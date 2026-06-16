@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oqra — A film camera built on chemistry, not filters</title>
+  <meta name="description" content="Oqra is a physics-based film camera for iPhone. Don't pick a preset — author one: design emulsion layers, tune dye chemistry, develop virtual film. Everything stays on your device." />
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Oqra — A film camera built on chemistry, not filters" />
+  <meta property="og:description" content="A physics-based film camera for iPhone. Author your own film stocks; everything stays on device." />
+  <!-- TODO: set og:url + og:image once the domain + a share image exist -->
+  <!-- <meta property="og:url" content="https://YOUR-DOMAIN/" /> -->
+  <!-- <meta property="og:image" content="https://YOUR-DOMAIN/assets/img/og.jpg" /> -->
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============================== NAV ============================== -->
+<nav class="nav">
+  <a class="nav__brand" href="/">OQRA</a>
+  <div class="nav__links">
+    <a class="is-secondary" href="#features">Features</a>
+    <a href="support.html">Support</a>
+    <a href="privacy.html">Privacy</a>
+    <!-- TODO: replace # with your App Store URL -->
+    <a href="#download" class="accent">Download</a>
+  </div>
+</nav>
+
+<!-- ============================== HERO ============================== -->
+<section class="hero">
+  <div class="container">
+    <p class="tag">iPhone · Film camera</p>
+    <h1>A film camera built on<br /><span class="accent">chemistry</span>, not filters.</h1>
+    <p class="lead">
+      Oqra is a physics-based film camera for iPhone. You don't scroll a folder
+      of LUTs — you author your own film: design emulsion layers, tune dye
+      chemistry, and develop virtual film through a real spectral engine.
+    </p>
+    <div class="btn-row" id="download">
+      <!-- TODO: swap href for your App Store link; for the official Apple badge,
+                 drop assets/img/app-store-badge.svg in and replace this button -->
+      <a class="btn btn--primary" href="#">Download on the App&nbsp;Store</a>
+      <a class="btn" href="#features">See what it does</a>
+    </div>
+  </div>
+
+  <div class="hero__media">
+    <!-- TODO: drop assets/img/hero.jpg — a viewfinder shot, dark background -->
+    <img src="assets/img/hero.jpg" alt="Oqra camera viewfinder"
+         onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',textContent:'HERO SHOT · assets/img/hero.jpg'}))" />
+  </div>
+</section>
+
+<!-- ============================== FEATURES ============================== -->
+<section class="divided" id="features">
+  <div class="container--wide">
+    <p class="tag">What makes it different</p>
+    <div class="features">
+      <div class="feature">
+        <h3>Real film engine</h3>
+        <p>Spectral exposure, Hurter–Driffield response, dye absorption, grain,
+           halation, and orange mask — simulated, not faked with a tone curve.</p>
+      </div>
+      <div class="feature">
+        <h3>Author, don't pick</h3>
+        <p>Every look is a recipe fed to the engine. Tune sensitizer wavelength,
+           dye purity, contrast and base fog — there's no fixed filter list.</p>
+      </div>
+      <div class="feature">
+        <h3>RAW &amp; Live Photos</h3>
+        <p>Capture in RAW / ProRAW and shoot Live Photos, then develop them
+           through the same film pipeline.</p>
+      </div>
+      <div class="feature">
+        <h3>Built into the hardware</h3>
+        <p>Shoot from the iPhone Camera Control button and straight from the
+           lock screen — Oqra lives where your camera already does.</p>
+      </div>
+      <div class="feature">
+        <h3>Everything on device</h3>
+        <p>No account, no servers, no analytics or tracking. Your photos, videos,
+           and recipes never leave your phone.</p>
+      </div>
+      <div class="feature">
+        <h3>Share your recipes</h3>
+        <p>Hand a film stock you authored to a friend as a single scannable
+           code — no export, no cloud.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SHOWCASE ============================== -->
+<section class="divided">
+  <div class="container--wide">
+    <p class="tag">A look inside</p>
+    <div class="shots">
+      <!-- TODO: drop tall screenshots into assets/img/shot-{1,2,3}.jpg -->
+      <img src="assets/img/shot-1.jpg" alt="Oqra viewfinder" class="placeholder--tall"
+           onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder placeholder--tall',textContent:'VIEWFINDER'}))" />
+      <img src="assets/img/shot-2.jpg" alt="Oqra recipe editor" class="placeholder--tall"
+           onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder placeholder--tall',textContent:'RECIPE EDITOR'}))" />
+      <img src="assets/img/shot-3.jpg" alt="Oqra collection" class="placeholder--tall"
+           onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder placeholder--tall',textContent:'COLLECTION'}))" />
+    </div>
+  </div>
+</section>
+
+<!-- ============================== CTA ============================== -->
+<section class="divided cta">
+  <div class="container">
+    <h2>Develop your own film.</h2>
+    <p class="lead">Free to try. Everything stays on your iPhone.</p>
+    <div class="btn-row">
+      <!-- TODO: swap href for your App Store link -->
+      <a class="btn btn--primary" href="#">Download on the App&nbsp;Store</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div>
+      <div class="site-footer__brand">OQRA</div>
+      <div class="site-footer__tagline">Chemistry, not filters</div>
+    </div>
+    <nav class="site-footer__links">
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="mailto:fantasyqkm@gmail.com">Contact</a>
+    </nav>
+  </div>
+  <!-- TODO: confirm the legal entity / year line -->
+  <div class="site-footer__legal">© 2026 Oqra</div>
+</footer>
+
+</body>
+</html>

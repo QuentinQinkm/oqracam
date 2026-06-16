@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["R47YR9KUY4.com.kuangming.FilmBo-iOS"],
+        "components": [
+          {
+            "/": "/p/*",
+            "comment": "Shared Oqra film recipe links open in the app"
+          }
+        ]
+      }
+    ]
+  }
+}

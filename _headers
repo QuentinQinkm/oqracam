@@ -1,0 +1,7 @@
+# Cloudflare Pages / Netlify headers.
+# Apple's universal-links CDN requires the AASA file to be served as JSON.
+# GitHub Pages serves extensionless files as application/octet-stream and
+# can't override this — which is why the deeplink needs a header-capable host.
+/.well-known/apple-app-site-association
+  Content-Type: application/json
+  Cache-Control: public, max-age=3600
