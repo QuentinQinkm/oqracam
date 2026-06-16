@@ -3,4 +3,6 @@
 # When Oqra IS installed, iOS opens the app before the browser ever loads this.
 # The target lives OUTSIDE /p/ so the rule can't match its own destination
 # (a destination under /p/ would re-trigger /p/* — an infinite loop Cloudflare rejects).
-/p/*  /shared.html  200
+# Target is the extensionless path (Cloudflare strips .html and serves /shared),
+# so this is a clean 200 rewrite with no redirect hop.
+/p/*  /shared  200
