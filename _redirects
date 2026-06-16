@@ -1,5 +1,6 @@
-# Cloudflare Pages / Netlify rewrites.
-# When Oqra IS installed, iOS intercepts https://oqra.app/p/<code> before the
-# browser loads anything. This rewrite only fires when the app is NOT installed:
-# it serves the friendly fallback page for any /p/<code> link (200, not a 301).
-/p/*  /p/index.html  200
+# Cloudflare / Netlify rewrites.
+# Serve the "app not installed" fallback for any shared-recipe link.
+# When Oqra IS installed, iOS opens the app before the browser ever loads this.
+# The target lives OUTSIDE /p/ so the rule can't match its own destination
+# (a destination under /p/ would re-trigger /p/* — an infinite loop Cloudflare rejects).
+/p/*  /shared.html  200

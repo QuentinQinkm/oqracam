@@ -18,9 +18,10 @@ styles.css     ← design tokens (mirror the app chrome) + all page styles
 assets/img/    ← hero shot, screenshots, App Store badge, og image
 
 .well-known/apple-app-site-association  ← AASA: lets oqra.app/p/<code> open the app
-p/index.html   ← friendly fallback when the app isn't installed
+shared.html    ← friendly fallback when the app isn't installed (served for /p/<code>)
 _headers       ← forces application/json on the AASA file (Cloudflare/Netlify)
-_redirects     ← serves p/index.html for any /p/<code> path (Cloudflare/Netlify)
+_redirects     ← rewrites /p/<code> → shared.html (target is outside /p/ to avoid a loop)
+.assetsignore  ← keeps .git / .wrangler / etc. from being published
 ```
 
 Open any `.html` file in a browser to preview. Search for `TODO:` to find every

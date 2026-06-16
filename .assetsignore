@@ -1,0 +1,10 @@
+# Files in the repo that must NOT be published as website assets.
+# (Cloudflare Workers static assets reads this, gitignore-style.)
+.git
+.gitignore
+.wrangler
+wrangler.jsonc
+wrangler.toml
+README.md
+*.log
+.DS_Store
