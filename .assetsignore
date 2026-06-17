@@ -8,3 +8,6 @@ wrangler.toml
 README.md
 *.log
 .DS_Store
+# Source photos (DNG originals + exported HEIC looks) — heavy, not for the web.
+# The web-ready squares live in assets/img/samples/ and DO publish.
+assets/SamplePhotos/

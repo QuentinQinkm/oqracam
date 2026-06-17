@@ -1,8 +1,8 @@
 # Cloudflare / Netlify rewrites.
-# Serve the "app not installed" fallback for any shared-recipe link.
+# Serve the single-page site for any shared-recipe link; share.js reads the
+# /p/<code> payload, decodes it, and scrolls to the #decode section.
 # When Oqra IS installed, iOS opens the app before the browser ever loads this.
-# The target lives OUTSIDE /p/ so the rule can't match its own destination
-# (a destination under /p/ would re-trigger /p/* — an infinite loop Cloudflare rejects).
-# Target is the extensionless path (Cloudflare strips .html and serves /shared),
-# so this is a clean 200 rewrite with no redirect hop.
-/p/*  /shared  200
+# Target is "/" (the root index) — OUTSIDE /p/, so the rule can't match its own
+# destination (a destination under /p/ would re-trigger /p/* — a loop Cloudflare
+# rejects). Clean 200 rewrite, URL stays /p/<code> so the payload is readable.
+/p/*  /  200

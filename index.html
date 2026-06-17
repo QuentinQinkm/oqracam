@@ -3,55 +3,65 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Oqra — A film camera built on chemistry, not filters</title>
-  <meta name="description" content="Oqra is a physics-based film camera for iPhone. Don't pick a preset — author one: design emulsion layers, tune dye chemistry, develop virtual film. Everything stays on your device." />
+  <title>Oqra — a hybrid film camera for iPhone</title>
+  <meta name="description" content="Oqra is a hybrid camera for iPhone — it develops every frame through a custom Metal engine that models real photographic physics: spectral exposure, grain, halation, and dye. You build the look, not pick it. Everything stays on your device." />
+  <link rel="canonical" href="https://oqra.app/" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
 
   <!-- Open Graph / social -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Oqra — A film camera built on chemistry, not filters" />
-  <meta property="og:description" content="A physics-based film camera for iPhone. Author your own film stocks; everything stays on device." />
-  <!-- TODO: set og:url + og:image once the domain + a share image exist -->
-  <!-- <meta property="og:url" content="https://YOUR-DOMAIN/" /> -->
-  <!-- <meta property="og:image" content="https://YOUR-DOMAIN/assets/img/og.jpg" /> -->
+  <meta property="og:title" content="Oqra — a hybrid film camera for iPhone" />
+  <meta property="og:description" content="A hybrid camera for iPhone that develops in real physics — build your own film look, all on device." />
+  <meta property="og:url" content="https://oqra.app/" />
+  <meta property="og:image" content="https://oqra.app/assets/img/oqra-icon-1024.png" />
+  <meta property="og:image:width" content="1024" />
+  <meta property="og:image:height" content="1024" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://oqra.app/assets/img/oqra-icon-1024.png" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/img/oqra-mark.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/assets/img/oqra-apple-touch.png" />
+  <link rel="manifest" href="/manifest.json" />
 </head>
 <body>
 
 <!-- ============================== NAV ============================== -->
 <nav class="nav">
-  <a class="nav__brand" href="/">OQRA</a>
+  <a class="nav__brand" href="#top" aria-label="Oqra — home"><img class="nav__logo" src="/assets/img/oqra-mark.png" alt="" width="26" height="26" />OQRA</a>
   <div class="nav__links">
     <a class="is-secondary" href="#features">Features</a>
-    <a href="support.html">Support</a>
-    <a href="privacy.html">Privacy</a>
-    <!-- TODO: replace # with your App Store URL -->
-    <a href="#download" class="accent">Download</a>
+    <a class="is-secondary" href="#compare">See it</a>
+    <a href="#support">Support</a>
+    <a class="accent" href="https://testflight.apple.com/join/Ya9JqGjF">Join beta</a>
   </div>
 </nav>
 
+<main>
+
 <!-- ============================== HERO ============================== -->
-<section class="hero">
+<section class="hero" id="top">
   <div class="container">
-    <p class="tag">iPhone · Film camera</p>
-    <h1>A film camera built on<br /><span class="accent">chemistry</span>, not filters.</h1>
+    <p class="tag">Orchestra of Aura</p>
+    <h1>A hybrid camera that develops in real <span class="accent">physics</span>.</h1>
     <p class="lead">
-      Oqra is a physics-based film camera for iPhone. You don't scroll a folder
-      of LUTs — you author your own film: design emulsion layers, tune dye
-      chemistry, and develop virtual film through a real spectral engine.
+      Oqra captures on iPhone, then develops every frame through a custom Metal
+      engine that models real photographic physics — spectral exposure,
+      characteristic curves, grain, halation, and dye. You don't pick a look;
+      you build it.
     </p>
     <div class="btn-row" id="download">
-      <!-- TODO: swap href for your App Store link; for the official Apple badge,
-                 drop assets/img/app-store-badge.svg in and replace this button -->
-      <a class="btn btn--primary" href="#">Download on the App&nbsp;Store</a>
-      <a class="btn" href="#features">See what it does</a>
+      <a class="btn btn--primary" href="https://testflight.apple.com/join/Ya9JqGjF">Join the TestFlight beta</a>
+      <span class="btn btn--soon">On the App&nbsp;Store<span class="btn__note">&nbsp;· soon</span></span>
     </div>
   </div>
 
   <div class="hero__media">
-    <!-- TODO: drop assets/img/hero.jpg — a viewfinder shot, dark background -->
-    <img src="assets/img/hero.jpg" alt="Oqra camera viewfinder"
-         onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',textContent:'HERO SHOT · assets/img/hero.jpg'}))" />
+    <!-- Swap for <img src="/assets/img/hero.jpg" alt="…" width height> once a hero shot exists. -->
+    <div class="placeholder">HERO</div>
   </div>
 </section>
 
@@ -59,85 +69,232 @@
 <section class="divided" id="features">
   <div class="container--wide">
     <p class="tag">What makes it different</p>
+    <h2 class="sr-only">Features</h2>
     <div class="features">
       <div class="feature">
-        <h3>Real film engine</h3>
-        <p>Spectral exposure, Hurter–Driffield response, dye absorption, grain,
-           halation, and orange mask — simulated, not faked with a tone curve.</p>
+        <h3>Modeled, not faked</h3>
+        <p>A custom Metal engine computes the real mechanics per pixel —
+           spectral exposure, Hurter–Driffield response, dye absorption, grain,
+           and halation. No tone-curve shortcut.</p>
       </div>
       <div class="feature">
-        <h3>Author, don't pick</h3>
-        <p>Every look is a recipe fed to the engine. Tune sensitizer wavelength,
-           dye purity, contrast and base fog — there's no fixed filter list.</p>
+        <h3>Full control</h3>
+        <p>Every look is a profile you build, not a preset you scroll. Tune
+           sensitizer wavelength, dye, contrast, grain, and halation — layer by
+           layer.</p>
       </div>
       <div class="feature">
-        <h3>RAW &amp; Live Photos</h3>
-        <p>Capture in RAW / ProRAW and shoot Live Photos, then develop them
-           through the same film pipeline.</p>
+        <h3>Built for the iPhone camera</h3>
+        <p>Designed around the device's native capture pipeline and made to push
+           it — shoot from the Camera Control button and straight from the lock
+           screen, with the full reach of the camera you already carry.</p>
       </div>
       <div class="feature">
-        <h3>Built into the hardware</h3>
-        <p>Shoot from the iPhone Camera Control button and straight from the
-           lock screen — Oqra lives where your camera already does.</p>
+        <h3>Re-develop anytime</h3>
+        <p>Every shot remembers the profile it was made with, so you can
+           re-develop or re-tune it later — non-destructively, on the original
+           capture.</p>
+      </div>
+      <div class="feature">
+        <h3>Share as a code</h3>
+        <p>Hand a profile you built to a friend as a single scannable code —
+           no export, no cloud, no account.</p>
       </div>
       <div class="feature">
         <h3>Everything on device</h3>
-        <p>No account, no servers, no analytics or tracking. Your photos, videos,
-           and recipes never leave your phone.</p>
-      </div>
-      <div class="feature">
-        <h3>Share your recipes</h3>
-        <p>Hand a film stock you authored to a friend as a single scannable
-           code — no export, no cloud.</p>
+        <p>No account, no servers, no tracking. Your photos, videos, and
+           profiles never leave your phone.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============================== SHOWCASE ============================== -->
-<section class="divided">
-  <div class="container--wide">
-    <p class="tag">A look inside</p>
-    <div class="shots">
-      <!-- TODO: drop tall screenshots into assets/img/shot-{1,2,3}.jpg -->
-      <img src="assets/img/shot-1.jpg" alt="Oqra viewfinder" class="placeholder--tall"
-           onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder placeholder--tall',textContent:'VIEWFINDER'}))" />
-      <img src="assets/img/shot-2.jpg" alt="Oqra recipe editor" class="placeholder--tall"
-           onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder placeholder--tall',textContent:'RECIPE EDITOR'}))" />
-      <img src="assets/img/shot-3.jpg" alt="Oqra collection" class="placeholder--tall"
-           onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder placeholder--tall',textContent:'COLLECTION'}))" />
-    </div>
-  </div>
-</section>
-
-<!-- ============================== CTA ============================== -->
-<section class="divided cta">
+<!-- ============================== BEFORE / AFTER ============================== -->
+<section class="divided" id="compare">
   <div class="container">
-    <h2>Develop your own film.</h2>
-    <p class="lead">Free to try. Everything stays on your iPhone.</p>
-    <div class="btn-row">
-      <!-- TODO: swap href for your App Store link -->
-      <a class="btn btn--primary" href="#">Download on the App&nbsp;Store</a>
+    <p class="tag">See it develop</p>
+    <h2>The same frame, two ways.</h2>
+    <p class="lead">
+      Drag the divider. Left is the untouched capture; right is that exact frame
+      developed through Oqra's film engine. Switch the scene and the film below.
+    </p>
+
+    <div class="ba" id="ba" style="--split:50%;" tabindex="0"
+         role="slider" aria-label="Before / after reveal — drag, or use the left and right arrow keys"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+      <img class="ba__img ba__after"  id="baAfter"  src="/assets/img/samples/flower_amethyst.jpg" alt="Developed in Oqra" width="1024" height="1024" decoding="async" draggable="false" />
+      <img class="ba__img ba__before" id="baBefore" src="/assets/img/samples/flower_og.jpg" alt="Original capture" width="1024" height="1024" decoding="async" draggable="false" />
+      <span class="ba__label ba__label--l">Original</span>
+      <span class="ba__label ba__label--r" id="baLabelR">Amethyst</span>
+      <div class="ba__line"><div class="ba__handle" aria-hidden="true">‹ ›</div></div>
+    </div>
+
+    <div class="ba__controls">
+      <div class="seg" id="sceneSeg" aria-label="Scene">
+        <button class="active" type="button" data-scene="flower">Flower</button>
+        <button type="button" data-scene="park">Park</button>
+        <button type="button" data-scene="pub">Pub</button>
+        <button type="button" data-scene="rose">Rose</button>
+        <button type="button" data-scene="snow">Snow</button>
+      </div>
+      <div class="seg" id="lookSeg" aria-label="Film">
+        <button class="active" type="button" data-look="amethyst">Amethyst</button>
+        <button type="button" data-look="crystal">Crystal</button>
+        <button type="button" data-look="onyx">Onyx</button>
+        <button type="button" data-look="verdigris">Verdigris</button>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- ============================== SUPPORT ============================== -->
+<section class="divided prose" id="support">
+  <div class="container">
+    <p class="tag">Help</p>
+    <h2>Support</h2>
+    <p class="lead">The fastest way to reach us is email — we read every message.</p>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="mailto:fantasyqkm@gmail.com?subject=Oqra%20Support">Email support</a>
+    </div>
+
+    <div class="faq">
+      <div class="faq__item">
+        <p class="faq__q">How do I save photos to my library?</p>
+        <p>Turn on <strong>Save to Photos</strong> in settings. Oqra keeps your
+           shots in its own private folder by default and only writes to your
+           system Photos library when this is enabled.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">Does Oqra collect or upload my data?</p>
+        <p>No. There's no account and no server. Your photos, videos, and recipes
+           stay on your device. See the <a href="#privacy">Privacy Policy</a>
+           for the full breakdown.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">How do I shoot RAW?</p>
+        <p>Enable the <strong>RAW Capture</strong> toggle. Oqra then captures in
+           RAW / ProRAW and develops it through the film engine.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">How do I share a film recipe?</p>
+        <p>Open a recipe and use Share to generate a scannable code. A friend with
+           Oqra can scan it to load the same film stock — nothing is uploaded.
+           Received one without the app? <a href="#decode">Open it here</a>.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">Which iPhones does Oqra support?</p>
+        <p>Oqra runs on recent iPhones; the Camera Control button requires an
+           iPhone&nbsp;16.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">I found a bug or have a feature request.</p>
+        <p>Please email <a href="mailto:fantasyqkm@gmail.com?subject=Oqra%20Bug%2FFeedback">fantasyqkm@gmail.com</a>
+           with your device model and iOS version, and a screenshot if you can.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== DECODE (reached from the nav) ============================== -->
+<section class="divided prose" id="decode">
+  <div class="container">
+    <p class="tag">Shared with you</p>
+    <h2>Open a shared recipe</h2>
+    <p class="lead">
+      Oqra film stocks travel as a scannable code or an oqra.app/p/… link. Paste
+      one here and download the recipe as a file — decoded entirely in your
+      browser, nothing uploaded. Import the <strong>.fbp</strong> in Oqra and the
+      look is reproduced by the film engine on your device.
+    </p>
+
+    <div class="decoder">
+      <label for="codeField" class="sr-only">Paste an Oqra recipe link or code</label>
+      <textarea id="codeField" class="decoder__field" spellcheck="false"
+                autocapitalize="off" autocorrect="off"
+                placeholder="Paste an oqra.app/p/… link, or the code after /p/"></textarea>
+      <div class="btn-row">
+        <button id="decodeBtn" class="btn" type="button">Decode recipe</button>
+        <button id="downloadBtn" class="btn btn--primary" type="button" hidden>Download .fbp</button>
+      </div>
+      <div id="decodeStatus" class="decoder__status"></div>
+      <div id="recipeSpec"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== PRIVACY ============================== -->
+<section class="divided prose" id="privacy">
+  <div class="container">
+    <p class="tag">Legal</p>
+    <h2>Privacy Policy</h2>
+    <p class="updated">Last updated: May 1, 2026</p>
+
+    <p>
+      Oqra is a film-emulation photo and video app. This policy explains what
+      information the app collects and how it is used.
+    </p>
+
+    <h3>What we collect</h3>
+    <p>
+      <strong>Nothing is sent off your device.</strong> Oqra does not require an
+      account, does not transmit your photos, videos, or film recipes to any
+      server, and does not include third-party analytics, advertising, or
+      tracking SDKs.
+    </p>
+    <p>The app requests the following system permissions, used only for the features you choose to enable:</p>
+    <ul>
+      <li><strong>Camera</strong> — to capture photos and video inside Oqra, including via the iPhone Camera Control button and the lock-screen Locked Camera Capture extension.</li>
+      <li><strong>Microphone</strong> — to record audio when capturing video. Not used during photo capture.</li>
+      <li><strong>Photo Library</strong> — only if you turn on "Save to Photos." When enabled, the developed photo or video is saved to your system Photos library. Oqra does not read your existing photos or videos unless you import one through the in-app picker.</li>
+      <li><strong>Location, Contacts</strong> — not used.</li>
+    </ul>
+
+    <h3>What is stored on your device</h3>
+    <ul>
+      <li>Photos and videos you capture or import, and the developed media produced by the engine, in Oqra's app-private folder.</li>
+      <li>Film recipes you create or favorite, and the recipe snapshots locked to each roll.</li>
+      <li>App preferences (such as the RAW Capture toggle and the Save to Photos toggle).</li>
+    </ul>
+    <p>This data stays on your device. You can delete all of it at any time by removing the app.</p>
+
+    <h3>TestFlight builds</h3>
+    <p>
+      If you are using Oqra through TestFlight, Apple collects diagnostic and
+      usage information per Apple's own TestFlight beta tester data practices.
+      Oqra itself does not receive this information.
+    </p>
+
+    <h3>Children</h3>
+    <p>Oqra is not directed to children under 13 and does not knowingly collect any information from children.</p>
+
+    <h3>Changes to this policy</h3>
+    <p>If this policy changes, the "Last updated" date above will change. Material changes will be noted in the app's release notes.</p>
+
+    <h3>Contact</h3>
+    <p>Questions about this policy: <a href="mailto:fantasyqkm@gmail.com">fantasyqkm@gmail.com</a></p>
+  </div>
+</section>
+
+</main>
 
 <!-- ============================== FOOTER ============================== -->
 <footer class="site-footer">
   <div class="site-footer__inner">
     <div>
       <div class="site-footer__brand">OQRA</div>
-      <div class="site-footer__tagline">Chemistry, not filters</div>
+      <div class="site-footer__tagline">Orchestra of Aura</div>
     </div>
     <nav class="site-footer__links">
-      <a href="support.html">Support</a>
-      <a href="privacy.html">Privacy Policy</a>
+      <a href="#support">Support</a>
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#decode">Open a recipe</a>
       <a href="mailto:fantasyqkm@gmail.com">Contact</a>
     </nav>
   </div>
-  <!-- TODO: confirm the legal entity / year line -->
   <div class="site-footer__legal">© 2026 Oqra</div>
 </footer>
 
+<script src="/compare.js" defer></script>
+<script src="/share.js" defer></script>
 </body>
 </html>

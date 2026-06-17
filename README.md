@@ -1,71 +1,64 @@
 # oqracam — Oqra official website
 
-Static marketing + legal site for **Oqra**, the film camera for iPhone
-(codename: FilmBo). No build step — plain HTML/CSS.
+Static marketing + legal site for **Oqra**, the hybrid film camera for iPhone
+(internal codename: FilmBo). No build step — plain HTML / CSS / vanilla JS.
+Design mirrors the app's chrome: pure-black canvas, SF-Pro-Light type, the
+visible-spectrum gradient as the only colour, hard edges (no rounded corners).
 
-> **Name note:** the original README here was a privacy policy that called the
-> app "LumBo Cam". The public name is **Oqra**; that text now lives in
-> [`privacy.html`](privacy.html) with the name corrected. If "LumBo Cam" is
-> actually the canonical store name, search-and-replace `Oqra` across the site.
+## Structure
 
-## Pages
+Single page — everything lives in `index.html` with in-page anchor nav
+(`#features`, `#compare`, `#support`, `#decode`, `#privacy`).
 
 ```
-index.html     ← landing: hero, features, screenshots, download CTA
-privacy.html   ← privacy policy (App Store requires a public URL)
-support.html   ← support + FAQ (App Store requires a support URL)
-styles.css     ← design tokens (mirror the app chrome) + all page styles
-assets/img/    ← hero shot, screenshots, App Store badge, og image
+index.html      ← the whole site: hero · features · before/after · CTA ·
+                  support (FAQ) · decode tool · privacy policy · footer
+styles.css      ← design tokens (mirror the app) + all styles
+compare.js      ← before/after reveal slider + scene/film pickers
+share.js        ← client-side preset-code decoder → downloads a .fbp
+404.html        ← branded not-found page
+manifest.json · robots.txt · sitemap.xml
+
+assets/img/             ← logo (oqra-mark / apple-touch / icon-1024) + samples/
+assets/img/samples/     ← 25 web-ready 1024² JPEGs (5 scenes × OG + 4 looks)
+assets/SamplePhotos/    ← SOURCE photos (DNG + exported HEIC). NOT published
+                          (see .assetsignore); regenerate samples/ from here.
 
 .well-known/apple-app-site-association  ← AASA: lets oqra.app/p/<code> open the app
-shared.html    ← friendly fallback when the app isn't installed (served for /p/<code>)
-_headers       ← forces application/json on the AASA file (Cloudflare/Netlify)
-_redirects     ← rewrites /p/<code> → shared.html (target is outside /p/ to avoid a loop)
-.assetsignore  ← keeps .git / .wrangler / etc. from being published
+_headers        ← AASA content-type, asset caching, security headers
+_redirects      ← /p/<code> → / (share.js decodes the payload in-page)
+.assetsignore   ← keeps .git, source photos, etc. out of the deploy
 ```
 
-Open any `.html` file in a browser to preview. Search for `TODO:` to find every
-placeholder that needs your input (App Store link, domain, screenshots, device
-requirements, footer entity).
+Preview locally with any static server (absolute `/asset` paths need a web root):
+`python3 -m http.server 8011` → http://localhost:8011/.
 
-## Before publishing — checklist
+## Updating the sample photos
 
-- [ ] Confirm the public app name (Oqra vs. LumBo Cam) across all pages.
-- [ ] Replace the App Store `href="#"` links in `index.html` with the real URL.
-- [ ] Drop real screenshots into `assets/img/` (`hero.jpg`, `shot-1..3.jpg`).
-- [ ] Add the official Apple "Download on the App Store" badge SVG.
-- [ ] Set `og:url` / `og:image` in `index.html` once the domain + share image exist.
-- [ ] Confirm supported-device / iOS line in `support.html`.
+The before/after widget reads `assets/img/samples/<scene>_<og|amethyst|crystal|onyx|verdigris>.jpg`.
+To refresh: drop the source DNG/HEIC into `assets/SamplePhotos/`, then re-export
+square 1024² JPEGs into `assets/img/samples/` (centre-crop, quality ~70).
 
-## Deploying — must be at `oqra.app` on a header-capable host
+## Deploying — `oqra.app` on a header-capable host
 
 The app's QR codec hardcodes `https://oqra.app/p/<code>` (`PresetQRCodec.urlPrefix`),
-so the deeplink domain is **`oqra.app`**, and the AASA file must be served there
-with `Content-Type: application/json`. **Plain GitHub Pages can't set that header**,
-so host on **Cloudflare Pages** (recommended), Netlify, or Vercel.
+and the AASA file must be served with `Content-Type: application/json` — which
+plain GitHub Pages can't do. Host on **Cloudflare** (current), Netlify, or Vercel;
+`_headers` and `_redirects` are picked up automatically.
 
-Cloudflare Pages (recommended):
-1. Cloudflare dashboard → Workers & Pages → create a Pages project → connect this
-   GitHub repo → build command: none, output dir: `/` (root).
-2. Add custom domain `oqra.app`. Point the AWS/Route 53 domain's DNS at the
-   Pages project (Cloudflare will give you the records; or move the zone to
-   Cloudflare). The `_headers` and `_redirects` files are picked up automatically.
-3. Verify: `curl -I https://oqra.app/.well-known/apple-app-site-association`
-   must return `content-type: application/json`. Apple's CDN copy:
-   `https://app-site-association.cdn-apple.com/a/v1/oqra.app`.
+Verify after deploy:
+- `curl -I https://oqra.app/.well-known/apple-app-site-association` → `content-type: application/json`
+- `https://oqra.app/p/<code>` returns 200 and the decoder shows the recipe
+- the `.fbp` download works (if the CSP blocks the blob download, add `blob:` to
+  `default-src` in `_headers`)
 
-(Netlify/Vercel also read `_headers`/`_redirects`; on Vercel use `vercel.json`
-headers instead.)
+## Remaining work
 
-## Deeplink (universal links) — remaining work
-
-Website side is done (this repo). Still required:
-
-- **Apple Developer portal:** enable the *Associated Domains* capability on App ID
-  `com.kuangming.FilmBo-iOS` (Team `R47YR9KUY4`).
-- **iOS app** (FilmBo repo): add `applinks:oqra.app` to `FilmBo-iOS.entitlements`;
-  add a `.onContinueUserActivity(NSUserActivityTypeBrowsingWeb)` handler that
-  decodes via `PresetQRCodec.decode(scanned:)` and imports the recipe (needs a new
-  `AppState` import-from-`FilmRecipe` method — only a file-URL importer exists today).
-- **Test on a real device** (universal links don't work in the Simulator); first
-  install must come from a profile carrying the entitlement.
+- [ ] Real hero shot (`assets/img/hero.jpg`) — currently a placeholder block.
+- [ ] App Store link (CTAs read "On the App Store · soon" until then; TestFlight is live).
+- [ ] **Deeplink iOS side** (FilmBo repo): Associated Domains capability on App ID
+  `com.kuangming.FilmBo-iOS` (Team `R47YR9KUY4`), `applinks:oqra.app` in the
+  entitlements, and a `.onContinueUserActivity` handler that decodes via
+  `PresetQRCodec.decode(scanned:)`. Until then, the web `#decode` tool is the
+  fallback (download the `.fbp`, import in-app). Universal links require a
+  real-device test.

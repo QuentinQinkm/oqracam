@@ -1,0 +1,14 @@
+{
+  "name": "Oqra",
+  "short_name": "Oqra",
+  "description": "A hybrid camera for iPhone — develop in real physics.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    { "src": "/assets/img/oqra-mark.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "/assets/img/oqra-apple-touch.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/assets/img/oqra-icon-1024.png", "sizes": "1024x1024", "type": "image/png" }
+  ]
+}
