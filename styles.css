@@ -345,6 +345,14 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 @media (max-width: 820px) { .features { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 540px) { .features { grid-template-columns: 1fr; } }
 
+/* features section: the hybrid story leads, then two cards.
+   The highlight headline IS the section's <h2>; the lead is held to a
+   readable measure so it doesn't run the full wide column. */
+.feature-hero__title { max-width: 16em; }
+.feature-hero__lead  { max-width: 760px; margin-bottom: clamp(40px, 6vh, 64px); }
+.features--two { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 540px) { .features--two { grid-template-columns: 1fr; } }
+
 /* ---------- placeholders (asset slots) ---------- */
 
 .placeholder {

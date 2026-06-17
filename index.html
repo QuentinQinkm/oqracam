@@ -35,7 +35,7 @@
   <div class="nav__links">
     <a class="is-secondary" href="#features">Features</a>
     <a class="is-secondary" href="#compare">See it</a>
-    <a href="#support">Support</a>
+    <a href="/support">Support</a>
     <a class="accent" href="https://testflight.apple.com/join/Ya9JqGjF">Join beta</a>
   </div>
 </nav>
@@ -68,42 +68,27 @@
 <!-- ============================== FEATURES ============================== -->
 <section class="divided" id="features">
   <div class="container--wide">
-    <p class="tag">What makes it different</p>
-    <h2 class="sr-only">Features</h2>
-    <div class="features">
+    <p class="tag">Capture, then develop</p>
+    <h2 class="feature-hero__title">A camera on one side, a darkroom on the other.</h2>
+    <p class="lead feature-hero__lead">
+      Load a film, point, and shoot. Your iPhone captures the frame; Oqra
+      develops it live in the viewfinder the instant you press the shutter — a
+      real film engine modeled on spectral exposure, density curves, dye, grain,
+      and halation. <strong>What you see is what you shoot</strong> — no editing
+      step, no filter laid on top.
+    </p>
+    <div class="features features--two">
       <div class="feature">
-        <h3>Modeled, not faked</h3>
-        <p>A custom Metal engine computes the real mechanics per pixel —
-           spectral exposure, Hurter–Driffield response, dye absorption, grain,
-           and halation. No tone-curve shortcut.</p>
+        <h3>An engine, not a filter</h3>
+        <p>A physics-based film simulation, not a lookup table: a native RAW
+           decoder feeding a custom Metal engine that runs real photographic
+           mechanics per pixel. The look is computed from the light.</p>
       </div>
       <div class="feature">
-        <h3>Full control</h3>
-        <p>Every look is a profile you build, not a preset you scroll. Tune
-           sensitizer wavelength, dye, contrast, grain, and halation — layer by
-           layer.</p>
-      </div>
-      <div class="feature">
-        <h3>Built for the iPhone camera</h3>
-        <p>Designed around the device's native capture pipeline and made to push
-           it — shoot from the Camera Control button and straight from the lock
-           screen, with the full reach of the camera you already carry.</p>
-      </div>
-      <div class="feature">
-        <h3>Re-develop anytime</h3>
-        <p>Every shot remembers the profile it was made with, so you can
-           re-develop or re-tune it later — non-destructively, on the original
-           capture.</p>
-      </div>
-      <div class="feature">
-        <h3>Share as a code</h3>
-        <p>Hand a profile you built to a friend as a single scannable code —
-           no export, no cloud, no account.</p>
-      </div>
-      <div class="feature">
-        <h3>Everything on device</h3>
-        <p>No account, no servers, no tracking. Your photos, videos, and
-           profiles never leave your phone.</p>
+        <h3>Build your own film, then share it</h3>
+        <p>Every look is a film recipe you can open and author — emulsion layers,
+           dye, grain, response. Build your own, then share it as a QR code or
+           link. Someone scans it and shoots your film.</p>
       </div>
     </div>
   </div>
@@ -147,54 +132,6 @@
   </div>
 </section>
 
-<!-- ============================== SUPPORT ============================== -->
-<section class="divided prose" id="support">
-  <div class="container">
-    <p class="tag">Help</p>
-    <h2>Support</h2>
-    <p class="lead">The fastest way to reach us is email — we read every message.</p>
-    <div class="btn-row">
-      <a class="btn btn--primary" href="mailto:fantasyqkm@gmail.com?subject=Oqra%20Support">Email support</a>
-    </div>
-
-    <div class="faq">
-      <div class="faq__item">
-        <p class="faq__q">How do I save photos to my library?</p>
-        <p>Turn on <strong>Save to Photos</strong> in settings. Oqra keeps your
-           shots in its own private folder by default and only writes to your
-           system Photos library when this is enabled.</p>
-      </div>
-      <div class="faq__item">
-        <p class="faq__q">Does Oqra collect or upload my data?</p>
-        <p>No. There's no account and no server. Your photos, videos, and recipes
-           stay on your device. See the <a href="#privacy">Privacy Policy</a>
-           for the full breakdown.</p>
-      </div>
-      <div class="faq__item">
-        <p class="faq__q">How do I shoot RAW?</p>
-        <p>Enable the <strong>RAW Capture</strong> toggle. Oqra then captures in
-           RAW / ProRAW and develops it through the film engine.</p>
-      </div>
-      <div class="faq__item">
-        <p class="faq__q">How do I share a film recipe?</p>
-        <p>Open a recipe and use Share to generate a scannable code. A friend with
-           Oqra can scan it to load the same film stock — nothing is uploaded.
-           Received one without the app? <a href="#decode">Open it here</a>.</p>
-      </div>
-      <div class="faq__item">
-        <p class="faq__q">Which iPhones does Oqra support?</p>
-        <p>Oqra runs on recent iPhones; the Camera Control button requires an
-           iPhone&nbsp;16.</p>
-      </div>
-      <div class="faq__item">
-        <p class="faq__q">I found a bug or have a feature request.</p>
-        <p>Please email <a href="mailto:fantasyqkm@gmail.com?subject=Oqra%20Bug%2FFeedback">fantasyqkm@gmail.com</a>
-           with your device model and iOS version, and a screenshot if you can.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============================== DECODE (reached from the nav) ============================== -->
 <section class="divided prose" id="decode">
   <div class="container">
@@ -222,59 +159,6 @@
   </div>
 </section>
 
-<!-- ============================== PRIVACY ============================== -->
-<section class="divided prose" id="privacy">
-  <div class="container">
-    <p class="tag">Legal</p>
-    <h2>Privacy Policy</h2>
-    <p class="updated">Last updated: May 1, 2026</p>
-
-    <p>
-      Oqra is a film-emulation photo and video app. This policy explains what
-      information the app collects and how it is used.
-    </p>
-
-    <h3>What we collect</h3>
-    <p>
-      <strong>Nothing is sent off your device.</strong> Oqra does not require an
-      account, does not transmit your photos, videos, or film recipes to any
-      server, and does not include third-party analytics, advertising, or
-      tracking SDKs.
-    </p>
-    <p>The app requests the following system permissions, used only for the features you choose to enable:</p>
-    <ul>
-      <li><strong>Camera</strong> — to capture photos and video inside Oqra, including via the iPhone Camera Control button and the lock-screen Locked Camera Capture extension.</li>
-      <li><strong>Microphone</strong> — to record audio when capturing video. Not used during photo capture.</li>
-      <li><strong>Photo Library</strong> — only if you turn on "Save to Photos." When enabled, the developed photo or video is saved to your system Photos library. Oqra does not read your existing photos or videos unless you import one through the in-app picker.</li>
-      <li><strong>Location, Contacts</strong> — not used.</li>
-    </ul>
-
-    <h3>What is stored on your device</h3>
-    <ul>
-      <li>Photos and videos you capture or import, and the developed media produced by the engine, in Oqra's app-private folder.</li>
-      <li>Film recipes you create or favorite, and the recipe snapshots locked to each roll.</li>
-      <li>App preferences (such as the RAW Capture toggle and the Save to Photos toggle).</li>
-    </ul>
-    <p>This data stays on your device. You can delete all of it at any time by removing the app.</p>
-
-    <h3>TestFlight builds</h3>
-    <p>
-      If you are using Oqra through TestFlight, Apple collects diagnostic and
-      usage information per Apple's own TestFlight beta tester data practices.
-      Oqra itself does not receive this information.
-    </p>
-
-    <h3>Children</h3>
-    <p>Oqra is not directed to children under 13 and does not knowingly collect any information from children.</p>
-
-    <h3>Changes to this policy</h3>
-    <p>If this policy changes, the "Last updated" date above will change. Material changes will be noted in the app's release notes.</p>
-
-    <h3>Contact</h3>
-    <p>Questions about this policy: <a href="mailto:fantasyqkm@gmail.com">fantasyqkm@gmail.com</a></p>
-  </div>
-</section>
-
 </main>
 
 <!-- ============================== FOOTER ============================== -->
@@ -285,8 +169,8 @@
       <div class="site-footer__tagline">Orchestra of Aura</div>
     </div>
     <nav class="site-footer__links">
-      <a href="#support">Support</a>
-      <a href="#privacy">Privacy Policy</a>
+      <a href="/support">Support</a>
+      <a href="/privacy">Privacy Policy</a>
       <a href="#decode">Open a recipe</a>
       <a href="mailto:fantasyqkm@gmail.com">Contact</a>
     </nav>
