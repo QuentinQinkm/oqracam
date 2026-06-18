@@ -16,6 +16,12 @@
    Vanilla, no deps, CSP-safe (script-src 'self'). The wipe runs at every width
    (portrait too); only prefers-reduced-motion falls back to the final frame.
    ============================================================ */
+
+/* Shared, stateless helpers — used by both the #develop and #shareflow
+   controllers below (closed over from file scope; defined once). */
+var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
+
 (function () {
   "use strict";
   var root = document.getElementById("develop");
@@ -36,9 +42,6 @@
   var units = holds * HOLD + wipes * WIPE;     // total scroll budget, in vh
   // Section height = one read-screen + the timeline; keeps CSS in lockstep.
   root.style.setProperty("--develop-scroll", units + "vh");
-
-  function pad(n) { return n < 10 ? "0" + n : "" + n; }
-  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
   // Map scroll progress 0..1 → fractional stage 0..N-1 through the
   // HOLD/wipe/HOLD timeline. Holds return an integer (frame parked);
@@ -119,4 +122,78 @@
     window.addEventListener("resize", onScroll, { passive: true });
     update();
   }
+})();
+
+/* ============================================================
+   Oqra — build → collect → share (#shareflow), scroll CROSSFADE
+   ============================================================
+   One pinned phone frame cross-fades through the three app screenshots in
+   order (Build → Collect → Share) as the section scrolls. Stacked so the
+   crossfade never dips to black: image 0 is the always-on base, each next
+   fades in on top. HOLD·fade·HOLD timeline with a dwell on every shot
+   (first/last included). N derives from the DOM. prefers-reduced-motion
+   falls back to the CSS row (all three shown, no scroll bind).
+   ============================================================ */
+(function () {
+  "use strict";
+  var root = document.getElementById("shareflow");
+  if (!root) return;
+  var imgs = Array.prototype.slice.call(root.querySelectorAll(".shareflow__img"));
+  var N = imgs.length;
+  if (!N) return;
+  if (window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var nameEl = document.getElementById("shareName");
+  var subEl = document.getElementById("shareSub");
+  var countEl = document.getElementById("shareCount");
+  var lastIdx = -1;
+
+  var HOLD = 28, FADE = 42;                        // matches the develop dwell/wipe
+  var units = N * HOLD + (N - 1) * FADE;          // scroll budget, in vh
+  root.style.setProperty("--shareflow-scroll", units + "vh");
+
+  function stageAt(p) {                             // HOLD/fade/HOLD → 0..N-1
+    var x = clamp(p, 0, 1) * units, acc = 0;
+    for (var k = 0; k < N; k++) {
+      if (x <= acc + HOLD) return k;
+      acc += HOLD;
+      if (k < N - 1) {
+        if (x < acc + FADE) return k + (x - acc) / FADE;
+        acc += FADE;
+      }
+    }
+    return N - 1;
+  }
+
+  function caption(idx) {
+    if (idx === lastIdx) return;
+    lastIdx = idx;
+    var el = imgs[idx];
+    if (nameEl) nameEl.textContent = el.getAttribute("data-name") || "";
+    if (subEl) subEl.textContent = el.getAttribute("data-sub") || "";
+    if (countEl) countEl.textContent = pad(idx + 1) + " / " + pad(N);
+  }
+
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var scrollable = root.offsetHeight - window.innerHeight;
+    var top = root.getBoundingClientRect().top;
+    var stage = stageAt(scrollable > 0 ? clamp(-top / scrollable, 0, 1) : 0);
+    for (var i = 0; i < N; i++) {
+      // image 0 = always-on base; image i fades in over (i-1) across [i-1, i].
+      imgs[i].style.opacity = (i === 0) ? "1" : clamp(stage - (i - 1), 0, 1).toFixed(3);
+    }
+    caption(clamp(Math.round(stage), 0, N - 1));
+  }
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
+  update();
 })();

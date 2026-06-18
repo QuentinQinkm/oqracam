@@ -66,13 +66,18 @@
   }
 
   var dragging = false;
+  function onHandle(e) { return !!(e.target.closest && e.target.closest(".ba__handle")); }
   ba.addEventListener("pointerdown", function (e) {
+    // Touch must START on the handle to drag — otherwise let the gesture
+    // scroll the page (a swipe over the image must pass through, not snap the
+    // divider to the finger). Mouse/pen keep click-anywhere-to-set.
+    if (e.pointerType === "touch" && !onHandle(e)) return;
     dragging = true;
     if (ba.setPointerCapture) { try { ba.setPointerCapture(e.pointerId); } catch (_) {} }
     setSplit(e.clientX);
     e.preventDefault();
   });
-  ba.addEventListener("pointermove", function (e) { if (dragging) setSplit(e.clientX); });
+  ba.addEventListener("pointermove", function (e) { if (dragging) { setSplit(e.clientX); e.preventDefault(); } });
   ba.addEventListener("pointerup",   function () { dragging = false; });
   ba.addEventListener("pointercancel", function () { dragging = false; });
 

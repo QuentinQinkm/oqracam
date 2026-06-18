@@ -67,12 +67,6 @@
 <!-- ============================== FEATURES ============================== -->
 <section class="divided" id="features">
   <div class="container--wide">
-    <p class="tag">Capture, then develop</p>
-    <h2 class="feature-hero__title">A camera on one side, a darkroom on the other.</h2>
-    <p class="lead feature-hero__lead">
-      Load a film, point, shoot. Oqra develops every frame for you — no editing
-      step, no filter on top.
-    </p>
     <!-- Develop: scroll-driven, sticky build-up. ONE real Snow capture
          (developed through a shared Verdigris recipe) walked through the whole
          pipeline — 9 real FilmBoCore renders (raw capture → developed signal →
@@ -83,21 +77,15 @@
       <div class="develop__sticky">
         <div class="develop__grid">
           <div class="develop__text">
-            <h3>An engine, not a filter</h3>
-            <p>The look is computed from light by a real film engine — never a
-               filter laid over your photo.</p>
-            <p>Oqra models a photographic negative as a stack of light-sensitive
-               layers — each with its own spectral sensitivity, density response,
-               dye, and grain — with halation blooming around the brightest light.
-               The look emerges from that chemistry, the way film does. Scroll to
-               watch one real frame become film, stage by stage.</p>
-            <div class="develop__cap">
-              <span class="develop__name" id="buildName">Raw capture</span>
-              <span class="develop__sub" id="buildSub">Straight off the sensor — before any processing</span>
-              <span class="develop__count" id="buildCount" aria-hidden="true">01 / 09</span>
-            </div>
+            <p class="tag">Capture, then develop</p>
+            <h2 class="develop__title">A camera on one side, a darkroom on the other.</h2>
+            <p class="develop__intro">The look is computed from light by a real film
+               engine — never a filter laid over your photo. Oqra builds it from a
+               stack of light-sensitive layers, each with its own spectral
+               sensitivity, density curve, dye, and grain — so the image emerges
+               from chemistry, the way film does.</p>
           </div>
-          <div class="develop__frame" role="img" aria-label="One real snow frame becoming film, stage by stage: the raw capture, then Apple’s developed signal; one emulsion record developed to a silver density image, then dyed in colour with its own grain; the other records stack on to build subtractive colour with the orange mask; then a warm halation bloom and the signature base tint produce the finished frame.">
+            <div class="develop__frame" role="img" aria-label="One real snow frame becoming film, stage by stage: the raw capture, then Apple’s developed signal; one emulsion record developed to a silver density image, then dyed in colour with its own grain; the other records stack on to build subtractive colour with the orange mask; then a warm halation bloom and the signature base tint produce the finished frame.">
             <img class="develop__img" data-i="0" data-name="Raw capture" data-sub="Straight off the sensor — before any processing" src="/assets/img/samples/build-0-raw.jpg" alt="The raw iPhone capture, straight off the sensor before processing" width="900" height="900" decoding="async" draggable="false" />
             <img class="develop__img" data-i="1" data-name="Developed" data-sub="Apple's RAW pipeline — noise reduction, boost, tone map" src="/assets/img/samples/build-1-capture.jpg" alt="The capture after Apple's RAW pipeline: noise reduction, boost, local tone map" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
             <img class="develop__img" data-i="2" data-name="One record, silver" data-sub="One emulsion layer's H&amp;D curve turns exposure into silver density" src="/assets/img/samples/build-2-silver.jpg" alt="One emulsion record developed to a silver density image, in grey" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
@@ -108,6 +96,11 @@
             <img class="develop__img" data-i="7" data-name="Halation" data-sub="Light scatters back through the base — a warm bloom around highlights" src="/assets/img/samples/build-7-halation.jpg" alt="A warm halation bloom around the brightest highlights" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
             <img class="develop__img" data-i="8" data-name="The print" data-sub="The signature base tint lands — your finished frame" src="/assets/img/samples/build-8-tint.jpg" alt="The finished frame after the signature base tint lands" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
             <div class="develop__bar" aria-hidden="true"></div>
+            <div class="develop__cap">
+              <span class="develop__name" id="buildName">Raw capture</span>
+              <span class="develop__sub" id="buildSub">Straight off the sensor — before any processing</span>
+              <span class="develop__count" id="buildCount" aria-hidden="true">01 / 09</span>
+            </div>
           </div>
         </div>
       </div>
@@ -163,24 +156,20 @@
       folds into a small code: share it as a link or QR, and anyone with Oqra can
       scan it and shoot your film.</p>
 
-    <div class="appshots">
-      <figure class="appshot">
-        <img src="/assets/img/app/editor.jpg" alt="The Oqra editor: a photo above the Hurter–Driffield characteristic-curve editor with per-layer controls" width="720" height="1483" loading="lazy" decoding="async" />
-        <figcaption>Build it — tune each layer's curve, dye, and grain.</figcaption>
-      </figure>
-      <figure class="appshot">
-        <img src="/assets/img/app/gallery.jpg" alt="The Oqra collection: a grid of saved film looks" width="720" height="1483" loading="lazy" decoding="async" />
-        <figcaption>Keep a collection — one tap to load and shoot.</figcaption>
-      </figure>
+    <div class="shareflow" id="shareflow">
+      <div class="shareflow__sticky">
+        <div class="shareflow__frame" role="img" aria-label="The Oqra app from build to share: the film editor, then your collection of looks, then the share screen with a scannable QR recipe.">
+          <img class="shareflow__img" data-name="Build it" data-sub="Tune each layer's curve, dye, and grain in the editor." src="/assets/img/app/editor.jpg?v=2" alt="The Oqra editor: a photo above the characteristic-curve editor with per-layer controls" width="720" height="1483" decoding="async" draggable="false" />
+          <img class="shareflow__img" data-name="Collect it" data-sub="Keep your films in a collection — one tap to load and shoot." src="/assets/img/app/gallery.jpg?v=2" alt="The Oqra collection: a grid of saved film looks" width="720" height="1483" loading="lazy" decoding="async" draggable="false" />
+          <img class="shareflow__img" data-name="Share it" data-sub="Every film folds into a scannable code — a link or QR anyone with Oqra can shoot." src="/assets/img/app/share.jpg" alt="The Oqra share screen: a QR code labelled BOSTON with an oqra.app link" width="720" height="1483" loading="lazy" decoding="async" draggable="false" />
+        </div>
+        <div class="shareflow__cap">
+          <span class="shareflow__name" id="shareName">Build it</span>
+          <span class="shareflow__sub" id="shareSub">Tune each layer's curve, dye, and grain in the editor.</span>
+          <span class="shareflow__count" id="shareCount" aria-hidden="true">01 / 03</span>
+        </div>
+      </div>
     </div>
-
-    <p>Every film folds into a small code. Share it as an
-       <strong>oqra.app/p/…</strong> link or a scannable poster — anyone with Oqra
-       can add it and shoot your film.</p>
-
-    <figure class="poster">
-      <img src="/assets/img/app/qr-poster.jpg" alt="An Oqra film-recipe poster: a QR code labelled BOSTON, with “Scan in Oqra or with your Camera to add this recipe.”" width="900" height="1125" loading="lazy" decoding="async" />
-    </figure>
 
     <h3 class="decode__open">Open a shared recipe</h3>
     <p>

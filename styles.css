@@ -323,7 +323,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   margin: clamp(56px, 9vh, 104px) auto 0;
   width: var(--col-wide);
 }
-.hero__media img { width: 100%; border: 1px solid var(--rule-bright); }
+.hero__media img { width: 100%; display: block; }
 
 /* ---------- feature grid (hairline-separated cells) ---------- */
 
@@ -347,8 +347,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 /* features section: the hybrid story leads, then two cards.
    The highlight headline IS the section's <h2>; the lead is held to a
    readable measure so it doesn't run the full wide column. */
-.feature-hero__title { max-width: 16em; }
-.feature-hero__lead  { max-width: 760px; margin-bottom: clamp(40px, 6vh, 64px); }
 .features--two { grid-template-columns: repeat(2, 1fr); }
 @media (max-width: 540px) { .features--two { grid-template-columns: 1fr; } }
 
@@ -527,7 +525,10 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   background: var(--bg-elev);
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;        /* we own the horizontal drag */
+  /* Allow vertical scroll over the comparator; only the handle owns the
+     gesture (touch-action: none on .ba__handle) so a swipe scrolls the page
+     instead of snapping the divider. */
+  touch-action: pan-y;
   cursor: ew-resize;
   outline: none;
 }
@@ -569,7 +570,14 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   color: var(--ink);
   font-size: 13px;
   letter-spacing: 0.1em;
+  /* The ONLY drag target: re-enable pointer events (the line is inert) and
+     own the gesture so dragging the divider never scrolls the page. */
+  pointer-events: auto;
+  touch-action: none;
+  cursor: ew-resize;
 }
+/* Roomier touch target without changing the visual size. */
+.ba__handle::before { content: ""; position: absolute; inset: -13px; }
 
 .ba__label {
   position: absolute;
@@ -694,6 +702,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   position: sticky;
   top: 0;
   min-height: 100vh;
+  box-sizing: border-box;
+  /* Clear the fixed nav so the pinned frame never touches the banner. */
+  padding: clamp(92px, 13vh, 116px) 0 32px;
   display: flex;
   align-items: center;
 }
@@ -704,30 +715,67 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   align-items: center;
   width: 100%;
 }
-.develop__text h3 { margin: 0 0 14px; }
-.develop__text p { margin: 0 0 14px; font-size: 15.5px; }
+.develop__title { margin: 0 0 18px; }
+.develop__intro {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+/* Live per-stage caption, overlaid bottom-left ON the frame. Two stacked
+   layers under the text: a gradient-masked (progressive) backdrop blur, then a
+   dark opacity gradient ON TOP of the blur for contrast. Both negative-z so the
+   text paints above them. */
 .develop__cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-top: 22px;
-  padding-top: 16px;
-  border-top: 1px solid var(--rule-bright);
+  padding: 56px 22px 18px;
+  pointer-events: none;
 }
-.develop__name {
+.develop__cap::before {            /* progressive backdrop blur (bottom-heavy) */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 40%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 40%, transparent 100%);
+}
+.develop__cap::after {             /* dark opacity gradient, above the blur */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top,
+    rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.42) 50%, transparent 100%);
+}
+/* Caption text styles are shared by the develop (#develop) and shareflow
+   (#shareflow) sticky sections — same name/sub/count typography. */
+.develop__name, .shareflow__name {
   font-size: 12px;
   font-weight: var(--w-regular);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink);
 }
-.develop__sub {
+.develop__sub, .shareflow__sub {
   font-size: 13px;
   font-weight: var(--w-light);
   line-height: 1.45;
   color: var(--ink-faint);
+  /* Reserve two lines so captions that wrap (esp. on phones) don't grow the
+     caption box and jump the layout as the stage changes on scroll. */
+  min-height: 2.9em;
 }
-.develop__count {
+.develop__count, .shareflow__count {
   margin-top: 2px;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 11px;
@@ -771,52 +819,75 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   pointer-events: none;
 }
 
-/* Phones: drop the sticky scroll mechanic (no scroll-jacking). The grid
-   stacks; stepper.js detects this width and shows the finished frame. */
-/* Portrait / narrow: keep the sticky wipe, single column. The wiping frame is
-   the hero on top; the engine text sits below it (the long second paragraph is
-   dropped so the pinned content stays within one screen). */
+/* Portrait / narrow: keep the sticky wipe, single column. The wiping frame +
+   its caption sit on top; the title + intro read below, all within one screen. */
 @media (max-width: 760px) {
   .develop { margin-top: 28px; }
   .develop__grid { grid-template-columns: 1fr; gap: 18px; justify-items: center; }
-  .develop__frame { order: -1; width: min(86vw, 54vh); }
+  .develop__frame { order: -1; width: min(86vw, 50vh); }
   .develop__text { width: 100%; }
-  .develop__text p:nth-of-type(2) { display: none; }
+  .develop__intro { display: none; }   /* keep the pinned content within a screen */
 }
 
-/* ---------- app screenshots (#decode: build it / collect) + share poster ----------
-   Real app shots, hard-edged frames. The two phone shots match aspect for a
-   clean 2-up; the QR poster is the share artifact (replaces the old SVG). */
-.appshots {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(16px, 3vw, 30px);
-  margin: clamp(28px, 5vw, 44px) 0;
+/* ---------- build → collect → share: scroll-driven crossfade (#shareflow) ----------
+   One centered phone frame, pinned while the section scrolls, cross-fading
+   through the three app screenshots in order (Build → Collect → Share). Stacked
+   so the crossfade never dips to black: image 0 is the always-on base, each
+   next fades in on top. No frame border — the screenshots carry their own
+   device bezel. stepper.js drives opacity + caption from scroll. */
+.shareflow {
+  --shareflow-scroll: 168vh;   /* set by stepper.js; matches the develop dwell */
+  position: relative;
+  margin: clamp(6px, 1.5vw, 16px) 0 0;   /* sit close under the section title */
+  height: calc(100vh + var(--shareflow-scroll));
 }
-.appshot { margin: 0; }
-.appshot img {
-  display: block;
+.shareflow__sticky {
+  position: sticky;
+  top: 64px;                 /* pin just below the fixed nav */
+  min-height: calc(100vh - 64px);
+  box-sizing: border-box;
+  padding-top: clamp(28px, 5vh, 56px);   /* clear offset below the nav when pinned */
+  padding-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;   /* phone near the top, close to the title */
+  gap: 20px;
+}
+.shareflow__frame {
+  position: relative;
+  /* Size by HEIGHT so the phone + caption always fit below the nav; width
+     follows the 720:1483 aspect. */
+  aspect-ratio: 720 / 1483;
+  height: min(66vh, 700px);
+  width: auto;
+}
+.shareflow__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  border: 1px solid var(--rule-bright);
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  will-change: opacity;
+  -webkit-user-drag: none;
 }
-.appshot figcaption {
-  margin-top: 12px;
-  font-size: 13px;
-  font-weight: var(--w-light);
-  line-height: 1.45;
-  color: var(--ink-faint);
+.shareflow__img:first-child { opacity: 1; }
+.shareflow__cap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  max-width: 360px;
 }
-.poster {
-  margin: clamp(28px, 5vw, 48px) auto;
-  max-width: 380px;
-}
-.poster img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--rule-bright);
-}
-@media (max-width: 520px) {
-  .appshots { grid-template-columns: 1fr; max-width: 320px; margin-inline: auto; gap: 26px; }
+/* .shareflow__name/__sub/__count typography is shared with .develop__* above. */
+/* Reduced motion: drop the scroll crossfade — show all three side by side. */
+@media (prefers-reduced-motion: reduce) {
+  .shareflow { height: auto; margin: 32px 0; }
+  .shareflow__sticky { position: static; min-height: 0; }
+  .shareflow__frame { display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 14px; width: 100%; aspect-ratio: auto; }
+  .shareflow__img { position: static; opacity: 1; width: min(200px, 44vw); height: auto; }
+  .shareflow__cap { display: none; }
 }
