@@ -88,6 +88,8 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   var ticking = false;
   function update() {
     ticking = false;
+    // The whole section pins (#develop is tall; .develop__sticky stays put) on
+    // both desktop and mobile, so the wipe keys off #develop's scroll progress.
     var scrollable = root.offsetHeight - window.innerHeight;
     var top = root.getBoundingClientRect().top;
     var progress = scrollable > 0 ? clamp(-top / scrollable, 0, 1) : 0;

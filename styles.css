@@ -126,10 +126,15 @@ section.divided::before {
   position: absolute;
   top: 0; left: 50%;
   transform: translateX(-50%);
-  width: var(--col-wide);
+  /* Each divided section's hairline frames its OWN content width, so it never
+     overhangs (the narrow #decode column no longer gets a ~200px stick-out). */
+  width: var(--section-col, var(--col-wide));
   height: 1px;
   background: var(--rule);
 }
+#features { --section-col: var(--col-wide); }   /* develop stays the wide beat */
+#compare  { --section-col: var(--col); }          /* frames its 720 text + centered square */
+#decode   { --section-col: var(--col); }         /* matches its reading column */
 
 /* ---------- shared label / type ---------- */
 
@@ -520,7 +525,10 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .ba {
   position: relative;
   width: 100%;
-  max-width: 560px;
+  /* Centered square within the 720 reading column; capped by viewport height
+     too so a 1:1 square never towers past the fold on a laptop. Reaches the
+     full column width on tall screens, sits narrower (centered) on short ones. */
+  max-width: min(var(--col), 66vh);
   margin: 8px auto 0;
   aspect-ratio: 1 / 1;
   overflow: hidden;
@@ -601,7 +609,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 /* ---------- segmented selector (mirrors the app's SegmentedSelector) ---------- */
 
 .ba__controls {
-  max-width: 560px;
+  max-width: min(var(--col), 66vh);   /* track the comparator width above */
   margin: 18px auto 0;
   display: flex;
   flex-direction: column;
@@ -714,10 +722,18 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .develop__grid {
   display: grid;
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
-  gap: clamp(28px, 5vw, 72px);
-  align-items: center;
+  /* 1fr spacer rows top & bottom CENTER the title+body block as one unit; the
+     two auto rows sit adjacent (no frame height wedged between them). */
+  grid-template-rows: 1fr auto auto 1fr;
+  column-gap: clamp(28px, 5vw, 72px);
+  row-gap: 0;
   width: 100%;
 }
+/* Desktop: heading + body are an adjacent, vertically-centered block in the
+   left column; the wiping frame spans the full height on the right. */
+.develop__text  { grid-column: 1; grid-row: 2; }
+.develop__intro { grid-column: 1; grid-row: 3; }
+.develop__frame { grid-column: 2; grid-row: 1 / -1; align-self: center; }
 .develop__title { margin: 0 0 18px; }
 .develop__intro {
   margin: 0;
@@ -774,10 +790,12 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   font-weight: var(--w-light);
   line-height: 1.45;
   color: var(--ink-faint);
-  /* Reserve two lines so captions that wrap (esp. on phones) don't grow the
-     caption box and jump the layout as the stage changes on scroll. */
-  min-height: 2.9em;
 }
+/* Only the shareflow caption is IN-FLOW (below the phone), so it reserves two
+   lines to stop the count line jumping as the stage crossfades. The develop
+   caption is an absolute bottom overlay on the frame — it can't shift page
+   layout, so it needs no reserve and sits tight against its 01/09 count. */
+.shareflow__sub { min-height: 2.9em; }
 .develop__count, .shareflow__count {
   margin-top: 2px;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
@@ -822,14 +840,30 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   pointer-events: none;
 }
 
-/* Portrait / narrow: keep the sticky wipe, single column. The wiping frame +
-   its caption sit on top; the title + intro read below, all within one screen. */
+/* Portrait / narrow: single column — title → developing frame → body — and the
+   WHOLE stack pins (just like desktop): .develop__sticky stays put while #develop
+   scrolls, so the frame floats in place and develops, with the title above and
+   the body below it. Tighter nav padding keeps the three within one screen. */
 @media (max-width: 760px) {
   .develop { margin-top: 28px; }
-  .develop__grid { grid-template-columns: 1fr; gap: 18px; justify-items: center; }
-  .develop__frame { order: -1; width: min(86vw, 50vh); }
-  .develop__text { width: 100%; }
-  .develop__intro { display: none; }   /* keep the pinned content within a screen */
+  .develop__sticky { padding: 72px 0 24px; }   /* clear the nav, tight enough to fit the stack */
+  .develop__grid {
+    grid-template-columns: 1fr;       /* single column */
+    grid-template-rows: none;          /* drop the desktop 4-row centering */
+    gap: 18px;
+  }
+  .develop__text,
+  .develop__intro { grid-column: auto; grid-row: auto; width: 100%; }
+  .develop__frame {
+    grid-column: auto; grid-row: auto; align-self: auto;
+    width: calc(100vw - 2 * var(--gutter));   /* == #compare .ba width, edge-aligned */
+  }
+}
+/* Short phones (e.g. iPhone SE): the full-width square + title + body don't all
+   fit one pinned screen, so cap the frame by height so nothing clips. Taller
+   phones keep the full edge-to-edge frame above. */
+@media (max-width: 760px) and (max-height: 740px) {
+  .develop__frame { width: min(calc(100vw - 2 * var(--gutter)), 38vh); }
 }
 
 /* ---------- build → collect → share: scroll-driven crossfade (#shareflow) ----------
