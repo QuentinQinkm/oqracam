@@ -1,20 +1,17 @@
 /* ============================================================
-   Oqra — film build-up (#develop), scroll-driven vertical WIPE
+   Oqra — film build-up (#develop), DRAG-to-develop vertical WIPE
    ============================================================
-   The frame steps through N stacked stills as the sticky section scrolls.
-   Each next stage is wiped in VERTICALLY (top→down) over the stage below it,
-   led by a hard BLACK BAR — the #compare slider's reveal, turned vertical and
-   black. Image 0 is the always-on base; image i is clip-path revealed from the
-   top, so a solid frame is always under the wipe edge (never flashes black).
+   N stacked stills; a horizontal dragger (.develop__scrub) under the image
+   scrubs through them. Each next stage is wiped in VERTICALLY (top→down) over
+   the stage below it, led by a hard BLACK BAR — the #compare slider's reveal,
+   turned vertical and black. Image 0 is the always-on base; image i is
+   clip-path revealed from the top, so a solid frame is always under the wipe
+   edge (never flashes black).
 
-   PACING: the scroll timeline is HOLD · wipe · HOLD · wipe · … · HOLD — every
-   stage (including the FIRST and LAST) gets a dwell of redundant scroll where
-   the frame holds still, with the wipe only happening between dwells. Hold /
-   wipe distances (in vh) set both the scroll-to-stage mapping AND the section
-   height (so the two always agree). N derives from the DOM.
-
-   Vanilla, no deps, CSP-safe (script-src 'self'). The wipe runs at every width
-   (portrait too); only prefers-reduced-motion falls back to the final frame.
+   No scroll, no pin, no auto-advance: the dragger position maps linearly to the
+   fractional stage 0..N-1 (N derives from the DOM). Default = fully developed
+   (handle right); drag left to rewind to the raw capture. Keyboard: arrows /
+   Home / End. Vanilla, no deps, CSP-safe (script-src 'self').
    ============================================================ */
 
 /* Shared, stateless helpers — used by both the #develop and #shareflow
@@ -30,34 +27,11 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   var N = imgs.length;
   if (!N) return;
   var bar = root.querySelector(".develop__bar");
+  var scrub = root.querySelector(".develop__scrub");
   var nameEl = document.getElementById("buildName");
   var subEl = document.getElementById("buildSub");
   var countEl = document.getElementById("buildCount");
   var lastIdx = -1;
-
-  // Per-stage scroll budget (vh): HOLD = redundant dwell at every stage
-  // (incl. first/last), WIPE = the transition between two stages.
-  var HOLD = 28, WIPE = 42;
-  var holds = N, wipes = N - 1;
-  var units = holds * HOLD + wipes * WIPE;     // total scroll budget, in vh
-  // Section height = one read-screen + the timeline; keeps CSS in lockstep.
-  root.style.setProperty("--develop-scroll", units + "vh");
-
-  // Map scroll progress 0..1 → fractional stage 0..N-1 through the
-  // HOLD/wipe/HOLD timeline. Holds return an integer (frame parked);
-  // wipes return a fraction (mid-transition).
-  function stageAt(p) {
-    var x = clamp(p, 0, 1) * units, acc = 0;
-    for (var k = 0; k < N; k++) {
-      if (x <= acc + HOLD) return k;            // dwell on stage k
-      acc += HOLD;
-      if (k < N - 1) {
-        if (x < acc + WIPE) return k + (x - acc) / WIPE;   // wipe k → k+1
-        acc += WIPE;
-      }
-    }
-    return N - 1;
-  }
 
   function clipFor(f) {
     if (f <= 0) return "inset(0 0 100% 0)";   // hidden
@@ -74,33 +48,15 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
     if (countEl) countEl.textContent = pad(idx + 1) + " / " + pad(N);
   }
 
-  var motionOK = !(window.matchMedia &&
-                   window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-
-  function showStatic() {              // reduced-motion fallback: finished frame
-    for (var i = 0; i < N; i++) {
-      imgs[i].style.clipPath = (i === 0 || i === N - 1) ? "none" : "inset(0 0 100% 0)";
-    }
-    if (bar) bar.style.opacity = "0";
-    caption(N - 1);
-  }
-
-  var ticking = false;
-  function update() {
-    ticking = false;
-    // The whole section pins (#develop is tall; .develop__sticky stays put) on
-    // both desktop and mobile, so the wipe keys off #develop's scroll progress.
-    var scrollable = root.offsetHeight - window.innerHeight;
-    var top = root.getBoundingClientRect().top;
-    var progress = scrollable > 0 ? clamp(-top / scrollable, 0, 1) : 0;
-    var stage = stageAt(progress);
-
+  // Paint the stacked wipe for a fractional stage 0..N-1: image 0 is the
+  // always-on base, each later image is clip-revealed from the top, with a hard
+  // black bar riding the seam mid-transition.
+  function render(stage) {
     for (var i = 0; i < N; i++) {
       imgs[i].style.clipPath = (i === 0) ? "none" : clipFor(clamp(stage - (i - 1), 0, 1));
     }
-
     if (bar) {
-      var frac = stage - Math.floor(stage);     // >0 only mid-wipe
+      var frac = stage - Math.floor(stage);
       if (stage > 0 && stage < N - 1 && frac > 0.0015) {
         bar.style.top = (frac * 100).toFixed(2) + "%";
         bar.style.opacity = "1";
@@ -108,22 +64,49 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
         bar.style.opacity = "0";
       }
     }
-
     caption(clamp(Math.round(stage), 0, N - 1));
   }
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(update);
+
+  // Drag-to-develop: the horizontal scrubber drives the build — no scroll, no
+  // auto-advance. Default fully developed (handle at the right); drag left to
+  // rewind to the raw capture.
+  var pos = 1;                                 // 0..1 along the scrubber
+  function apply() {
+    var stage = clamp(pos * (N - 1), 0, N - 1);
+    if (scrub) {
+      scrub.style.setProperty("--scrub", (pos * 100).toFixed(2) + "%");
+      scrub.setAttribute("aria-valuenow", String(Math.round(stage)));
+    }
+    render(stage);
+  }
+  function setFromX(clientX) {
+    if (!scrub) return;
+    var r = scrub.getBoundingClientRect();
+    pos = clamp((clientX - r.left) / r.width, 0, 1);
+    apply();
   }
 
-  if (!motionOK) {
-    showStatic();
-  } else {
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    update();
+  if (scrub) {
+    var dragging = false;
+    scrub.addEventListener("pointerdown", function (e) {
+      dragging = true;
+      if (scrub.setPointerCapture) { try { scrub.setPointerCapture(e.pointerId); } catch (_) {} }
+      setFromX(e.clientX);
+      e.preventDefault();
+    });
+    scrub.addEventListener("pointermove", function (e) { if (dragging) { setFromX(e.clientX); e.preventDefault(); } });
+    scrub.addEventListener("pointerup",   function () { dragging = false; });
+    scrub.addEventListener("pointercancel", function () { dragging = false; });
+    scrub.addEventListener("keydown", function (e) {
+      var step = 1 / (N - 1);
+      if (e.key === "ArrowLeft"  || e.key === "ArrowDown") { pos = clamp(pos - step, 0, 1); apply(); e.preventDefault(); }
+      else if (e.key === "ArrowRight" || e.key === "ArrowUp") { pos = clamp(pos + step, 0, 1); apply(); e.preventDefault(); }
+      else if (e.key === "Home") { pos = 0; apply(); e.preventDefault(); }
+      else if (e.key === "End")  { pos = 1; apply(); e.preventDefault(); }
+    });
   }
+
+  apply();   // initial paint — fully developed
 })();
 
 /* ============================================================

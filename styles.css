@@ -566,10 +566,11 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   background: var(--ink);
   pointer-events: none;
 }
-.ba__handle {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+/* Shared drag button — used by BOTH the A/B comparator (.ba__handle) and the
+   develop scrubber (.develop__scrub-handle) so the two are identical: a
+   hard-edged square, translucent over a backdrop blur, a 1px --ink border and
+   a centered ‹ › glyph. Position/gesture specifics live on each below. */
+.ba__handle, .develop__scrub-handle {
   width: 34px; height: 34px;
   display: flex;
   align-items: center;
@@ -581,11 +582,16 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   color: var(--ink);
   font-size: 13px;
   letter-spacing: 0.1em;
+  cursor: ew-resize;
+}
+.ba__handle {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
   /* The ONLY drag target: re-enable pointer events (the line is inert) and
      own the gesture so dragging the divider never scrolls the page. */
   pointer-events: auto;
   touch-action: none;
-  cursor: ew-resize;
 }
 /* Roomier touch target without changing the visual size. */
 .ba__handle::before { content: ""; position: absolute; inset: -13px; }
@@ -705,35 +711,24 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .develop {
   position: relative;
   margin-top: clamp(36px, 6vw, 72px);
-  /* Height = one read-screen + the hold/wipe timeline. stepper.js sets
-     --develop-scroll from the image count, so CSS + JS never drift. */
-  height: calc(100vh + var(--develop-scroll, 518vh));
+  /* Static, drag-to-develop now — no scroll pin, so a normal-height section. */
 }
-.develop__sticky {
-  position: sticky;
-  top: 0;
-  min-height: 100vh;
-  box-sizing: border-box;
-  /* Clear the fixed nav so the pinned frame never touches the banner. */
-  padding: clamp(92px, 13vh, 116px) 0 32px;
-  display: flex;
-  align-items: center;
-}
+.develop__sticky { display: contents; }   /* the old pin wrapper is now inert */
 .develop__grid {
   display: grid;
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
   /* 1fr spacer rows top & bottom CENTER the title+body block as one unit; the
-     two auto rows sit adjacent (no frame height wedged between them). */
+     two auto rows sit adjacent (no stage height wedged between them). */
   grid-template-rows: 1fr auto auto 1fr;
   column-gap: clamp(28px, 5vw, 72px);
   row-gap: 0;
   width: 100%;
 }
-/* Desktop: heading + body are an adjacent, vertically-centered block in the
-   left column; the wiping frame spans the full height on the right. */
+/* Desktop: heading + body are an adjacent, vertically-centered block on the
+   left; the image stage (frame + dragger) sits on the right, centered. */
 .develop__text  { grid-column: 1; grid-row: 2; }
 .develop__intro { grid-column: 1; grid-row: 3; }
-.develop__frame { grid-column: 2; grid-row: 1 / -1; align-self: center; }
+.develop__stage { grid-column: 2; grid-row: 1 / -1; align-self: center; }
 .develop__title { margin: 0 0 18px; }
 .develop__intro {
   margin: 0;
@@ -840,30 +835,53 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   pointer-events: none;
 }
 
-/* Portrait / narrow: single column — title → developing frame → body — and the
-   WHOLE stack pins (just like desktop): .develop__sticky stays put while #develop
-   scrolls, so the frame floats in place and develops, with the title above and
-   the body below it. Tighter nav padding keeps the three within one screen. */
+/* ---- drag-to-develop scrubber (under the image stage) ----
+   A horizontal dragger in the app's language: a hairline rail, an --ink fill up
+   to a hard-edged knob. Dragging scrubs the 9 build stages (stepper.js) — no
+   scroll, no auto-advance. */
+.develop__scrub {
+  position: relative;
+  height: 34px;
+  margin-top: 16px;
+  cursor: ew-resize;
+  touch-action: pan-y;   /* vertical scroll passes through; horizontal drags scrub */
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* Two layers split by the handle: full-spectrum colour to the LEFT (developed),
+   neutral gray to the RIGHT (undeveloped). The colour layer is the full-width
+   --spectrum, revealed only up to the handle via --scrub. */
+.develop__scrub-gray,
+.develop__scrub-color {
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 4px; transform: translateY(-50%);
+}
+.develop__scrub-gray  { background: var(--ink-faint); }
+.develop__scrub-color {
+  background: var(--spectrum);
+  clip-path: inset(0 calc(100% - var(--scrub, 100%)) 0 0);
+}
+.develop__scrub-handle {
+  position: absolute; top: 50%; left: var(--scrub, 100%);
+  transform: translate(-50%, -50%);
+}
+.develop__scrub:focus-visible { outline: none; }
+.develop__scrub:focus-visible .develop__scrub-handle {
+  outline: 2px solid var(--ink); outline-offset: 3px;
+}
+
+/* Portrait / narrow: one column — title → image stage (frame + dragger) → body.
+   Nothing pins now, so the frame is simply full width (no scale-down). */
 @media (max-width: 760px) {
   .develop { margin-top: 28px; }
-  .develop__sticky { padding: 72px 0 24px; }   /* clear the nav, tight enough to fit the stack */
   .develop__grid {
-    grid-template-columns: 1fr;       /* single column */
-    grid-template-rows: none;          /* drop the desktop 4-row centering */
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
     gap: 18px;
   }
   .develop__text,
+  .develop__stage,
   .develop__intro { grid-column: auto; grid-row: auto; width: 100%; }
-  .develop__frame {
-    grid-column: auto; grid-row: auto; align-self: auto;
-    width: calc(100vw - 2 * var(--gutter));   /* == #compare .ba width, edge-aligned */
-  }
-}
-/* Short phones (e.g. iPhone SE): the full-width square + title + body don't all
-   fit one pinned screen, so cap the frame by height so nothing clips. Taller
-   phones keep the full edge-to-edge frame above. */
-@media (max-width: 760px) and (max-height: 740px) {
-  .develop__frame { width: min(calc(100vw - 2 * var(--gutter)), 38vh); }
 }
 
 /* ---------- build → collect → share: scroll-driven crossfade (#shareflow) ----------

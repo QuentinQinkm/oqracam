@@ -80,6 +80,7 @@
             <p class="tag">Capture, then develop</p>
             <h2 class="develop__title">A camera on one side, a darkroom on the other.</h2>
           </div>
+          <div class="develop__stage">
             <div class="develop__frame" role="img" aria-label="One real snow frame becoming film, stage by stage: the raw capture, then Apple’s developed signal; one emulsion record developed to a silver density image, then dyed in colour with its own grain; the other records stack on to build subtractive colour with the orange mask; then a warm halation bloom and the signature base tint produce the finished frame.">
             <img class="develop__img" data-i="0" data-name="Raw capture" data-sub="Straight off the sensor — before any processing" src="/assets/img/samples/build-0-raw.jpg" alt="The raw iPhone capture, straight off the sensor before processing" width="900" height="900" decoding="async" draggable="false" />
             <img class="develop__img" data-i="1" data-name="Developed" data-sub="Apple's RAW pipeline — noise reduction, boost, tone map" src="/assets/img/samples/build-1-capture.jpg" alt="The capture after Apple's RAW pipeline: noise reduction, boost, local tone map" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
@@ -96,12 +97,18 @@
               <span class="develop__sub" id="buildSub">Straight off the sensor — before any processing</span>
               <span class="develop__count" id="buildCount" aria-hidden="true">01 / 09</span>
             </div>
+            </div>
+            <div class="develop__scrub" role="slider" tabindex="0"
+                 aria-label="Develop the film — drag to move through the stages"
+                 aria-valuemin="0" aria-valuemax="8" aria-valuenow="8">
+              <div class="develop__scrub-gray" aria-hidden="true"></div>
+              <div class="develop__scrub-color" aria-hidden="true"></div>
+              <div class="develop__scrub-handle" aria-hidden="true">‹ ›</div>
+            </div>
           </div>
           <p class="develop__intro">The look is computed from light by a real film
-             engine — never a filter laid over your photo. Oqra builds it from a
-             stack of light-sensitive layers, each with its own spectral
-             sensitivity, density curve, dye, and grain — so the image emerges
-             from chemistry, the way film does.</p>
+             engine — not a filter laid over your photo. Oqra builds it from
+             light-sensitive layers, each with its own curve, dye, and grain.</p>
         </div>
       </div>
     </div>
