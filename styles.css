@@ -323,8 +323,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   margin: clamp(56px, 9vh, 104px) auto 0;
   width: var(--col-wide);
 }
-.hero__media img,
-.hero__media .placeholder { width: 100%; border: 1px solid var(--rule-bright); }
+.hero__media img { width: 100%; border: 1px solid var(--rule-bright); }
 
 /* ---------- feature grid (hairline-separated cells) ---------- */
 
@@ -386,56 +385,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .feature .more > summary:hover::after { color: var(--ink); }
 .more__body { padding-top: 18px; }
 .more__body p { margin-bottom: 0; font-size: 14.5px; }
-
-/* ---------- inline SVG diagrams (HTML/CSS-rendered, no raster) ---------- */
-.diagram {
-  margin-bottom: 16px;
-  border: 1px solid var(--rule-bright);
-  background: var(--bg-elev);
-  padding: 14px 16px;
-}
-.dg { width: 100%; height: auto; display: block; }
-.dg__band  { fill: var(--bg-elev); stroke: var(--rule-bright); stroke-width: 1; }
-.dg__cap   { fill: var(--ink-ghost); font: var(--w-regular) 9px/1 var(--font-sans);  letter-spacing: 0.18em; }
-.dg__lbl   { fill: var(--ink);       font: var(--w-regular) 11px/1 var(--font-sans); letter-spacing: 0.12em; }
-.dg__sub   { fill: var(--ink-faint); font: var(--w-light) 9.5px/1 var(--font-sans);  letter-spacing: 0.02em; }
-.dg__sub2  { fill: var(--ink-ghost); font: var(--w-light) 8.5px/1 var(--font-sans);  letter-spacing: 0.04em; }
-.dg__stroke { stroke: var(--ink); stroke-width: 1.4; fill: none; }
-.dg__fill  { fill: var(--ink-faint); }
-.dg__dot   { fill: var(--ink-faint); }
-.dg__rule  { stroke: var(--rule-bright); stroke-width: 1; }
-.dg__tick  { fill: var(--bg-surface); stroke: var(--rule-bright); stroke-width: 1; }
-.dg__qr rect { fill: var(--ink); }
-.dg__qr .dg__hole { fill: var(--bg-elev); }
-
-/* ---------- placeholders (asset slots) ---------- */
-
-.placeholder {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 10;
-  background:
-    linear-gradient(180deg, var(--bg-surface), var(--bg-elev));
-  border: 1px solid var(--rule-bright);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-faint);
-  font-family: var(--font-sans);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  text-align: center;
-  padding: 24px;
-}
-.placeholder::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg, transparent 0 2px, rgba(255, 255, 255, 0.012) 2px 3px);
-  pointer-events: none;
-}
 
 /* ---------- long-form legal / support prose ---------- */
 
@@ -833,4 +782,41 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   .develop__frame { order: -1; width: min(86vw, 54vh); }
   .develop__text { width: 100%; }
   .develop__text p:nth-of-type(2) { display: none; }
+}
+
+/* ---------- app screenshots (#decode: build it / collect) + share poster ----------
+   Real app shots, hard-edged frames. The two phone shots match aspect for a
+   clean 2-up; the QR poster is the share artifact (replaces the old SVG). */
+.appshots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 3vw, 30px);
+  margin: clamp(28px, 5vw, 44px) 0;
+}
+.appshot { margin: 0; }
+.appshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule-bright);
+}
+.appshot figcaption {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: var(--w-light);
+  line-height: 1.45;
+  color: var(--ink-faint);
+}
+.poster {
+  margin: clamp(28px, 5vw, 48px) auto;
+  max-width: 380px;
+}
+.poster img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule-bright);
+}
+@media (max-width: 520px) {
+  .appshots { grid-template-columns: 1fr; max-width: 320px; margin-inline: auto; gap: 26px; }
 }
