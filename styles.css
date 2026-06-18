@@ -353,6 +353,61 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .features--two { grid-template-columns: repeat(2, 1fr); }
 @media (max-width: 540px) { .features--two { grid-template-columns: 1fr; } }
 
+/* ---------- expandable depth on a feature card (native <details>, no JS) ----------
+   Surface stays one concise line; the engine intro / build story lives behind a
+   tap. Hard-edged: a hairline rule, an uppercase summary row, a +/− marker. */
+.feature .more { margin-top: 20px; border-top: 1px solid var(--rule-bright); }
+.feature .more > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: var(--w-regular);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  transition: color 150ms ease-out;
+}
+.feature .more > summary::-webkit-details-marker { display: none; }
+.feature .more > summary::after {
+  content: "+";
+  font-size: 15px;
+  line-height: 1;
+  color: var(--ink-faint);
+  transition: color 150ms ease-out;
+}
+.feature .more[open] > summary::after { content: "\2013"; }   /* en-dash minus */
+.feature .more > summary:hover,
+.feature .more > summary:hover::after { color: var(--ink); }
+.more__body { padding-top: 18px; }
+.more__body p { margin-bottom: 0; font-size: 14.5px; }
+
+/* ---------- inline SVG diagrams (HTML/CSS-rendered, no raster) ---------- */
+.diagram {
+  margin-bottom: 16px;
+  border: 1px solid var(--rule-bright);
+  background: var(--bg-elev);
+  padding: 14px 16px;
+}
+.dg { width: 100%; height: auto; display: block; }
+.dg__band  { fill: var(--bg-elev); stroke: var(--rule-bright); stroke-width: 1; }
+.dg__cap   { fill: var(--ink-ghost); font: var(--w-regular) 9px/1 var(--font-sans);  letter-spacing: 0.18em; }
+.dg__lbl   { fill: var(--ink);       font: var(--w-regular) 11px/1 var(--font-sans); letter-spacing: 0.12em; }
+.dg__sub   { fill: var(--ink-faint); font: var(--w-light) 9.5px/1 var(--font-sans);  letter-spacing: 0.02em; }
+.dg__sub2  { fill: var(--ink-ghost); font: var(--w-light) 8.5px/1 var(--font-sans);  letter-spacing: 0.04em; }
+.dg__stroke { stroke: var(--ink); stroke-width: 1.4; fill: none; }
+.dg__fill  { fill: var(--ink-faint); }
+.dg__dot   { fill: var(--ink-faint); }
+.dg__rule  { stroke: var(--rule-bright); stroke-width: 1; }
+.dg__tick  { fill: var(--bg-surface); stroke: var(--rule-bright); stroke-width: 1; }
+.dg__qr rect { fill: var(--ink); }
+.dg__qr .dg__hole { fill: var(--bg-elev); }
+
 /* ---------- placeholders (asset slots) ---------- */
 
 .placeholder {
@@ -668,4 +723,114 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-ghost);
+}
+
+/* ---------- develop: scroll-driven, sticky build-up (#develop) ----------
+   ONE real Snow capture walked through the film pipeline. The left column
+   pins the engine pitch; the right frame steps through the 8 real FilmBoCore
+   renders as the section scrolls — each next stage is VERTICALLY WIPED in
+   (top→down) over the one below, led by a hard black bar (like #compare's
+   slider, but vertical + black). A solid frame is always underneath the wipe,
+   so it never flashes black. stepper.js drives per-image clip-path + the bar
+   + the caption from scroll progress — no scrubber, no tabs. Hard 0-radius
+   edges. */
+.develop {
+  position: relative;
+  margin-top: clamp(36px, 6vw, 72px);
+  /* Height = one read-screen + the hold/wipe timeline. stepper.js sets
+     --develop-scroll from the image count, so CSS + JS never drift. */
+  height: calc(100vh + var(--develop-scroll, 518vh));
+}
+.develop__sticky {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.develop__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+  width: 100%;
+}
+.develop__text h3 { margin: 0 0 14px; }
+.develop__text p { margin: 0 0 14px; font-size: 15.5px; }
+.develop__cap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule-bright);
+}
+.develop__name {
+  font-size: 12px;
+  font-weight: var(--w-regular);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.develop__sub {
+  font-size: 13px;
+  font-weight: var(--w-light);
+  line-height: 1.45;
+  color: var(--ink-faint);
+}
+.develop__count {
+  margin-top: 2px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-ghost);
+  font-variant-numeric: tabular-nums;
+}
+.develop__frame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--rule-bright);
+  background: var(--bg-elev);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.develop__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Each later frame is hidden, then VERTICALLY WIPED in over the one below
+     (a top→down reveal led by the black bar — like #compare's slider, but
+     vertical + black). JS drives clip-path from scroll progress. */
+  clip-path: inset(0 0 100% 0);
+  -webkit-user-drag: none;
+}
+.develop__img:first-child { clip-path: none; }   /* always-on base, never clipped */
+/* The wipe edge: a hard black bar that slides down the frame as the next stage
+   reveals above it. Centered on the seam; JS sets `top` + visibility. */
+.develop__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--develop-bar, 6px);
+  margin-top: calc(var(--develop-bar, 6px) / -2);
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Phones: drop the sticky scroll mechanic (no scroll-jacking). The grid
+   stacks; stepper.js detects this width and shows the finished frame. */
+/* Portrait / narrow: keep the sticky wipe, single column. The wiping frame is
+   the hero on top; the engine text sits below it (the long second paragraph is
+   dropped so the pinned content stays within one screen). */
+@media (max-width: 760px) {
+  .develop { margin-top: 28px; }
+  .develop__grid { grid-template-columns: 1fr; gap: 18px; justify-items: center; }
+  .develop__frame { order: -1; width: min(86vw, 54vh); }
+  .develop__text { width: 100%; }
+  .develop__text p:nth-of-type(2) { display: none; }
 }

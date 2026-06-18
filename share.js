@@ -10,10 +10,12 @@
                   · bypass · recoverHighlights
      global 52b : maskDensity7 dirInhibition7 baseTintWarmth8
                   scanExposure8 grainSoftness8 halation7 exposureEV7
-     cond.      : calibrationK10? · rawBoost7? · localToneMap7 (v>=3)
+     cond.      : calibrationK10? · rawBoost7? · localToneMap7 (v==3)
      layer×N 83b: sensitizerPeak9 sensitizerBw8 dyeHue9 dyePurity7
                   dmax9 fog8 hdToe8 hdGamma9 hdShoulder8 crystalSize8
-     name (v2/3): len1 + UTF-8, byte-aligned        · CRC-16/CCITT-FALSE
+     v4 grain   : flag+localToneMap(1+7?) flag+grainGain(1+7?)
+                  flag+grainSharpness(1+7?)            (v>=4 only)
+     name(v2-4) : len1 + UTF-8, byte-aligned        · CRC-16/CCITT-FALSE
    ============================================================ */
 (function () {
   "use strict";
@@ -42,6 +44,8 @@
     hdGamma:       [0.3, 3.0],
     hdShoulder:    [0, 0.5],
     crystalSize:   [0, 0.5],
+    grainGain:     [0, 2],
+    grainSharpness:[0, 1],
   };
 
   function extractPayload(input) {
@@ -126,7 +130,7 @@
 
     var r = new BitReader(body);
     var version = r.read(4);
-    if (version < 1 || version > 3) throw new Error("unsupportedVersion: " + version);
+    if (version < 1 || version > 4) throw new Error("unsupportedVersion: " + version);
 
     var layerCount = r.read(2) + 1;
     var hasCalK = r.read(1) === 1;
@@ -149,7 +153,11 @@
     // Conditionals — written in this exact order in encode.
     global.calibrationK = hasCalK ? dq(r.read(10), R.calibrationK, 10) : null;
     global.rawBoost = hasRawBoost ? dq(r.read(7), R.rawBoost, 7) : null;
-    global.localToneMapAmount = version >= 3 ? dq(r.read(7), R.localToneMap, 7) : null;
+    // v3 carries localToneMap inline here; v4 relocates it into the flagged
+    // grain block after the layers (so the inline read is v3-only).
+    global.localToneMapAmount = version === 3 ? dq(r.read(7), R.localToneMap, 7) : null;
+    global.grainGain = null;
+    global.grainSharpness = null;
 
     var layers = [];
     for (var i = 0; i < layerCount; i++) {
@@ -169,11 +177,24 @@
       });
     }
 
-    // Optional name block (v2/v3), byte-aligned after the recipe bits.
+    // v4 grain block (after the layers): flagged optionals — relocated
+    // localToneMap, grainGain, grainSharpness. Absent in v1/v2/v3.
+    var v4HasLTM = false, v4HasGG = false, v4HasGS = false;
+    if (version >= 4) {
+      v4HasLTM = r.read(1) === 1;
+      if (v4HasLTM) global.localToneMapAmount = dq(r.read(7), R.localToneMap, 7);
+      v4HasGG = r.read(1) === 1;
+      if (v4HasGG) global.grainGain = dq(r.read(7), R.grainGain, 7);
+      v4HasGS = r.read(1) === 1;
+      if (v4HasGS) global.grainSharpness = dq(r.read(7), R.grainSharpness, 7);
+    }
+
+    // Optional name block (v2/v3/v4), byte-aligned after the recipe bits.
     var name = null;
     if (version >= 2) {
       var recipeBits = 10 + 52 + (hasCalK ? 10 : 0) + (hasRawBoost ? 7 : 0) +
-        (version >= 3 ? 7 : 0) + 83 * layerCount;
+        (version === 3 ? 7 : 0) + 83 * layerCount +
+        (version >= 4 ? (3 + (v4HasLTM ? 7 : 0) + (v4HasGG ? 7 : 0) + (v4HasGS ? 7 : 0)) : 0);
       var lenIdx = Math.ceil(recipeBits / 8);
       if (lenIdx < body.length) {
         var len = body[lenIdx];
@@ -206,6 +227,10 @@
     if (g.calibrationK !== null) globalOut.calibrationK = g.calibrationK;
     if (g.rawBoost !== null) globalOut.rawBoost = g.rawBoost;
     if (g.localToneMapAmount !== null) globalOut.localToneMapAmount = g.localToneMapAmount;
+    // v4 grain controls — Optional in the recipe; emit only when present so a
+    // default-grain share stays byte-stable (matches the Swift encodeIfPresent).
+    if (g.grainGain != null) globalOut.grainGain = g.grainGain;
+    if (g.grainSharpness != null) globalOut.grainSharpness = g.grainSharpness;
 
     var envelope = {
       kind: "preset",
