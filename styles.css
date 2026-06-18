@@ -411,7 +411,10 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   margin-top: 48px;
   margin-bottom: 14px;
 }
-.prose p, .prose li { color: var(--ink-dim); font-size: 16.5px; }
+/* Body copy only — must NOT restyle component tokens (.tag, .lead) that happen
+   to be <p>s inside a prose section, or they silently grow (specificity: a bare
+   `.prose p` beats `.tag`/`.lead`). Tokens stay context-independent. */
+.prose p:not(.tag):not(.lead), .prose li { color: var(--ink-dim); font-size: 16.5px; }
 .prose strong { color: var(--ink); }
 .prose ul { padding-left: 22px; }
 .prose li { margin-bottom: 0.6em; }
