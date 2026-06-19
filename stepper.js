@@ -74,7 +74,7 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   function apply() {
     var stage = clamp(pos * (N - 1), 0, N - 1);
     if (scrub) {
-      scrub.style.setProperty("--scrub", (pos * 100).toFixed(2) + "%");
+      scrub.style.setProperty("--scrub", pos.toFixed(4));   // unitless 0..1; CSS insets the travel
       scrub.setAttribute("aria-valuenow", String(Math.round(stage)));
     }
     render(stage);
@@ -82,7 +82,8 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   function setFromX(clientX) {
     if (!scrub) return;
     var r = scrub.getBoundingClientRect();
-    pos = clamp((clientX - r.left) / r.width, 0, 1);
+    var half = 17;   // = --handle / 2 in CSS — handle centre travels [half .. width-half]
+    pos = clamp((clientX - r.left - half) / (r.width - 2 * half), 0, 1);
     apply();
   }
 

@@ -46,21 +46,54 @@
 <section class="hero" id="top">
   <div class="container">
     <p class="tag">Orchestra of Aura</p>
-    <h1>A hybrid camera that develops in real <span class="accent">physics</span>.</h1>
+    <h1>A hybrid camera that develops real <span class="accent">film</span> looks.</h1>
     <p class="lead">
-      Oqra captures on iPhone, then develops every frame through a custom Metal
-      engine that models real photographic physics — spectral exposure,
-      characteristic curves, grain, halation, and dye. You don't pick a look;
-      you build it.
+      Load a film, point, and shoot — Oqra develops every frame through a real
+      film engine, not a filter laid on after. Want more control? Build your own
+      film, layer by layer, and share it.
     </p>
     <div class="btn-row" id="download">
       <a class="btn btn--primary" href="https://testflight.apple.com/join/Ya9JqGjF">Join the TestFlight beta</a>
       <span class="btn btn--soon">On the App&nbsp;Store<span class="btn__note">&nbsp;· soon</span></span>
     </div>
+    <ul class="speclist" aria-label="What it shoots">
+      <li>ProRAW</li>
+      <li>48&nbsp;MP RAW</li>
+      <li>Live Photos</li>
+      <li>100% on-device</li>
+    </ul>
   </div>
 
   <div class="hero__media">
-    <img src="/assets/img/app/camcontrol.jpg" alt="The Oqra camera: a live viewfinder developing red begonias into film, with exposure and film-roll controls" width="1578" height="766" decoding="async" />
+    <img src="/assets/img/app/camcontrol.jpg" alt="The Oqra camera — film-roll and exposure controls over the viewfinder" width="1578" height="766" decoding="async" />
+  </div>
+</section>
+
+<!-- ============================== THE FILMS (look-book) ============================== -->
+<section class="divided" id="films">
+  <div class="container--wide">
+    <p class="tag">The films</p>
+    <h2>Load a look, then make it yours.</h2>
+    <p class="lead">Each Oqra film is a recipe, not a filter — it reacts to your
+      light, so the same film looks different scene to scene. Start with these.</p>
+    <div class="lookbook">
+      <figure class="lookbook__item">
+        <img src="/assets/img/samples/pub_amethyst.jpg" alt="A fish market developed in the Amethyst film" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
+        <figcaption><span class="lookbook__name">Amethyst</span><span class="lookbook__desc">Soft warmth, cool shadows</span></figcaption>
+      </figure>
+      <figure class="lookbook__item">
+        <img src="/assets/img/samples/rose_crystal.jpg" alt="Roses developed in the Crystal film" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
+        <figcaption><span class="lookbook__name">Crystal</span><span class="lookbook__desc">Clean, bright, true colour</span></figcaption>
+      </figure>
+      <figure class="lookbook__item">
+        <img src="/assets/img/samples/snow_onyx.jpg" alt="A snowy landscape developed in the Onyx film" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
+        <figcaption><span class="lookbook__name">Onyx</span><span class="lookbook__desc">Deep silver black &amp; white</span></figcaption>
+      </figure>
+      <figure class="lookbook__item">
+        <img src="/assets/img/samples/park_verdigris.jpg" alt="Colourful pinwheels developed in the Verdigris film" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
+        <figcaption><span class="lookbook__name">Verdigris</span><span class="lookbook__desc">Vivid, sun-faded colour</span></figcaption>
+      </figure>
+    </div>
   </div>
 </section>
 
@@ -81,16 +114,16 @@
             <h2 class="develop__title">A camera on one side, a darkroom on the other.</h2>
           </div>
           <div class="develop__stage">
-            <div class="develop__frame" role="img" aria-label="One real snow frame becoming film, stage by stage: the raw capture, then Apple’s developed signal; one emulsion record developed to a silver density image, then dyed in colour with its own grain; the other records stack on to build subtractive colour with the orange mask; then a warm halation bloom and the signature base tint produce the finished frame.">
-            <img class="develop__img" data-i="0" data-name="Raw capture" data-sub="Straight off the sensor — before any processing" src="/assets/img/samples/build-0-raw.jpg" alt="The raw iPhone capture, straight off the sensor before processing" width="900" height="900" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="1" data-name="Developed" data-sub="Apple's RAW pipeline — noise reduction, boost, tone map" src="/assets/img/samples/build-1-capture.jpg" alt="The capture after Apple's RAW pipeline: noise reduction, boost, local tone map" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="2" data-name="One record, silver" data-sub="One emulsion layer's H&amp;D curve turns exposure into silver density" src="/assets/img/samples/build-2-silver.jpg" alt="One emulsion record developed to a silver density image, in grey" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="3" data-name="One record, in colour" data-sub="Its complementary dye couples — carrying that layer's own grain" src="/assets/img/samples/build-3-record.jpg" alt="That single record in colour with its own grain, as its dye couples" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="4" data-name="Two records" data-sub="The green-sensitive layer's dye stacks on" src="/assets/img/samples/build-4-two.jpg" alt="Two records combined — the green-sensitive layer's dye stacks on" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="5" data-name="Three records" data-sub="The blue-sensitive layer's dye joins — subtractive colour" src="/assets/img/samples/build-5-three.jpg" alt="Three records combined — the blue-sensitive layer's dye joins" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="6" data-name="Four records" data-sub="The trim layer and orange mask complete the colour" src="/assets/img/samples/build-6-four.jpg" alt="All four records with the orange mask — subtractive colour complete" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="7" data-name="Halation" data-sub="Light scatters back through the base — a warm bloom around highlights" src="/assets/img/samples/build-7-halation.jpg" alt="A warm halation bloom around the brightest highlights" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="8" data-name="The print" data-sub="The signature base tint lands — your finished frame" src="/assets/img/samples/build-8-tint.jpg" alt="The finished frame after the signature base tint lands" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <div class="develop__frame" role="img" aria-label="One real snow frame becoming film, stage by stage: the raw capture, then Apple's processed image; one light-sensitive layer turned to grey tone, then to colour with its grain; the other layers add their colours; then a warm glow around the highlights and the film's signature tint produce the finished frame.">
+            <img class="develop__img" data-i="0" data-name="Raw capture" data-sub="Straight off the sensor, untouched" src="/assets/img/samples/build-0-raw.jpg" alt="The raw iPhone capture, straight off the sensor" width="900" height="900" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="1" data-name="Developed" data-sub="Apple's RAW processing — denoised, boosted, toned" src="/assets/img/samples/build-1-capture.jpg" alt="The capture after Apple's RAW processing" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="2" data-name="One layer, silver" data-sub="The first light-sensitive layer turns light into tone" src="/assets/img/samples/build-2-silver.jpg" alt="The first layer turned to grey tone" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="3" data-name="One layer, in colour" data-sub="That layer takes on its colour, and its grain" src="/assets/img/samples/build-3-record.jpg" alt="That layer in colour, with its grain" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="4" data-name="Two layers" data-sub="The green-sensitive layer adds its colour" src="/assets/img/samples/build-4-two.jpg" alt="Two layers combined — green added" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="5" data-name="Three layers" data-sub="The blue-sensitive layer joins in" src="/assets/img/samples/build-5-three.jpg" alt="Three layers combined — blue added" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="6" data-name="Four layers" data-sub="The last layer balances the whole colour" src="/assets/img/samples/build-6-four.jpg" alt="All four layers — colour balanced" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="7" data-name="Halation" data-sub="A warm glow blooms around the brightest spots" src="/assets/img/samples/build-7-halation.jpg" alt="A warm glow around the brightest highlights" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="8" data-name="The print" data-sub="The film's signature tint lands — your finished frame" src="/assets/img/samples/build-8-tint.jpg" alt="The finished frame after the film's tint" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
             <div class="develop__bar" aria-hidden="true"></div>
             <div class="develop__cap">
               <span class="develop__name" id="buildName">Raw capture</span>

@@ -121,6 +121,13 @@ a:hover { border-bottom-color: var(--ink-faint); }
 
 section { padding: clamp(72px, 11vh, 132px) 0; position: relative; }
 
+/* Output before mechanism: lead with the films / comparator / build-and-share,
+   and render the engine explainer (#features) LAST in the flow — even though it
+   sits second in the DOM. main is a flex column purely so we can reorder it
+   without moving that large section in the markup. */
+main { display: flex; flex-direction: column; }
+#features { order: 1; }
+
 section.divided::before {
   content: "";
   position: absolute;
@@ -324,11 +331,56 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .hero .lead { max-width: 620px; margin-left: auto; margin-right: auto; }
 .hero .btn-row { justify-content: center; }
 
+/* Capability chips — hairline-divided mono row, the app's datasheet voice. */
+.speclist {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.speclist li { padding: 0 14px; border-left: 1px solid var(--rule-bright); }
+.speclist li:first-child { padding-left: 0; border-left: 0; }
+
 .hero__media {
   margin: clamp(56px, 9vh, 104px) auto 0;
   width: var(--col-wide);
 }
 .hero__media img { width: 100%; display: block; }
+
+/* ---------- the films (look-book) ---------- */
+.lookbook {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;                                  /* the 1px gap IS the hairline grid */
+  background: var(--rule-bright);
+  border: 1px solid var(--rule-bright);
+  margin-top: clamp(22px, 3vw, 40px);
+}
+.lookbook__item { position: relative; margin: 0; background: var(--bg-elev); }
+.lookbook__item img {
+  display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
+}
+.lookbook__item figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 44px 14px 14px;
+  display: flex; flex-direction: column; gap: 3px;
+  background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.34) 55%, transparent 100%);
+  pointer-events: none;
+}
+.lookbook__name {
+  font-family: var(--font-sans); font-size: 12px; font-weight: var(--w-regular);
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink);
+}
+.lookbook__desc { font-size: 12px; line-height: 1.4; color: var(--ink-faint); }
+@media (max-width: 820px) { .lookbook { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 460px) { .lookbook { grid-template-columns: 1fr; } }
 
 /* ---------- feature grid (hairline-separated cells) ---------- */
 
@@ -840,6 +892,8 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
    to a hard-edged knob. Dragging scrubs the 9 build stages (stepper.js) — no
    scroll, no auto-advance. */
 .develop__scrub {
+  --handle: 34px;        /* the rail is inset by half this so the handle never
+                            overflows the image: at 0%/100% its EDGE meets the edge */
   position: relative;
   height: 34px;
   margin-top: 16px;
@@ -849,20 +903,24 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   -webkit-user-select: none;
 }
 /* Two layers split by the handle: full-spectrum colour to the LEFT (developed),
-   neutral gray to the RIGHT (undeveloped). The colour layer is the full-width
-   --spectrum, revealed only up to the handle via --scrub. */
+   neutral gray to the RIGHT (undeveloped). The rail is inset by half a handle on
+   each side so it ends where the handle CENTRE can reach; --scrub is 0..1. */
 .develop__scrub-gray,
 .develop__scrub-color {
-  position: absolute; left: 0; right: 0; top: 50%;
+  position: absolute; top: 50%;
+  left: calc(var(--handle) / 2);
+  right: calc(var(--handle) / 2);
   height: 4px; transform: translateY(-50%);
 }
 .develop__scrub-gray  { background: var(--ink-faint); }
 .develop__scrub-color {
   background: var(--spectrum);
-  clip-path: inset(0 calc(100% - var(--scrub, 100%)) 0 0);
+  clip-path: inset(0 calc((1 - var(--scrub, 1)) * 100%) 0 0);
 }
 .develop__scrub-handle {
-  position: absolute; top: 50%; left: var(--scrub, 100%);
+  position: absolute; top: 50%;
+  /* centre travels [handle/2 .. 100%-handle/2] so the handle stays fully inside */
+  left: calc(var(--handle) / 2 + var(--scrub, 1) * (100% - var(--handle)));
   transform: translate(-50%, -50%);
 }
 .develop__scrub:focus-visible { outline: none; }
