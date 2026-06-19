@@ -121,12 +121,14 @@ a:hover { border-bottom-color: var(--ink-faint); }
 
 section { padding: clamp(72px, 11vh, 132px) 0; position: relative; }
 
-/* Output before mechanism: lead with the films / comparator / build-and-share,
-   and render the engine explainer (#features) LAST in the flow — even though it
-   sits second in the DOM. main is a flex column purely so we can reorder it
-   without moving that large section in the markup. */
-main { display: flex; flex-direction: column; }
-#features { order: 1; }
+/* Fade-in on scroll. reveal.js adds .reveal (hidden) then .is-visible when the
+   element enters the viewport — so it's a no-op without JS (stays visible) and
+   under reduced motion (reveal.js opts out). */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
 
 section.divided::before {
   content: "";
@@ -353,34 +355,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   width: var(--col-wide);
 }
 .hero__media img { width: 100%; display: block; }
-
-/* ---------- the films (look-book) ---------- */
-.lookbook {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;                                  /* the 1px gap IS the hairline grid */
-  background: var(--rule-bright);
-  border: 1px solid var(--rule-bright);
-  margin-top: clamp(22px, 3vw, 40px);
-}
-.lookbook__item { position: relative; margin: 0; background: var(--bg-elev); }
-.lookbook__item img {
-  display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
-}
-.lookbook__item figcaption {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 44px 14px 14px;
-  display: flex; flex-direction: column; gap: 3px;
-  background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.34) 55%, transparent 100%);
-  pointer-events: none;
-}
-.lookbook__name {
-  font-family: var(--font-sans); font-size: 12px; font-weight: var(--w-regular);
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink);
-}
-.lookbook__desc { font-size: 12px; line-height: 1.4; color: var(--ink-faint); }
-@media (max-width: 820px) { .lookbook { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 460px) { .lookbook { grid-template-columns: 1fr; } }
 
 /* ---------- feature grid (hairline-separated cells) ---------- */
 
@@ -672,6 +646,14 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+/* The selected film's one-line identity (updated by compare.js). */
+.ba__note {
+  margin: 2px 0 0;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-faint);
 }
 .seg {
   display: flex;

@@ -60,7 +60,6 @@
       <li>ProRAW</li>
       <li>48&nbsp;MP RAW</li>
       <li>Live Photos</li>
-      <li>100% on-device</li>
     </ul>
   </div>
 
@@ -69,30 +68,41 @@
   </div>
 </section>
 
-<!-- ============================== THE FILMS (look-book) ============================== -->
-<section class="divided" id="films">
-  <div class="container--wide">
-    <p class="tag">The films</p>
-    <h2>Load a look, then make it yours.</h2>
-    <p class="lead">Each Oqra film is a recipe, not a filter — it reacts to your
-      light, so the same film looks different scene to scene. Start with these.</p>
-    <div class="lookbook">
-      <figure class="lookbook__item">
-        <img src="/assets/img/samples/pub_amethyst.jpg" alt="A fish market developed in the Amethyst film" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
-        <figcaption><span class="lookbook__name">Amethyst</span><span class="lookbook__desc">Soft warmth, cool shadows</span></figcaption>
-      </figure>
-      <figure class="lookbook__item">
-        <img src="/assets/img/samples/rose_crystal.jpg" alt="Roses developed in the Crystal film" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
-        <figcaption><span class="lookbook__name">Crystal</span><span class="lookbook__desc">Clean, bright, true colour</span></figcaption>
-      </figure>
-      <figure class="lookbook__item">
-        <img src="/assets/img/samples/snow_onyx.jpg" alt="A snowy landscape developed in the Onyx film" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
-        <figcaption><span class="lookbook__name">Onyx</span><span class="lookbook__desc">Deep silver black &amp; white</span></figcaption>
-      </figure>
-      <figure class="lookbook__item">
-        <img src="/assets/img/samples/park_verdigris.jpg" alt="Colourful pinwheels developed in the Verdigris film" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
-        <figcaption><span class="lookbook__name">Verdigris</span><span class="lookbook__desc">Vivid, sun-faded colour</span></figcaption>
-      </figure>
+<!-- ============================== SEE THE FILMS (before / after) ============================== -->
+<section class="divided" id="compare">
+  <div class="container">
+    <p class="tag">See the films</p>
+    <h2>The same frame, two ways.</h2>
+    <p class="lead">
+      Drag the divider — left is the untouched capture, right is that exact frame
+      developed through Oqra's film engine. Switch the scene and the film below.
+    </p>
+
+    <div class="ba" id="ba" style="--split:50%;" tabindex="0"
+         role="slider" aria-label="Before / after reveal — drag, or use the left and right arrow keys"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+      <img class="ba__img ba__after"  id="baAfter"  src="/assets/img/samples/flower_amethyst.jpg" alt="Developed in Oqra" width="1024" height="1024" decoding="async" draggable="false" />
+      <img class="ba__img ba__before" id="baBefore" src="/assets/img/samples/flower_og.jpg" alt="Original capture" width="1024" height="1024" decoding="async" draggable="false" />
+      <span class="ba__label ba__label--l">Original</span>
+      <span class="ba__label ba__label--r" id="baLabelR">Amethyst</span>
+      <div class="ba__line"><div class="ba__handle" aria-hidden="true">‹ ›</div></div>
+    </div>
+
+    <div class="ba__controls">
+      <div class="seg" id="sceneSeg" aria-label="Scene">
+        <button class="active" type="button" data-scene="flower">Flower</button>
+        <button type="button" data-scene="park">Park</button>
+        <button type="button" data-scene="pub">Pub</button>
+        <button type="button" data-scene="rose">Rose</button>
+        <button type="button" data-scene="snow">Snow</button>
+      </div>
+      <div class="seg" id="lookSeg" aria-label="Film">
+        <button class="active" type="button" data-look="amethyst">Amethyst</button>
+        <button type="button" data-look="crystal">Crystal</button>
+        <button type="button" data-look="onyx">Onyx</button>
+        <button type="button" data-look="verdigris">Verdigris</button>
+      </div>
+      <p class="ba__note" id="baNote">Soft warmth, cool shadows</p>
     </div>
   </div>
 </section>
@@ -143,44 +153,6 @@
              engine — not a filter laid over your photo. Oqra builds it from
              light-sensitive layers, each with its own curve, dye, and grain.</p>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================== BEFORE / AFTER ============================== -->
-<section class="divided" id="compare">
-  <div class="container">
-    <p class="tag">See it develop</p>
-    <h2>The same frame, two ways.</h2>
-    <p class="lead">
-      Drag the divider. Left is the untouched capture; right is that exact frame
-      developed through Oqra's film engine. Switch the scene and the film below.
-    </p>
-
-    <div class="ba" id="ba" style="--split:50%;" tabindex="0"
-         role="slider" aria-label="Before / after reveal — drag, or use the left and right arrow keys"
-         aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-      <img class="ba__img ba__after"  id="baAfter"  src="/assets/img/samples/flower_amethyst.jpg" alt="Developed in Oqra" width="1024" height="1024" decoding="async" draggable="false" />
-      <img class="ba__img ba__before" id="baBefore" src="/assets/img/samples/flower_og.jpg" alt="Original capture" width="1024" height="1024" decoding="async" draggable="false" />
-      <span class="ba__label ba__label--l">Original</span>
-      <span class="ba__label ba__label--r" id="baLabelR">Amethyst</span>
-      <div class="ba__line"><div class="ba__handle" aria-hidden="true">‹ ›</div></div>
-    </div>
-
-    <div class="ba__controls">
-      <div class="seg" id="sceneSeg" aria-label="Scene">
-        <button class="active" type="button" data-scene="flower">Flower</button>
-        <button type="button" data-scene="park">Park</button>
-        <button type="button" data-scene="pub">Pub</button>
-        <button type="button" data-scene="rose">Rose</button>
-        <button type="button" data-scene="snow">Snow</button>
-      </div>
-      <div class="seg" id="lookSeg" aria-label="Film">
-        <button class="active" type="button" data-look="amethyst">Amethyst</button>
-        <button type="button" data-look="crystal">Crystal</button>
-        <button type="button" data-look="onyx">Onyx</button>
-        <button type="button" data-look="verdigris">Verdigris</button>
       </div>
     </div>
   </div>
@@ -256,5 +228,6 @@
 <script src="/compare.js" defer></script>
 <script src="/share.js" defer></script>
 <script src="/stepper.js" defer></script>
+<script src="/reveal.js" defer></script>
 </body>
 </html>

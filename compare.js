@@ -15,12 +15,22 @@
   var before  = document.getElementById("baBefore");
   var after   = document.getElementById("baAfter");
   var labelR  = document.getElementById("baLabelR");
+  var note    = document.getElementById("baNote");
   var sceneSeg = document.getElementById("sceneSeg");
   var lookSeg  = document.getElementById("lookSeg");
   var BASE = "/assets/img/samples/";
 
   var scene = "flower";
   var look  = "amethyst";
+
+  // Each film's one-line identity (shown under the picker — the looks' names
+  // gain a character, not just a label).
+  var CHARS = {
+    amethyst:  "Soft warmth, cool shadows",
+    crystal:   "Clean, bright, true colour",
+    onyx:      "Deep silver black & white",
+    verdigris: "Vivid, sun-faded colour"
+  };
 
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
@@ -30,6 +40,7 @@
     before.alt = cap(scene) + ", original capture";
     after.alt  = cap(scene) + ", developed in Oqra (" + cap(look) + ")";
     labelR.textContent = cap(look);
+    if (note) note.textContent = CHARS[look] || "";
   }
 
   function activate(seg, btn) {

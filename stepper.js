@@ -28,6 +28,7 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   if (!N) return;
   var bar = root.querySelector(".develop__bar");
   var scrub = root.querySelector(".develop__scrub");
+  var frame = root.querySelector(".develop__frame");
   var nameEl = document.getElementById("buildName");
   var subEl = document.getElementById("buildSub");
   var countEl = document.getElementById("buildCount");
@@ -67,10 +68,14 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
     caption(clamp(Math.round(stage), 0, N - 1));
   }
 
-  // Drag-to-develop: the horizontal scrubber drives the build — no scroll, no
-  // auto-advance. Default fully developed (handle at the right); drag left to
-  // rewind to the raw capture.
-  var pos = 1;                                 // 0..1 along the scrubber
+  // Drag-to-develop: the horizontal scrubber drives the build. On first
+  // appearance the stack starts at stage 1 (raw) and AUTO-DEVELOPS to the final
+  // stage over 1.5s (ease-in-out), once per page load; after that it's manual.
+  // Reduced motion: show the finished frame, no animation.
+  var motionOK = !(window.matchMedia &&
+                   window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var pos = motionOK ? 0 : 1;                   // 0..1 along the scrubber
+  var autoplayed = false, sliding = false;
   function apply() {
     var stage = clamp(pos * (N - 1), 0, N - 1);
     if (scrub) {
@@ -91,6 +96,7 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
     var dragging = false;
     scrub.addEventListener("pointerdown", function (e) {
       dragging = true;
+      autoplayed = true; sliding = false;   // a manual grab pre-empts the auto-develop
       if (scrub.setPointerCapture) { try { scrub.setPointerCapture(e.pointerId); } catch (_) {} }
       setFromX(e.clientX);
       e.preventDefault();
@@ -100,6 +106,7 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
     scrub.addEventListener("pointercancel", function () { dragging = false; });
     scrub.addEventListener("keydown", function (e) {
       var step = 1 / (N - 1);
+      autoplayed = true; sliding = false;
       if (e.key === "ArrowLeft"  || e.key === "ArrowDown") { pos = clamp(pos - step, 0, 1); apply(); e.preventDefault(); }
       else if (e.key === "ArrowRight" || e.key === "ArrowUp") { pos = clamp(pos + step, 0, 1); apply(); e.preventDefault(); }
       else if (e.key === "Home") { pos = 0; apply(); e.preventDefault(); }
@@ -107,7 +114,33 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
     });
   }
 
-  apply();   // initial paint — fully developed
+  // Auto-develop once, when the image stack first scrolls into view.
+  function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+  function autoDevelop() {
+    sliding = true; pos = 0; apply();          // snap to stage 1 (raw)
+    var start = null;
+    function tick(ts) {
+      if (!sliding) return;                    // pre-empted by a manual grab
+      if (start === null) start = ts;
+      var t = (ts - start) / 1500; if (t > 1) t = 1;
+      pos = easeInOut(t); apply();
+      if (t < 1) requestAnimationFrame(tick); else sliding = false;
+    }
+    requestAnimationFrame(tick);
+  }
+  if (motionOK && frame && "IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !autoplayed) {
+          autoplayed = true; io.disconnect();
+          autoDevelop();
+        }
+      });
+    }, { threshold: 0.55 });
+    io.observe(frame);
+  }
+
+  apply();   // initial paint
 })();
 
 /* ============================================================
