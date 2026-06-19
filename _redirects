@@ -6,3 +6,6 @@
 # destination (a destination under /p/ would re-trigger /p/* — a loop Cloudflare
 # rejects). Clean 200 rewrite, URL stays /p/<code> so the payload is readable.
 /p/*  /  200
+
+# Old standalone support page now lives on the main page.
+/support  /#support  302

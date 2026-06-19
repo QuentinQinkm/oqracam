@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Oqra — a hybrid film camera for iPhone</title>
-  <meta name="description" content="Oqra is a hybrid camera for iPhone — it develops every frame through a custom Metal engine that models real photographic physics: spectral exposure, grain, halation, and dye. You build the look, not pick it. Everything stays on your device." />
+  <meta name="description" content="Oqra is a film camera for iPhone. Load a film look and shoot — every frame is developed by a real film engine with grain, halation, and dye, all on your device." />
   <link rel="canonical" href="https://oqra.app/" />
   <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -14,7 +14,7 @@
   <!-- Open Graph / social -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Oqra — a hybrid film camera for iPhone" />
-  <meta property="og:description" content="A hybrid camera for iPhone that develops in real physics — build your own film look, all on device." />
+  <meta property="og:description" content="A film camera for iPhone that develops every frame through a real film engine — load a film or build your own, all on device." />
   <meta property="og:url" content="https://oqra.app/" />
   <meta property="og:image" content="https://oqra.app/assets/img/oqra-icon-1024.png" />
   <meta property="og:image:width" content="1024" />
@@ -35,7 +35,7 @@
   <div class="nav__links">
     <a class="is-secondary" href="#features">Features</a>
     <a class="is-secondary" href="#compare">See it</a>
-    <a href="/support">Support</a>
+    <a href="#support">Support</a>
     <a class="accent" href="https://testflight.apple.com/join/Ya9JqGjF">Join beta</a>
   </div>
 </nav>
@@ -49,8 +49,8 @@
     <h1>A hybrid camera that develops real <span class="accent">film</span> looks.</h1>
     <p class="lead">
       Load a film, point, and shoot — Oqra develops every frame through a real
-      film engine, not a filter laid on after. Want more control? Build your own
-      film, layer by layer, and share it.
+      film engine, so the look is built into the photo. Want more control? Build
+      your own film, layer by layer, and share it.
     </p>
     <div class="btn-row" id="download">
       <a class="btn btn--primary" href="https://testflight.apple.com/join/Ya9JqGjF">Join the TestFlight beta</a>
@@ -61,10 +61,83 @@
       <li>48&nbsp;MP RAW</li>
       <li>Live Photos</li>
     </ul>
+    <p class="hero__req">Requires iPhone&nbsp;13 or newer.</p>
   </div>
 
   <div class="hero__media">
     <img src="/assets/img/app/camcontrol.jpg" alt="The Oqra camera — film-roll and exposure controls over the viewfinder" width="1578" height="766" decoding="async" />
+  </div>
+</section>
+
+<!-- ============================== IMMERSIVE SAMPLES (shot on Oqra) ============================== -->
+<section class="gallery" id="scenes" aria-roledescription="carousel" aria-label="Photos shot on Oqra">
+  <h2 class="gallery__title">Shot on Oqra</h2>
+  <div class="gallery__stage">
+    <img class="gallery__img is-active" src="/assets/img/scenes/scene-1.jpg" alt="Snow-capped mountains and a ski slope, shot on Oqra" width="1050" height="1400" decoding="async" draggable="false" />
+    <img class="gallery__img" src="/assets/img/scenes/scene-2.jpg" alt="An old tiled-roof temple in foliage at dusk, shot on Oqra" width="1049" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" src="/assets/img/scenes/scene-3.jpg" alt="A cherry-blossom tree in full bloom, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" src="/assets/img/scenes/scene-4.jpg" alt="A museum interior in black and white, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" src="/assets/img/scenes/scene-5.jpg" alt="A waterfront cycle path at dusk under a curving canopy, city lights along the lake, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+  </div>
+  <div class="gallery__controls">
+    <button type="button" class="gallery__nav" data-dir="-1" aria-label="Previous photo">
+      <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M9.5 1 L3.5 7 L9.5 13" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+    <span class="gallery__counter" aria-live="polite">01 / 05</span>
+    <button type="button" class="gallery__nav" data-dir="1" aria-label="Next photo">
+      <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M4.5 1 L10.5 7 L4.5 13" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ============================== FEATURES ============================== -->
+<section class="divided" id="features">
+  <div class="container--wide">
+    <!-- Develop: scroll-driven, sticky build-up. ONE real Snow capture
+         (developed through a shared Verdigris recipe) walked through the whole
+         pipeline — 9 real FilmBoCore renders (raw capture → developed signal →
+         the film build-up) wiped in vertically, led by a black bar, as the
+         section scrolls. Engine pitch pins on the left; the frame builds on the
+         right. stepper.js maps scroll progress → per-image clip-path + caption. -->
+    <div class="develop" id="develop">
+      <div class="develop__sticky">
+        <div class="develop__grid">
+          <div class="develop__text">
+            <p class="tag">Capture, then develop</p>
+            <h2 class="develop__title">A camera on one side, a darkroom on the other.</h2>
+          </div>
+          <div class="develop__stage">
+            <div class="develop__frame" role="img" aria-label="One real snow photo becoming film, step by step: the raw capture, then Apple's developed photo, then the film's layers adding their colour and grain, a warm glow around the highlights, and the film's tint on the finished frame.">
+            <img class="develop__img" data-i="0" data-name="Raw capture" data-sub="Straight from the camera, untouched" src="/assets/img/samples/build-0-raw.jpg" alt="The raw iPhone capture, straight from the camera" width="900" height="900" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="1" data-name="Developed" data-sub="Apple's RAW processing — cleaned up and colour-corrected" src="/assets/img/samples/build-1-capture.jpg" alt="The capture after Apple's RAW processing" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="2" data-name="One layer, silver" data-sub="The first light-sensitive layer turns light into tone" src="/assets/img/samples/build-2-silver.jpg" alt="The first layer turned to grey tone" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="3" data-name="One layer, in colour" data-sub="That layer takes on its colour, and its grain" src="/assets/img/samples/build-3-record.jpg" alt="That layer in colour, with its grain" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="4" data-name="Two layers" data-sub="The green-sensitive layer adds its colour" src="/assets/img/samples/build-4-two.jpg" alt="Two layers combined — green added" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="5" data-name="Three layers" data-sub="The blue-sensitive layer joins in" src="/assets/img/samples/build-5-three.jpg" alt="Three layers combined — blue added" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="6" data-name="Four layers" data-sub="The last layer balances the whole colour" src="/assets/img/samples/build-6-four.jpg" alt="All four layers — colour balanced" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="7" data-name="Halation" data-sub="A warm glow blooms around the brightest spots" src="/assets/img/samples/build-7-halation.jpg" alt="A warm glow around the brightest highlights" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="8" data-name="The print" data-sub="The film's signature tint lands — your finished frame" src="/assets/img/samples/build-8-tint.jpg" alt="The finished frame after the film's tint" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
+            <div class="develop__bar" aria-hidden="true"></div>
+            <div class="develop__cap">
+              <span class="develop__name" id="buildName">Raw capture</span>
+              <span class="develop__sub" id="buildSub">Straight from the camera, before any developing</span>
+              <span class="develop__count" id="buildCount" aria-hidden="true">01 / 09</span>
+            </div>
+            </div>
+            <div class="develop__scrub" role="slider" tabindex="0"
+                 aria-label="Develop the film — drag to move through the stages"
+                 aria-valuemin="0" aria-valuemax="8" aria-valuenow="8">
+              <div class="develop__scrub-gray" aria-hidden="true"></div>
+              <div class="develop__scrub-color" aria-hidden="true"></div>
+              <div class="develop__scrub-handle" aria-hidden="true">‹ ›</div>
+            </div>
+          </div>
+          <p class="develop__intro">A real film engine builds the look from
+             light-sensitive layers, each with its own tone, dye, and grain —
+             the same way film does.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -74,7 +147,7 @@
     <p class="tag">See the films</p>
     <h2>The same frame, two ways.</h2>
     <p class="lead">
-      Drag the divider — left is the untouched capture, right is that exact frame
+      Drag the divider — left is the original photo, right is the same shot
       developed through Oqra's film engine. Switch the scene and the film below.
     </p>
 
@@ -107,77 +180,25 @@
   </div>
 </section>
 
-<!-- ============================== FEATURES ============================== -->
-<section class="divided" id="features">
-  <div class="container--wide">
-    <!-- Develop: scroll-driven, sticky build-up. ONE real Snow capture
-         (developed through a shared Verdigris recipe) walked through the whole
-         pipeline — 9 real FilmBoCore renders (raw capture → developed signal →
-         the film build-up) wiped in vertically, led by a black bar, as the
-         section scrolls. Engine pitch pins on the left; the frame builds on the
-         right. stepper.js maps scroll progress → per-image clip-path + caption. -->
-    <div class="develop" id="develop">
-      <div class="develop__sticky">
-        <div class="develop__grid">
-          <div class="develop__text">
-            <p class="tag">Capture, then develop</p>
-            <h2 class="develop__title">A camera on one side, a darkroom on the other.</h2>
-          </div>
-          <div class="develop__stage">
-            <div class="develop__frame" role="img" aria-label="One real snow frame becoming film, stage by stage: the raw capture, then Apple's processed image; one light-sensitive layer turned to grey tone, then to colour with its grain; the other layers add their colours; then a warm glow around the highlights and the film's signature tint produce the finished frame.">
-            <img class="develop__img" data-i="0" data-name="Raw capture" data-sub="Straight off the sensor, untouched" src="/assets/img/samples/build-0-raw.jpg" alt="The raw iPhone capture, straight off the sensor" width="900" height="900" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="1" data-name="Developed" data-sub="Apple's RAW processing — denoised, boosted, toned" src="/assets/img/samples/build-1-capture.jpg" alt="The capture after Apple's RAW processing" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="2" data-name="One layer, silver" data-sub="The first light-sensitive layer turns light into tone" src="/assets/img/samples/build-2-silver.jpg" alt="The first layer turned to grey tone" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="3" data-name="One layer, in colour" data-sub="That layer takes on its colour, and its grain" src="/assets/img/samples/build-3-record.jpg" alt="That layer in colour, with its grain" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="4" data-name="Two layers" data-sub="The green-sensitive layer adds its colour" src="/assets/img/samples/build-4-two.jpg" alt="Two layers combined — green added" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="5" data-name="Three layers" data-sub="The blue-sensitive layer joins in" src="/assets/img/samples/build-5-three.jpg" alt="Three layers combined — blue added" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="6" data-name="Four layers" data-sub="The last layer balances the whole colour" src="/assets/img/samples/build-6-four.jpg" alt="All four layers — colour balanced" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="7" data-name="Halation" data-sub="A warm glow blooms around the brightest spots" src="/assets/img/samples/build-7-halation.jpg" alt="A warm glow around the brightest highlights" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <img class="develop__img" data-i="8" data-name="The print" data-sub="The film's signature tint lands — your finished frame" src="/assets/img/samples/build-8-tint.jpg" alt="The finished frame after the film's tint" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
-            <div class="develop__bar" aria-hidden="true"></div>
-            <div class="develop__cap">
-              <span class="develop__name" id="buildName">Raw capture</span>
-              <span class="develop__sub" id="buildSub">Straight off the sensor — before any processing</span>
-              <span class="develop__count" id="buildCount" aria-hidden="true">01 / 09</span>
-            </div>
-            </div>
-            <div class="develop__scrub" role="slider" tabindex="0"
-                 aria-label="Develop the film — drag to move through the stages"
-                 aria-valuemin="0" aria-valuemax="8" aria-valuenow="8">
-              <div class="develop__scrub-gray" aria-hidden="true"></div>
-              <div class="develop__scrub-color" aria-hidden="true"></div>
-              <div class="develop__scrub-handle" aria-hidden="true">‹ ›</div>
-            </div>
-          </div>
-          <p class="develop__intro">The look is computed from light by a real film
-             engine — not a filter laid over your photo. Oqra builds it from
-             light-sensitive layers, each with its own curve, dye, and grain.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============================== DECODE (reached from the nav) ============================== -->
 <section class="divided prose" id="decode">
   <div class="container">
     <p class="tag">Build &amp; share</p>
     <h2>Build your own film, then share it</h2>
-    <p class="lead">A film is a recipe you author, not a preset you scroll — tune
-      each layer's spectral response, dye, grain, and contrast curve. Every film
-      folds into a small code: share it as a link or QR, and anyone with Oqra can
-      scan it and shoot your film.</p>
+    <p class="lead">A film is a look you build yourself — set each layer's colour,
+      dye, grain, and contrast. Every film folds into a small code: share it as a
+      link or QR, and anyone with Oqra can scan it and shoot your film.</p>
 
     <div class="shareflow" id="shareflow">
       <div class="shareflow__sticky">
         <div class="shareflow__frame" role="img" aria-label="The Oqra app from build to share: the film editor, then your collection of looks, then the share screen with a scannable QR recipe.">
-          <img class="shareflow__img" data-name="Build it" data-sub="Tune each layer's curve, dye, and grain in the editor." src="/assets/img/app/editor.jpg?v=2" alt="The Oqra editor: a photo above the characteristic-curve editor with per-layer controls" width="720" height="1483" decoding="async" draggable="false" />
+          <img class="shareflow__img" data-name="Build it" data-sub="Set each layer's tone, dye, and grain in the editor." src="/assets/img/app/editor.jpg?v=2" alt="The Oqra editor: a photo above the characteristic-curve editor with per-layer controls" width="720" height="1483" decoding="async" draggable="false" />
           <img class="shareflow__img" data-name="Collect it" data-sub="Keep your films in a collection — one tap to load and shoot." src="/assets/img/app/gallery.jpg?v=2" alt="The Oqra collection: a grid of saved film looks" width="720" height="1483" loading="lazy" decoding="async" draggable="false" />
           <img class="shareflow__img" data-name="Share it" data-sub="Every film folds into a scannable code — a link or QR anyone with Oqra can shoot." src="/assets/img/app/share.jpg" alt="The Oqra share screen: a QR code labelled BOSTON with an oqra.app link" width="720" height="1483" loading="lazy" decoding="async" draggable="false" />
         </div>
         <div class="shareflow__cap">
           <span class="shareflow__name" id="shareName">Build it</span>
-          <span class="shareflow__sub" id="shareSub">Tune each layer's curve, dye, and grain in the editor.</span>
+          <span class="shareflow__sub" id="shareSub">Set each layer's tone, dye, and grain in the editor.</span>
           <span class="shareflow__count" id="shareCount" aria-hidden="true">01 / 03</span>
         </div>
       </div>
@@ -185,10 +206,9 @@
 
     <h3 class="decode__open">Open a shared recipe</h3>
     <p>
-      Oqra film stocks travel as a scannable code or an oqra.app/p/… link. Paste
-      one here and download the recipe as a file — decoded entirely in your
-      browser, nothing uploaded. Import the <strong>.fbp</strong> in Oqra and the
-      look is reproduced by the film engine on your device.
+      Have an Oqra film someone shared? Paste its link or code here to download
+      the film file. It's read right here in your browser — nothing is uploaded.
+      Open the file in Oqra to shoot with that look.
     </p>
 
     <div class="decoder">
@@ -206,6 +226,88 @@
   </div>
 </section>
 
+<!-- ============================== BUILT FOR IPHONE (native capture) ============================== -->
+<section class="divided" id="native">
+  <div class="container--wide">
+    <p class="tag">Built for iPhone</p>
+    <h2>Shoot before you even unlock.</h2>
+    <p class="lead">Click the Camera Control button on your Lock Screen and Oqra is
+      already capturing — no unlock, no app-switch.</p>
+    <div class="features">
+      <div class="feature">
+        <svg class="feature__glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <line x1="14" y1="6" x2="14" y2="42" />
+          <rect x="10" y="18" width="8" height="12" />
+          <path d="M4 22 h5 M4 27 h5" />
+        </svg>
+        <h3>Camera Control ready</h3>
+        <p>Focus, exposure, and shutter from the button — line up your shot without touching the screen. <span class="feature__note">iPhone&nbsp;16</span></p>
+      </div>
+      <div class="feature">
+        <svg class="feature__glyph" viewBox="0 0 64 42" fill="none" aria-hidden="true">
+          <rect x="1" y="1" width="62" height="40" stroke="currentColor" stroke-width="1.5" />
+          <text x="32" y="27" text-anchor="middle" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" letter-spacing="1.2" fill="currentColor">RAW</text>
+        </svg>
+        <h3>Shoots in ProRAW</h3>
+        <p>It develops your actual ProRAW / Apple&nbsp;DNG, working from the full-quality photo your iPhone captured.</p>
+      </div>
+      <div class="feature">
+        <svg class="feature__glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <defs>
+            <linearGradient id="lp-spectrum" x1="9" y1="24" x2="39" y2="24" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#6400b4" /><stop offset="14.3%" stop-color="#0000ff" /><stop offset="28.6%" stop-color="#00b4ff" /><stop offset="42.9%" stop-color="#00ff80" /><stop offset="57.1%" stop-color="#b4ff00" /><stop offset="71.4%" stop-color="#ffdc00" /><stop offset="85.7%" stop-color="#ff8000" /><stop offset="100%" stop-color="#c80000" />
+            </linearGradient>
+          </defs>
+          <circle cx="24" cy="24" r="15" stroke="url(#lp-spectrum)" />
+          <circle cx="24" cy="24" r="9" />
+          <circle cx="24" cy="24" r="3" />
+          <path d="M24 6 v3 M24 39 v3 M6 24 h3 M39 24 h3" />
+        </svg>
+        <h3>Captures Live Photos</h3>
+        <p>Your Live Photos get the same film look, motion and all.</p>
+      </div>
+    </div>
+    <p class="legal-note">Apple, iPhone, Live&nbsp;Photos, and ProRAW are trademarks of Apple&nbsp;Inc., registered in the U.S. and other countries and regions. Camera Control is a feature of iPhone. Oqra is an independent product and has not been authorized, sponsored, or otherwise approved by Apple&nbsp;Inc.</p>
+  </div>
+</section>
+
+<!-- ============================== SUPPORT (Q&A + contact) ============================== -->
+<section class="divided prose" id="support">
+  <div class="container">
+    <p class="tag">Help</p>
+    <h2>Support &amp; questions</h2>
+    <p class="lead">The fastest way to reach us is email — we read every message.</p>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="mailto:support@oqra.app?subject=Oqra%20Support">Email support</a>
+    </div>
+    <p>Found a bug or have a request? Email
+      <a href="mailto:support@oqra.app?subject=Oqra%20Bug%2FFeedback">support@oqra.app</a>
+      with your iPhone model, iOS version, and a screenshot if you can.</p>
+
+    <div class="faq">
+      <details class="faq__item">
+        <summary>Which iPhones does it run on?</summary>
+        <div class="faq__a"><p>iPhone&nbsp;13 and newer, with iOS&nbsp;18 or later.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary>Is it free?</summary>
+        <div class="faq__a"><p>It's free while we're in the TestFlight beta. It'll be
+          on the App&nbsp;Store soon.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary>Do my photos stay private?</summary>
+        <div class="faq__a"><p>Yes — everything develops on your phone. No account, no
+          servers, nothing uploaded. See the <a href="/privacy">privacy policy</a>.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary>Do I keep my original photo?</summary>
+        <div class="faq__a"><p>You can keep the untouched original — RAW included —
+          saved next to the developed shot. Just turn on Keep&nbsp;RAW&nbsp;File in
+          the app.</p></div>
+      </details>    </div>
+  </div>
+</section>
+
 </main>
 
 <!-- ============================== FOOTER ============================== -->
@@ -216,10 +318,10 @@
       <div class="site-footer__tagline">Orchestra of Aura</div>
     </div>
     <nav class="site-footer__links">
-      <a href="/support">Support</a>
+      <a href="#support">Support</a>
       <a href="/privacy">Privacy Policy</a>
       <a href="#decode">Open a recipe</a>
-      <a href="mailto:fantasyqkm@gmail.com">Contact</a>
+      <a href="mailto:support@oqra.app">Contact</a>
     </nav>
   </div>
   <div class="site-footer__legal">© 2026 Oqra</div>
@@ -229,5 +331,6 @@
 <script src="/share.js" defer></script>
 <script src="/stepper.js" defer></script>
 <script src="/reveal.js" defer></script>
+<script src="/gallery.js" defer></script>
 </body>
 </html>

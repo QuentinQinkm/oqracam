@@ -144,6 +144,7 @@ section.divided::before {
 #features { --section-col: var(--col-wide); }   /* develop stays the wide beat */
 #compare  { --section-col: var(--col); }          /* frames its 720 text + centered square */
 #decode   { --section-col: var(--col); }         /* matches its reading column */
+#support  { --section-col: var(--col); }          /* reading column */
 
 /* ---------- shared label / type ---------- */
 
@@ -322,6 +323,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   flex-wrap: wrap;
   margin-top: 36px;
 }
+/* Support's lone email button sits between two paragraphs — base .btn-row only
+   has top margin, so balance the bottom so it reads centred between them. */
+#support .btn-row { margin-bottom: 36px; }
 
 /* ---------- hero ---------- */
 
@@ -350,11 +354,81 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .speclist li { padding: 0 14px; border-left: 1px solid var(--rule-bright); }
 .speclist li:first-child { padding-left: 0; border-left: 0; }
 
+/* Device requirement — quiet, sets expectations before the install decision. */
+.hero__req {
+  margin: 14px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink-ghost);
+}
+
 .hero__media {
   margin: clamp(56px, 9vh, 104px) auto 0;
   width: var(--col-wide);
 }
 .hero__media img { width: 100%; display: block; }
+
+/* ---------- immersive sample gallery (shot on Oqra) ----------
+   One photo at a time in a fixed 3:4 frame (all five are portrait), centred on
+   the black canvas. Arrows, swipe, or arrow-keys cycle them, wrapping around;
+   each swap crossfades. gallery.js drives it (toggles .is-active); with no JS
+   the first photo stays visible. */
+.gallery { margin: 0; padding-top: clamp(40px, 7vh, 88px); }
+.gallery__title { text-align: center; margin: 0 0 24px; padding: 0 var(--gutter); }
+.gallery__stage {
+  position: relative;
+  width: 100%;
+  max-width: calc(82vh * 3 / 4);   /* the whole 3:4 photo fits within 82vh tall */
+  margin: 0 auto;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--bg);
+}
+.gallery__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;               /* frame and photos are both 3:4 — no crop */
+  opacity: 0;
+  transition: opacity 450ms ease;
+}
+.gallery__img.is-active { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .gallery__img { transition: none; }   /* instant swap, no crossfade */
+}
+
+.gallery__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 18px var(--gutter);
+}
+.gallery__nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--rule-bright);
+  border-radius: 0;          /* hard-edged */
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 150ms ease-out, color 150ms ease-out;
+}
+.gallery__nav:hover { border-color: var(--ink-faint); }
+.gallery__nav svg { display: block; width: 13px; height: 13px; }
+.gallery__counter {
+  min-width: 5.5em;
+  text-align: center;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--ink-faint);
+}
 
 /* ---------- feature grid (hairline-separated cells) ---------- */
 
@@ -374,6 +448,33 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 
 @media (max-width: 820px) { .features { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 540px) { .features { grid-template-columns: 1fr; } }
+
+/* "Built for iPhone" (#native): readable lead in the wide column, a spaced
+   feature grid, and a quiet device note inside a card. */
+#native .lead { max-width: 600px; }
+#native .features { margin-top: clamp(24px, 3vw, 40px); }
+/* Original, generic, hard-edged glyphs (currentColor = --ink) — NOT Apple's
+   SF Symbols or feature marks, which aren't licensed for marketing web use. */
+.feature__glyph { display: block; height: 42px; width: auto; margin-bottom: 18px; color: var(--ink); }
+/* Trademark attribution — required when naming Apple features. */
+.legal-note {
+  margin: clamp(28px, 4vw, 44px) 0 0;
+  max-width: 760px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  color: var(--ink-ghost);
+}
+.feature__note {
+  display: block;
+  margin-top: 10px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+}
 
 /* features section: the hybrid story leads, then two cards.
    The highlight headline IS the section's <h2>; the lead is held to a
@@ -450,6 +551,35 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .prose ul { padding-left: 22px; }
 .prose li { margin-bottom: 0.6em; }
 .prose a { word-break: break-word; }
+
+/* ---------- collapsible FAQ (#support) — native <details>, no JS ---------- */
+.faq { margin-top: clamp(28px, 4vw, 48px); border-top: 1px solid var(--rule-bright); }
+.faq__item { border-bottom: 1px solid var(--rule-bright); }
+.faq__item > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  font-family: var(--font-sans);
+  font-size: clamp(16px, 1.6vw, 19px);
+  font-weight: var(--w-light);
+  line-height: 1.35;
+  color: var(--ink);
+}
+.faq__item > summary::-webkit-details-marker { display: none; }
+.faq__item > summary::after {
+  content: "+";
+  flex: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink-faint);
+}
+.faq__item[open] > summary::after { content: "\2212"; }   /* minus */
+.faq__a { padding: 0 0 20px; }
+.faq__a p { margin: 0; }
 
 .faq { margin-top: 8px; }
 .faq__item { border-top: 1px solid var(--rule-bright); padding: 28px 0; }

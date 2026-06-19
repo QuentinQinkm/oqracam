@@ -70,7 +70,7 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
 
   // Drag-to-develop: the horizontal scrubber drives the build. On first
   // appearance the stack starts at stage 1 (raw) and AUTO-DEVELOPS to the final
-  // stage over 1.5s (ease-in-out), once per page load; after that it's manual.
+  // stage over 1.75s (ease-out), once per page load; after that it's manual.
   // Reduced motion: show the finished frame, no animation.
   var motionOK = !(window.matchMedia &&
                    window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -115,15 +115,16 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   }
 
   // Auto-develop once, when the image stack first scrolls into view.
-  function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+  // easeOutCubic — fast start, a pronounced slow settle onto the finished frame.
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
   function autoDevelop() {
     sliding = true; pos = 0; apply();          // snap to stage 1 (raw)
     var start = null;
     function tick(ts) {
       if (!sliding) return;                    // pre-empted by a manual grab
       if (start === null) start = ts;
-      var t = (ts - start) / 1500; if (t > 1) t = 1;
-      pos = easeInOut(t); apply();
+      var t = (ts - start) / 1750; if (t > 1) t = 1;
+      pos = easeOut(t); apply();
       if (t < 1) requestAnimationFrame(tick); else sliding = false;
     }
     requestAnimationFrame(tick);
