@@ -1069,6 +1069,26 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .develop__scrub:focus-visible .develop__scrub-handle {
   outline: 2px solid var(--ink); outline-offset: 3px;
 }
+/* Replay the auto-develop animation — centred under the dragger, datasheet voice. */
+.develop__replay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 16px auto 0;
+  padding: 8px 10px;
+  background: transparent;
+  border: 0;                 /* no frame — text + icon only */
+  color: var(--ink-faint);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 150ms ease-out;
+}
+.develop__replay:hover { color: var(--ink); }
+.develop__replay-icon { width: 13px; height: 13px; display: block; flex: none; }
 
 /* Portrait / narrow: one column — title → image stage (frame + dragger) → body.
    Nothing pins now, so the frame is simply full width (no scale-down). */

@@ -114,14 +114,18 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
     });
   }
 
-  // Auto-develop once, when the image stack first scrolls into view.
-  // easeOutCubic — fast start, a pronounced slow settle onto the finished frame.
+  // Auto-develop: played once when the stack first scrolls into view, and again
+  // whenever Replay is pressed. easeOutCubic — fast start, a pronounced slow
+  // settle onto the finished frame. animId lets a fresh run supersede one still
+  // in flight (e.g. rapid Replay taps) so two ticks never fight.
   function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  var animId = 0;
   function autoDevelop() {
+    var myId = ++animId;
     sliding = true; pos = 0; apply();          // snap to stage 1 (raw)
     var start = null;
     function tick(ts) {
-      if (!sliding) return;                    // pre-empted by a manual grab
+      if (myId !== animId || !sliding) return; // superseded, or pre-empted by a manual grab
       if (start === null) start = ts;
       var t = (ts - start) / 1750; if (t > 1) t = 1;
       pos = easeOut(t); apply();
@@ -140,6 +144,11 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
     }, { threshold: 0.55 });
     io.observe(frame);
   }
+
+  // Replay button — re-runs the develop animation on demand. Works regardless of
+  // reduced-motion since it's an explicit, user-initiated action.
+  var replayBtn = document.getElementById("developReplay");
+  if (replayBtn) replayBtn.addEventListener("click", autoDevelop);
 
   apply();   // initial paint
 })();
