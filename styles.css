@@ -231,6 +231,16 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   height: 2px;
   background: var(--spectrum);
 }
+/* The whole nav hides while the hero ("landing") is in view — the hero carries
+   its own brand lockup, so the bar would only duplicate it. nav.js toggles
+   .is-hidden and slides it back in once you scroll past the hero; .nav--anim
+   gates the transition so the load state is set instantly (no slide on first
+   paint). A keyboard Tab (:focus-within) also brings it back, so its links are
+   never invisible-but-focusable. Pages with no hero (privacy, 404) never get
+   .is-hidden — the nav stays put there. */
+.nav--anim { transition: transform 0.35s ease, opacity 0.35s ease; }
+.nav.is-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+.nav.is-hidden:focus-within { transform: none; opacity: 1; pointer-events: auto; }
 
 .nav__brand {
   display: inline-flex;
@@ -244,9 +254,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border: 0;
 }
 .nav__brand:hover { color: var(--ink); border: 0; }
-/* The mark is the app icon (RGB capsules on pure black) — it sits on the
-   black nav with no visible edge, so no border/radius needed. */
-.nav__logo { width: 26px; height: 26px; display: block; }
+/* The mark is the spectrum capsules (transparent PNG) — sits straight on the
+   black nav with no edge. Non-square, so size by height and let width follow. */
+.nav__logo { height: 32px; width: auto; display: block; }
 
 .nav__links {
   display: flex;
@@ -330,12 +340,32 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 /* ---------- hero ---------- */
 
 .hero {
-  padding-top: clamp(72px, 12vh, 128px);
+  /* The nav hides at the landing, so it needs far less top room than a visible
+     nav would (it still reserves ~one nav-height of flow space above). */
+  padding-top: clamp(16px, 3vh, 36px);
   padding-bottom: clamp(56px, 9vh, 104px);
   text-align: center;
 }
 .hero .lead { max-width: 620px; margin-left: auto; margin-right: auto; }
 .hero .btn-row { justify-content: center; }
+/* Hero brand lockup — the spectrum mark + the OQRA wordmark, centred. This is
+   the brand presence at the landing (the nav hides while the hero is in view,
+   so the name needs to live here). */
+.hero__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.4vw, 14px);
+  margin: 0 0 clamp(16px, 2.5vh, 24px);
+}
+.hero__mark { display: block; height: clamp(40px, 6vw, 56px); width: auto; }
+.hero__wordmark {
+  font-family: var(--font-sans);
+  font-size: clamp(20px, 3vw, 28px);
+  letter-spacing: 0.3em;
+  font-weight: var(--w-light);
+  color: var(--ink);
+}
 
 /* Capability chips — hairline-divided mono row, the app's datasheet voice. */
 .speclist {
@@ -363,8 +393,8 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 }
 
 .hero__media {
-  margin: clamp(56px, 9vh, 104px) auto 0;
-  width: var(--col-wide);
+  margin: clamp(22px, 3.5vh, 40px) auto;            /* sits between the headline and the lead */
+  width: min(600px, calc(100% - 2 * var(--gutter)));
 }
 .hero__media img { width: 100%; display: block; }
 
