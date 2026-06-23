@@ -12,12 +12,14 @@ var OqraScroll = (function () {
   function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
   function pad(n) { return n < 10 ? "0" + n : "" + n; }
 
-  // The shared scroll rhythm tokens (vh): dwell on each stage, fade between.
+  // The shared scroll rhythm tokens (vh): dwell on each stage, fade between, and
+  // a trailing dwell after the final phase before the section releases.
   function tokens() {
     var cs = getComputedStyle(document.documentElement);
     return {
       hold: parseFloat(cs.getPropertyValue("--scroll-hold")) || 28,
-      fade: parseFloat(cs.getPropertyValue("--scroll-fade")) || 42
+      fade: parseFloat(cs.getPropertyValue("--scroll-fade")) || 42,
+      tail: parseFloat(cs.getPropertyValue("--scroll-tail")) || 0
     };
   }
 

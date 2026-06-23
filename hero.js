@@ -14,8 +14,8 @@
 
   hero.classList.add("is-scroll");
 
-  var tok = OqraScroll.tokens();          // shared rhythm: dwell + fade (vh)
-  var HOLD = tok.hold, FADE = tok.fade;
+  var tok = OqraScroll.tokens();          // shared rhythm: dwell + fade + tail (vh)
+  var HOLD = tok.hold, FADE = tok.fade, TAIL = tok.tail;
 
   var facesA = hero.querySelectorAll(".hero__face--a");
   var facesB = hero.querySelectorAll(".hero__face--b");
@@ -28,10 +28,11 @@
     var range = hero.offsetHeight - vh;             // how far the stage stays pinned
     var scrolled = Math.min(range, Math.max(0, -hero.getBoundingClientRect().top));
     var p = range > 0 ? scrolled / range : 0;
-    // HOLD · fade · HOLD over two phases — same rhythm as #shareflow. stageAt
-    // returns 0..1 here: the crossfade amount between phase one and phase two.
-    var units = 2 * HOLD + FADE;
-    var x = p * units;                              // vh of travel consumed
+    // HOLD · fade · HOLD · TAIL over two phases — same rhythm as #shareflow.
+    // x is travel in vh across the FULL budget (incl. tail); stageAt returns
+    // 0..1 (the crossfade) and stays 1 through the trailing tail.
+    var units = 2 * HOLD + FADE;                    // the transition itself
+    var x = p * (units + TAIL);                     // vh of travel consumed
     var q = OqraScroll.stageAt(x, 2, HOLD, FADE);
 
     // Logo + name fade out with the title (opacity only, so its box stays

@@ -25,6 +25,11 @@
   --rule:         #151515;   /* divider — soft hairline */
   --rule-bright:  #1e1e1e;   /* dividerStrong — visible hairline */
 
+  /* Frosted-glass surface — shared by the nav, feature cards, pickers, the
+     decode field, and bordered buttons. */
+  --glass:        rgba(0, 0, 0, 0.72);
+  --glass-blur:   saturate(140%) blur(12px);
+
   --ink:          #ededed;   /* value — bright/primary text */
   --ink-dim:      #b4b4b4;   /* body copy (web-readability tier) */
   --ink-faint:    #8a8a8a;   /* dim caps labels, tags, nav — lightened from the
@@ -58,11 +63,13 @@
 
   /* ---- shared scroll-transition rhythm (unitless vh) ----
      HOLD = dwell scroll distance on each stage; FADE = crossfade distance
-     between stages. Read by hero.js and stepper.js (#shareflow) so every pinned
-     transition shares one feel — and the hero's pinned height derives from them
-     (HOLD · fade · HOLD = 2·HOLD + FADE of travel, atop one viewport). */
+     between stages; TAIL = extra dwell AFTER the final phase, before the pinned
+     section releases into the next. Read by hero.js and stepper.js (#shareflow)
+     so every pinned transition shares one feel — and their pinned heights derive
+     from them (hero = 2·HOLD + FADE + TAIL of travel, atop one viewport). */
   --scroll-hold: 28;
   --scroll-fade: 42;
+  --scroll-tail: 30;
 }
 
 /* ---------- reset / base ---------- */
@@ -255,9 +262,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   justify-content: space-between;
   align-items: center;
   padding: 18px var(--gutter);
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-bottom: 1px solid var(--rule);
 }
 /* Signature: the visible-spectrum ruler (the app's core metaphor) as a thin
@@ -335,7 +342,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border: 1px solid var(--rule-bright);
   border-radius: 0;                      /* hard-edged */
   color: var(--ink);
-  background: transparent;
+  background: var(--glass);       /* frosted glass, like the nav/cards */
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   cursor: pointer;
   transition: border-color 150ms ease-out, background 150ms ease-out, color 150ms ease-out;
 }
@@ -395,9 +404,10 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
    on and motion is allowed). Default flow shows every face stacked & visible. */
 .hero.is-scroll {
   padding: 0;
-  /* HOLD (dwell phase 1) · FADE (crossfade) · HOLD (dwell phase 2) of travel,
-     plus one viewport for the pinned stage — derived from the shared tokens. */
-  height: calc((2 * var(--scroll-hold) + var(--scroll-fade)) * 1vh + 100vh);
+  /* HOLD (dwell phase 1) · FADE (crossfade) · HOLD (dwell phase 2) · TAIL
+     (trailing dwell) of travel, plus one viewport for the pinned stage —
+     derived from the shared tokens. */
+  height: calc((2 * var(--scroll-hold) + var(--scroll-fade) + var(--scroll-tail)) * 1vh + 100vh);
   /* The nav hides at the landing but, being sticky, still reserves ~its height
      in flow — that shows as a blank band on top. Pull the landing up under it so
      the first screen truly starts at the top edge. */
@@ -567,33 +577,65 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 
 /* ---------- feature grid (hairline-separated cells) ---------- */
 
+/* "Built for iPhone" (#native): a three-up grid of cards, each led by a
+   screenshot banner of Oqra's own UI that bleeds to the card top and fades into
+   the copy below. */
 .features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: var(--rule-bright);
-  border: 1px solid var(--rule-bright);
+  /* faint translucent hairline grid (lets the page glow seep through the frost) */
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   margin-top: 8px;
 }
 .feature {
-  background: var(--bg);
-  padding: 32px 28px;
+  /* same frosted infill as the floating nav bar */
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  padding-bottom: clamp(24px, 2.6vw, 32px);
+  overflow: hidden;
 }
+.feature__banner {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  margin-bottom: clamp(16px, 2vw, 22px);
+  /* Longer, eased top + bottom fade — a gradual S-curve falloff (extra mid
+     stops) instead of a hard linear band, so the edges melt out smoothly. The
+     focal control stays in the solid 32–68% middle. */
+  -webkit-mask-image: linear-gradient(to bottom,
+    transparent 0%, rgba(0,0,0,0.12) 9%, rgba(0,0,0,0.5) 18%, #000 32%,
+    #000 68%, rgba(0,0,0,0.5) 82%, rgba(0,0,0,0.12) 91%, transparent 100%);
+  mask-image: linear-gradient(to bottom,
+    transparent 0%, rgba(0,0,0,0.12) 9%, rgba(0,0,0,0.5) 18%, #000 32%,
+    #000 68%, rgba(0,0,0,0.5) 82%, rgba(0,0,0,0.12) 91%, transparent 100%);
+}
+/* Both shots are pre-cropped to 2:1 with the focal control centred and the same
+   scale (focus-centred, OOB padded transparent), so a plain centred cover is all
+   that's needed — no per-card object-position. */
+.feature__banner img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.feature__text { padding: 0 clamp(22px, 2.4vw, 28px); }
 .feature p { margin-bottom: 0; font-size: 15.5px; }
 
-@media (max-width: 820px) { .features { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 540px) { .features { grid-template-columns: 1fr; } }
+/* 3 cards don't divide into 2 columns (leaves an empty cell), so go straight
+   from 3-up to a single column (3 rows) on narrow / portrait devices. */
+@media (max-width: 860px) { .features { grid-template-columns: 1fr; } }
 
-/* "Built for iPhone" (#native): readable lead in the wide column, a spaced
-   feature grid, and a quiet device note inside a card. */
 #native .lead { max-width: 600px; }
 #native .features { margin-top: clamp(24px, 3vw, 40px); }
-/* Original, generic, hard-edged glyphs (currentColor = --ink) — NOT Apple's
-   SF Symbols or feature marks, which aren't licensed for marketing web use. */
-.feature__glyph { display: block; height: 42px; width: auto; margin-bottom: 18px; color: var(--ink); }
-/* Trademark attribution — required when naming Apple features. */
+
+/* Trademark attribution — required when naming Apple/Adobe features. */
+/* Footnote star mark + the disclaimer it points to, under the feature row. */
+.ref { color: var(--ink-faint); }
+.features-note {
+  margin: clamp(20px, 2.6vw, 30px) 0 0;
+  font-size: 13px;
+  color: var(--ink-faint);
+}
 .legal-note {
-  margin: clamp(28px, 4vw, 44px) 0 0;
+  margin: clamp(18px, 2.2vw, 24px) 0 0;
   max-width: 760px;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 11px;
@@ -737,7 +779,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   width: 100%;
   min-height: 92px;
   resize: vertical;
-  background: var(--bg-elev);
+  background: var(--glass);   /* frosted glass, like the nav/cards */
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   border: 1px solid var(--rule-bright);
   border-radius: 0;
   color: var(--ink);
@@ -930,7 +974,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   padding: 0 8px;
   border: 0;
   border-radius: 0;
-  background: var(--bg-surface);   /* surfaceAlt — inactive */
+  background: var(--glass);   /* frosted glass — inactive */
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   color: var(--ink-faint);
   font-family: var(--font-sans);
   font-size: 11px;

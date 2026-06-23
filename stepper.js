@@ -171,16 +171,16 @@ var pad = OqraScroll.pad, clamp = OqraScroll.clamp;
     document.getElementById("shareCount")
   );
 
-  // Shared rhythm: dwell on each shot, fade between (vh). The scroll budget sets
-  // the section's height via --shareflow-scroll (CSS).
+  // Shared rhythm: dwell on each shot, fade between, plus a trailing tail after
+  // the last shot (vh). The full budget sets the section height (--shareflow-scroll).
   var tok = OqraScroll.tokens(), HOLD = tok.hold, FADE = tok.fade;
-  var units = N * HOLD + (N - 1) * FADE;
-  root.style.setProperty("--shareflow-scroll", units + "vh");
+  var budget = N * HOLD + (N - 1) * FADE + tok.tail;
+  root.style.setProperty("--shareflow-scroll", budget + "vh");
 
   OqraScroll.onScroll(function () {
     var scrollable = root.offsetHeight - window.innerHeight;
     var p = scrollable > 0 ? clamp(-root.getBoundingClientRect().top / scrollable, 0, 1) : 0;
-    var stage = OqraScroll.stageAt(p * units, N, HOLD, FADE);
+    var stage = OqraScroll.stageAt(p * budget, N, HOLD, FADE);
     for (var i = 0; i < N; i++) {
       // image 0 = always-on base; image i fades in over (i-1) across [i-1, i].
       imgs[i].style.opacity = (i === 0) ? "1" : clamp(stage - (i - 1), 0, 1).toFixed(3);
