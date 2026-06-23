@@ -76,22 +76,22 @@ html { scroll-behavior: smooth; background: var(--bg); }
    centre. Because it's fixed and lives on <html> (with <body> transparent),
    every part of the page — including the reserved space above the hero — sits
    on this same canvas, so there's no black bar at the top. */
-html::before {
-  content: "";
+/* Page-wide spectrum glow — a fixed, blurred band anchored at the top, behind
+   all content. A real element (not a pseudo) so hero.js can write its transform
+   and opacity directly each frame (compositor-only, no tree-wide style
+   invalidation). hero.js grows it FROM the top (scaleY) as you scroll into phase
+   two; this default state (full) is what no-JS / reduced motion sees. */
+.hero-glow {
   position: fixed;
   left: 50%;
   top: 0;
-  /* Anchored at the very top and tall, so it can fill most of the viewport.
-     --glow is a 0..1 scroll-progress (set by hero.js): scaleY reveals the band
-     downward FROM the top — a glow that grows in — while opacity ramps up with
-     it. Defaults to 1 for no-JS / reduced motion (full glow shown). */
-  transform: translateX(-50%) scaleY(var(--glow, 1));
+  transform: translateX(-50%) scaleY(1);
   transform-origin: top center;
-  width: min(1100px, 130vw);
+  width: 80vw;
   height: 75vh;
   background: var(--spectrum);
   filter: blur(140px);
-  opacity: calc(0.12 + var(--glow, 1) * 0.20);
+  opacity: 0.32;
   z-index: -1;
   pointer-events: none;
   will-change: transform, opacity;
@@ -433,19 +433,25 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .hero.is-scroll .hero__media { margin: 0; }
 .hero.is-scroll .hero__req { margin: 0; }
 
-/* Logo + swapping text, kept together as one unit above the phone. */
+/* Logo + swapping text, kept together as one unit above the phone. Constrained
+   to the shared reading column so the text keeps the same side gutter as every
+   other section (otherwise it runs edge-to-edge on mobile). */
 .hero__head {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: clamp(14px, 2.2vh, 22px);
+  width: var(--col);
+  margin: 0 auto;
 }
-/* Buttons + spec row + requirement: a fixed cluster under the phone, always shown. */
+/* Buttons + requirement: a fixed cluster under the phone, always shown. */
 .hero__foot {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: clamp(16px, 2.5vh, 24px);
+  width: var(--col);
+  margin: 0 auto;
 }
 /* Hero brand lockup — the spectrum mark + the OQRA wordmark, centred. This is
    the brand presence at the landing (the nav hides while the hero is in view,

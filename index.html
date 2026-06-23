@@ -29,6 +29,10 @@
 </head>
 <body>
 
+<!-- Page-wide spectrum glow (decorative). A real element so hero.js can drive
+     its transform/opacity directly on the compositor — see styles.css. -->
+<div class="hero-glow" aria-hidden="true"></div>
+
 <!-- ============================== NAV ============================== -->
 <nav class="nav">
   <a class="nav__brand" href="#top" aria-label="Oqra — home"><img class="nav__logo" src="/assets/img/oqra-logo.png" alt="" width="240" height="146" />OQRA</a>
@@ -345,6 +349,7 @@
   <div class="site-footer__legal">© 2026 Oqra</div>
 </footer>
 
+<script src="/scroll.js" defer></script>
 <script src="/compare.js" defer></script>
 <script src="/share.js" defer></script>
 <script src="/stepper.js" defer></script>

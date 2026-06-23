@@ -14,32 +14,25 @@
 
   hero.classList.add("is-scroll");
 
-  var root = document.documentElement;
-  root.style.setProperty("--glow", "0");   // phase one starts on plain black
-
-  // Shared scroll rhythm tokens (vh): dwell on each phase, fade between them.
-  var cs = getComputedStyle(root);
-  var HOLD = parseFloat(cs.getPropertyValue("--scroll-hold")) || 28;
-  var FADE = parseFloat(cs.getPropertyValue("--scroll-fade")) || 42;
+  var tok = OqraScroll.tokens();          // shared rhythm: dwell + fade (vh)
+  var HOLD = tok.hold, FADE = tok.fade;
 
   var facesA = hero.querySelectorAll(".hero__face--a");
   var facesB = hero.querySelectorAll(".hero__face--b");
   var brand = hero.querySelector(".hero__brand");   // logo + name: fades with the title
+  var glowEl = document.querySelector(".hero-glow"); // driven directly (no CSS var)
+  if (glowEl) { glowEl.style.transform = "translateX(-50%) scaleY(0)"; glowEl.style.opacity = "0"; }
 
-  var ticking = false;
   function update() {
-    ticking = false;
     var vh = window.innerHeight || 1;
     var range = hero.offsetHeight - vh;             // how far the stage stays pinned
     var scrolled = Math.min(range, Math.max(0, -hero.getBoundingClientRect().top));
     var p = range > 0 ? scrolled / range : 0;
-    // HOLD · fade · HOLD: phase 1 dwells for HOLD, crossfades over FADE, then
-    // phase 2 dwells for HOLD — same rhythm as #shareflow, from shared tokens.
+    // HOLD · fade · HOLD over two phases — same rhythm as #shareflow. stageAt
+    // returns 0..1 here: the crossfade amount between phase one and phase two.
     var units = 2 * HOLD + FADE;
     var x = p * units;                              // vh of travel consumed
-    var q = x <= HOLD ? 0
-          : x >= HOLD + FADE ? 1
-          : (x - HOLD) / FADE;
+    var q = OqraScroll.stageAt(x, 2, HOLD, FADE);
 
     // Logo + name fade out with the title (opacity only, so its box stays
     // reserved and nothing below shifts position).
@@ -47,12 +40,15 @@
 
     // Spectrum background glow grows in from the top — starts when phase two
     // begins (x = HOLD) and finishes at 75% of the whole transition distance.
-    // --glow is a 0..1 progress; CSS turns it into scaleY + opacity.
+    // Written straight to the element's compositor props (scaleY + opacity).
     var glowEnd = 0.75 * units;
-    var glow = x <= HOLD ? 0
-             : x >= glowEnd ? 1
-             : (x - HOLD) / (glowEnd - HOLD);
-    root.style.setProperty("--glow", glow.toFixed(3));
+    var g = x <= HOLD ? 0
+          : x >= glowEnd ? 1
+          : (x - HOLD) / (glowEnd - HOLD);
+    if (glowEl) {
+      glowEl.style.transform = "translateX(-50%) scaleY(" + g.toFixed(3) + ")";
+      glowEl.style.opacity = (0.12 + g * 0.2).toFixed(3);
+    }
 
     var i;
     for (i = 0; i < facesA.length; i++) {
@@ -64,11 +60,5 @@
       facesB[i].style.pointerEvents = q > 0.5 ? "" : "none";
     }
   }
-  function onScroll() {
-    if (!ticking) { ticking = true; requestAnimationFrame(update); }
-  }
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
-  update();
+  OqraScroll.onScroll(update);
 })();

@@ -14,10 +14,8 @@
    Home / End. Vanilla, no deps, CSP-safe (script-src 'self').
    ============================================================ */
 
-/* Shared, stateless helpers — used by both the #develop and #shareflow
-   controllers below (closed over from file scope; defined once). */
-var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
-var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
+/* Shared helpers live in scroll.js (loaded first); alias the two used here. */
+var pad = OqraScroll.pad, clamp = OqraScroll.clamp;
 
 (function () {
   "use strict";
@@ -29,24 +27,17 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   var bar = root.querySelector(".develop__bar");
   var scrub = root.querySelector(".develop__scrub");
   var frame = root.querySelector(".develop__frame");
-  var nameEl = document.getElementById("buildName");
-  var subEl = document.getElementById("buildSub");
-  var countEl = document.getElementById("buildCount");
-  var lastIdx = -1;
+  var caption = OqraScroll.captioner(
+    imgs,
+    document.getElementById("buildName"),
+    document.getElementById("buildSub"),
+    document.getElementById("buildCount")
+  );
 
   function clipFor(f) {
     if (f <= 0) return "inset(0 0 100% 0)";   // hidden
     if (f >= 1) return "none";                 // full
     return "inset(0 0 " + ((1 - f) * 100).toFixed(2) + "% 0)";
-  }
-
-  function caption(idx) {
-    if (idx === lastIdx) return;
-    lastIdx = idx;
-    var el = imgs[idx];
-    if (nameEl) nameEl.textContent = el.getAttribute("data-name") || "";
-    if (subEl) subEl.textContent = el.getAttribute("data-sub") || "";
-    if (countEl) countEl.textContent = pad(idx + 1) + " / " + pad(N);
   }
 
   // Paint the stacked wipe for a fractional stage 0..N-1: image 0 is the
@@ -65,7 +56,7 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
         bar.style.opacity = "0";
       }
     }
-    caption(clamp(Math.round(stage), 0, N - 1));
+    caption(clamp(Math.round(stage), 0, N - 1), N);
   }
 
   // Drag-to-develop: the horizontal scrubber drives the build. On first
@@ -173,59 +164,27 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   if (window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  var nameEl = document.getElementById("shareName");
-  var subEl = document.getElementById("shareSub");
-  var countEl = document.getElementById("shareCount");
-  var lastIdx = -1;
+  var caption = OqraScroll.captioner(
+    imgs,
+    document.getElementById("shareName"),
+    document.getElementById("shareSub"),
+    document.getElementById("shareCount")
+  );
 
-  // Shared scroll rhythm tokens (vh) — same dwell/fade as the hero.
-  var cs = getComputedStyle(document.documentElement);
-  var HOLD = parseFloat(cs.getPropertyValue("--scroll-hold")) || 28;
-  var FADE = parseFloat(cs.getPropertyValue("--scroll-fade")) || 42;
-  var units = N * HOLD + (N - 1) * FADE;          // scroll budget, in vh
+  // Shared rhythm: dwell on each shot, fade between (vh). The scroll budget sets
+  // the section's height via --shareflow-scroll (CSS).
+  var tok = OqraScroll.tokens(), HOLD = tok.hold, FADE = tok.fade;
+  var units = N * HOLD + (N - 1) * FADE;
   root.style.setProperty("--shareflow-scroll", units + "vh");
 
-  function stageAt(p) {                             // HOLD/fade/HOLD → 0..N-1
-    var x = clamp(p, 0, 1) * units, acc = 0;
-    for (var k = 0; k < N; k++) {
-      if (x <= acc + HOLD) return k;
-      acc += HOLD;
-      if (k < N - 1) {
-        if (x < acc + FADE) return k + (x - acc) / FADE;
-        acc += FADE;
-      }
-    }
-    return N - 1;
-  }
-
-  function caption(idx) {
-    if (idx === lastIdx) return;
-    lastIdx = idx;
-    var el = imgs[idx];
-    if (nameEl) nameEl.textContent = el.getAttribute("data-name") || "";
-    if (subEl) subEl.textContent = el.getAttribute("data-sub") || "";
-    if (countEl) countEl.textContent = pad(idx + 1) + " / " + pad(N);
-  }
-
-  var ticking = false;
-  function update() {
-    ticking = false;
+  OqraScroll.onScroll(function () {
     var scrollable = root.offsetHeight - window.innerHeight;
-    var top = root.getBoundingClientRect().top;
-    var stage = stageAt(scrollable > 0 ? clamp(-top / scrollable, 0, 1) : 0);
+    var p = scrollable > 0 ? clamp(-root.getBoundingClientRect().top / scrollable, 0, 1) : 0;
+    var stage = OqraScroll.stageAt(p * units, N, HOLD, FADE);
     for (var i = 0; i < N; i++) {
       // image 0 = always-on base; image i fades in over (i-1) across [i-1, i].
       imgs[i].style.opacity = (i === 0) ? "1" : clamp(stage - (i - 1), 0, 1).toFixed(3);
     }
-    caption(clamp(Math.round(stage), 0, N - 1));
-  }
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(update);
-  }
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
-  update();
+    caption(clamp(Math.round(stage), 0, N - 1), N);
+  });
 })();
