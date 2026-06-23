@@ -55,6 +55,14 @@
   --gutter:   clamp(20px, 4vw, 56px);
   --col:      min(720px, calc(100vw - 2 * var(--gutter)));
   --col-wide: min(1120px, calc(100vw - 2 * var(--gutter)));
+
+  /* ---- shared scroll-transition rhythm (unitless vh) ----
+     HOLD = dwell scroll distance on each stage; FADE = crossfade distance
+     between stages. Read by hero.js and stepper.js (#shareflow) so every pinned
+     transition shares one feel — and the hero's pinned height derives from them
+     (HOLD · fade · HOLD = 2·HOLD + FADE of travel, atop one viewport). */
+  --scroll-hold: 28;
+  --scroll-fade: 42;
 }
 
 /* ---------- reset / base ---------- */
@@ -72,15 +80,21 @@ html::before {
   content: "";
   position: fixed;
   left: 50%;
-  top: -10vh;
-  transform: translateX(-50%);
+  top: 0;
+  /* Anchored at the very top and tall, so it can fill most of the viewport.
+     --glow is a 0..1 scroll-progress (set by hero.js): scaleY reveals the band
+     downward FROM the top — a glow that grows in — while opacity ramps up with
+     it. Defaults to 1 for no-JS / reduced motion (full glow shown). */
+  transform: translateX(-50%) scaleY(var(--glow, 1));
+  transform-origin: top center;
   width: min(1100px, 130vw);
-  height: 60vh;
+  height: 75vh;
   background: var(--spectrum);
-  filter: blur(130px);
-  opacity: 0.30;
+  filter: blur(140px);
+  opacity: calc(0.12 + var(--glow, 1) * 0.20);
   z-index: -1;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
 body {
@@ -370,14 +384,69 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 /* ---------- hero ---------- */
 
 .hero {
-  /* The nav hides at the landing, so it needs far less top room than a visible
-     nav would (it still reserves ~one nav-height of flow space above). */
-  padding-top: clamp(16px, 3vh, 36px);
-  padding-bottom: clamp(56px, 9vh, 104px);
+  padding: clamp(16px, 3vh, 36px) 0 clamp(56px, 9vh, 104px);
   text-align: center;
 }
 .hero .lead { max-width: 620px; margin-left: auto; margin-right: auto; }
-.hero .btn-row { justify-content: center; }
+.hero .btn-row { justify-content: center; margin-top: 0; }
+
+/* ---- pinned hero: phone fixed, text zones crossfade around it ----
+   Enhanced behaviour only kicks in with .is-scroll (added by hero.js when JS is
+   on and motion is allowed). Default flow shows every face stacked & visible. */
+.hero.is-scroll {
+  padding: 0;
+  /* HOLD (dwell phase 1) · FADE (crossfade) · HOLD (dwell phase 2) of travel,
+     plus one viewport for the pinned stage — derived from the shared tokens. */
+  height: calc((2 * var(--scroll-hold) + var(--scroll-fade)) * 1vh + 100vh);
+  /* The nav hides at the landing but, being sticky, still reserves ~its height
+     in flow — that shows as a blank band on top. Pull the landing up under it so
+     the first screen truly starts at the top edge. */
+  margin-top: -68px;
+}
+.hero.is-scroll .hero__stage {
+  position: sticky;
+  top: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(22px, 4.5vh, 48px);
+}
+/* The top zone stacks its two faces in one cell, so the taller face fixes the
+   zone's height — the phone below never shifts as they crossfade. Both faces are
+   CENTER-aligned, so brand+title and intro+buttons share a common centre line
+   and swap in place; any height difference splits evenly above and below. */
+.hero.is-scroll .hero__zone {
+  display: grid;
+  width: 100%;
+  justify-items: center;
+  align-items: center;
+}
+.hero.is-scroll .hero__face {
+  grid-area: 1 / 1;
+  margin: 0;
+  will-change: opacity;
+}
+.hero.is-scroll .hero__face--b { opacity: 0; }   /* hidden until scrolled (JS drives it) */
+.hero.is-scroll .hero__brand { margin: 0; }      /* spacing handled by the head gap */
+.hero.is-scroll .hero__media { margin: 0; }
+.hero.is-scroll .hero__req { margin: 0; }
+
+/* Logo + swapping text, kept together as one unit above the phone. */
+.hero__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2.2vh, 22px);
+}
+/* Buttons + spec row + requirement: a fixed cluster under the phone, always shown. */
+.hero__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(16px, 2.5vh, 24px);
+}
 /* Hero brand lockup — the spectrum mark + the OQRA wordmark, centred. This is
    the brand presence at the landing (the nav hides while the hero is in view,
    so the name needs to live here). */

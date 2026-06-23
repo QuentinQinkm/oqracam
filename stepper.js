@@ -178,7 +178,10 @@ var clamp = function (v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); };
   var countEl = document.getElementById("shareCount");
   var lastIdx = -1;
 
-  var HOLD = 28, FADE = 42;                        // matches the develop dwell/wipe
+  // Shared scroll rhythm tokens (vh) — same dwell/fade as the hero.
+  var cs = getComputedStyle(document.documentElement);
+  var HOLD = parseFloat(cs.getPropertyValue("--scroll-hold")) || 28;
+  var FADE = parseFloat(cs.getPropertyValue("--scroll-fade")) || 42;
   var units = N * HOLD + (N - 1) * FADE;          // scroll budget, in vh
   root.style.setProperty("--shareflow-scroll", units + "vh");
 

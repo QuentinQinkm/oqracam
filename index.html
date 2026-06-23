@@ -44,36 +44,40 @@
 
 <!-- ============================== HERO ============================== -->
 <section class="hero" id="top">
-  <div class="container">
-    <div class="hero__brand">
-      <img class="hero__mark" src="/assets/img/oqra-logo.png" alt="" width="240" height="146" />
-      <span class="hero__wordmark">OQRA</span>
+  <!-- Pinned composition: the logo, phone, buttons, and spec row all stay put.
+       The only scroll effect (hero.js) is the headline crossfading into the
+       intro copy, just under the logo. Progressive: without JS / reduced motion
+       every face shows in normal flow so nothing is hidden. -->
+  <div class="hero__stage">
+
+    <div class="hero__head">
+      <div class="hero__brand">
+        <img class="hero__mark" src="/assets/img/oqra-logo.png" alt="" width="240" height="146" />
+        <span class="hero__wordmark">OQRA</span>
+      </div>
+      <div class="hero__zone">
+        <h1 class="hero__face hero__face--a">Shoot digital.<br>Develop real <span class="accent">film</span>.</h1>
+        <p class="hero__face hero__face--b lead">
+          A camera app for iPhone that develops every shot through a real film
+          engine — grain, glow, and color, all on your phone. Build your own
+          film and share it as a code.
+        </p>
+      </div>
     </div>
-    <h1>Shoot digital.<br>Develop real <span class="accent">film</span>.</h1>
-  </div>
 
-  <div class="hero__media">
-    <img src="/assets/img/app/camcontrol.webp" alt="The Oqra camera — film-roll and exposure controls over the viewfinder" width="1578" height="766" decoding="async" />
-  </div>
-
-  <div class="container">
-    <p class="lead">
-      A camera app for iPhone that develops every shot through a real film
-      engine — grain, glow, and color, all on your phone. Build your own film
-      and share it as a code.
-    </p>
-    <div class="btn-row" id="download">
-      <a class="btn btn--primary" href="https://testflight.apple.com/join/Ya9JqGjF">Join the TestFlight beta</a>
-      <span class="btn btn--soon">On the App&nbsp;Store<span class="btn__note">&nbsp;· soon</span></span>
+    <div class="hero__media">
+      <img src="/assets/img/app/camcontrol.webp" alt="The Oqra camera — film-roll and exposure controls over the viewfinder" width="1578" height="766" decoding="async" />
     </div>
-    <ul class="speclist" aria-label="What it shoots">
-      <li>ProRAW</li>
-      <li>48&nbsp;MP RAW</li>
-      <li>Live Photos</li>
-    </ul>
-    <p class="hero__req">Requires iPhone&nbsp;13 or newer.</p>
-  </div>
 
+    <div class="hero__foot">
+      <div class="btn-row" id="download">
+        <a class="btn btn--primary" href="https://testflight.apple.com/join/Ya9JqGjF">Join the TestFlight beta</a>
+        <span class="btn btn--soon">On the App&nbsp;Store<span class="btn__note">&nbsp;· soon</span></span>
+      </div>
+      <p class="hero__req">Requires iPhone&nbsp;13 or newer · iOS&nbsp;18 or later</p>
+    </div>
+
+  </div>
 </section>
 
 <!-- ============================== IMMERSIVE SAMPLES (shot on Oqra) ============================== -->
@@ -347,5 +351,6 @@
 <script src="/reveal.js" defer></script>
 <script src="/gallery.js" defer></script>
 <script src="/nav.js" defer></script>
+<script src="/hero.js" defer></script>
 </body>
 </html>
