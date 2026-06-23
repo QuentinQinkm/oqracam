@@ -553,7 +553,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   padding: 0;
   border: 1px solid var(--rule-bright);
   border-radius: 0;          /* hard-edged */
-  background: transparent;
+  background: var(--glass);   /* frosted glass, like the nav/cards/buttons */
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   color: var(--ink);
   cursor: pointer;
   transition: border-color 150ms ease-out, color 150ms ease-out;
