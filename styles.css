@@ -24,6 +24,7 @@
   --bg-surface:   #141414;   /* surfaceAlt */
   --rule:         #151515;   /* divider — soft hairline */
   --rule-bright:  #1e1e1e;   /* dividerStrong — visible hairline */
+  --hairline:     rgba(255, 255, 255, 0.12);   /* light divider — matches the current chrome */
 
   /* Frosted-glass surface — shared by the nav, feature cards, pickers, the
      decode field, and bordered buttons. */
@@ -51,7 +52,7 @@
   /* ---- type: SF Pro / system, light-first (no mono) ---- */
   --font-sans:    -apple-system, BlinkMacSystemFont, "SF Pro Text",
                   "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
-  --font-display: var(--font-sans);
+  --font-mono:    ui-monospace, "SF Mono", Menlo, monospace;   /* datasheet voice */
 
   --w-light:   300;
   --w-regular: 400;
@@ -195,7 +196,6 @@ section.divided::before {
 
 .tag {
   display: inline-block;
-  font-family: var(--font-sans);
   font-size: 11px;
   font-weight: var(--w-regular);
   letter-spacing: 0.2em;
@@ -209,7 +209,6 @@ section.divided::before {
 h1, h2, h3, h4 { margin: 0 0 0.5em; color: var(--ink); }
 
 h1 {
-  font-family: var(--font-display);
   font-size: clamp(44px, 7vw, 84px);
   line-height: 1.04;
   letter-spacing: -0.025em;
@@ -224,7 +223,6 @@ h1 .accent {
 }
 
 h2 {
-  font-family: var(--font-display);
   font-size: clamp(24px, 3vw, 36px);
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -232,7 +230,6 @@ h2 {
 }
 
 h3 {
-  font-family: var(--font-sans);
   font-size: 12px;
   line-height: 1.4;
   letter-spacing: 0.16em;
@@ -291,7 +288,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--font-sans);
   font-size: 14px;
   letter-spacing: 0.32em;
   font-weight: var(--w-regular);
@@ -307,7 +303,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   display: flex;
   gap: 26px;
   align-items: center;
-  font-family: var(--font-sans);
   font-size: 11px;
   font-weight: var(--w-light);
   letter-spacing: 0.16em;
@@ -475,7 +470,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 }
 .hero__mark { display: block; height: clamp(40px, 6vw, 56px); width: auto; }
 .hero__wordmark {
-  font-family: var(--font-sans);
   font-size: clamp(20px, 3vw, 28px);
   letter-spacing: 0.3em;
   font-weight: var(--w-light);
@@ -490,7 +484,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -569,7 +563,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .gallery__counter {
   min-width: 5.5em;
   text-align: center;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.18em;
   color: var(--ink-faint);
@@ -585,8 +579,8 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   /* faint translucent hairline grid (lets the page glow seep through the frost) */
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
   margin-top: 8px;
 }
 .feature {
@@ -637,19 +631,10 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .legal-note {
   margin: clamp(18px, 2.2vw, 24px) 0 0;
   max-width: 760px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.6;
   letter-spacing: 0.01em;
-  color: var(--ink-ghost);
-}
-.feature__note {
-  display: block;
-  margin-top: 10px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--ink-ghost);
 }
 
@@ -671,7 +656,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   gap: 12px;
   padding-top: 14px;
   cursor: pointer;
-  font-family: var(--font-sans);
   font-size: 11px;
   font-weight: var(--w-regular);
   letter-spacing: 0.16em;
@@ -702,7 +686,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   margin-bottom: 0.3em;
 }
 .prose .updated {
-  font-family: var(--font-sans);
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -730,8 +713,8 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .prose a { word-break: break-word; }
 
 /* ---------- collapsible FAQ (#support) — native <details>, no JS ---------- */
-.faq { margin-top: clamp(28px, 4vw, 48px); border-top: 1px solid var(--rule-bright); }
-.faq__item { border-bottom: 1px solid var(--rule-bright); }
+.faq { margin-top: clamp(28px, 4vw, 48px); border-top: 1px solid var(--hairline); }
+.faq__item { border-bottom: 1px solid var(--hairline); }
 .faq__item > summary {
   list-style: none;
   cursor: pointer;
@@ -740,7 +723,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   justify-content: space-between;
   gap: 16px;
   padding: 18px 0;
-  font-family: var(--font-sans);
   font-size: clamp(16px, 1.6vw, 19px);
   font-weight: var(--w-light);
   line-height: 1.35;
@@ -758,20 +740,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .faq__a { padding: 0 0 20px; }
 .faq__a p { margin: 0; }
 
-.faq { margin-top: 8px; }
-.faq__item { border-top: 1px solid var(--rule-bright); padding: 28px 0; }
-.faq__item:last-child { border-bottom: 1px solid var(--rule-bright); }
-.faq__q {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: var(--w-regular);
-  letter-spacing: 0.01em;
-  color: var(--ink);
-  margin: 0 0 12px;
-  text-transform: none;
-}
-.faq__item p:last-child { margin-bottom: 0; }
-
 /* ---------- preset-code decoder tool (the #decode section) ---------- */
 
 .decoder { margin-top: 40px; }
@@ -785,7 +753,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border: 1px solid var(--rule-bright);
   border-radius: 0;
   color: var(--ink);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace; /* a CODE field — mono is correct here */
+  font-family: var(--font-mono); /* a CODE field — mono is correct here */
   font-size: 13px;
   line-height: 1.5;
   letter-spacing: 0.01em;
@@ -800,7 +768,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 
 .decoder__status {
   margin-top: 18px;
-  font-family: var(--font-sans);
   font-size: 12px;
   letter-spacing: 0.04em;
   min-height: 1.2em;
@@ -823,20 +790,18 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border-bottom: 1px solid var(--rule-bright);
 }
 .recipe-spec__name {
-  font-family: var(--font-sans);
   font-size: 16px;
   font-weight: var(--w-regular);
   color: var(--ink);
 }
 .recipe-spec__kind {
-  font-family: var(--font-sans);
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-faint);
 }
 .recipe-spec__rows {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
 }
 .recipe-spec__row {
@@ -934,7 +899,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .ba__label {
   position: absolute;
   top: 12px;
-  font-family: var(--font-sans);
   font-size: 10px;
   font-weight: var(--w-regular);
   letter-spacing: 0.18em;
@@ -995,7 +959,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 /* ---------- footer ---------- */
 
 .site-footer {
-  border-top: 1px solid var(--rule);
   padding: 56px var(--gutter);
 }
 .site-footer__inner {
@@ -1008,14 +971,12 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   flex-wrap: wrap;
 }
 .site-footer__brand {
-  font-family: var(--font-sans);
   letter-spacing: 0.32em;
   font-size: 15px;
   color: var(--ink);
   font-weight: var(--w-regular);
 }
 .site-footer__tagline {
-  font-family: var(--font-sans);
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -1026,7 +987,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-family: var(--font-sans);
   font-size: 11px;
   font-weight: var(--w-light);
   letter-spacing: 0.16em;
@@ -1037,7 +997,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .site-footer__legal {
   width: var(--col-wide);
   margin: 32px auto 0;
-  font-family: var(--font-sans);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1138,7 +1097,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .shareflow__sub { min-height: 2.9em; }
 .develop__count, .shareflow__count {
   margin-top: 2px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.08em;
   color: var(--ink-ghost);
@@ -1231,7 +1190,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   background: transparent;
   border: 0;                 /* no frame — text + icon only */
   color: var(--ink-faint);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
