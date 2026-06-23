@@ -98,7 +98,10 @@ html { scroll-behavior: smooth; background: var(--bg); }
   width: 80vw;
   height: 75vh;
   background: var(--spectrum);
-  filter: blur(140px);
+  /* Viewport-relative blur so the glow keeps the same proportion (and vividness)
+     on phones as on desktop — a fixed px blur over-blurs the smaller mobile
+     element and washes the colour out. */
+  filter: blur(clamp(40px, 10vw, 140px));
   opacity: 0.32;
   z-index: -1;
   pointer-events: none;
