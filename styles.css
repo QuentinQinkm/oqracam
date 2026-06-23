@@ -26,7 +26,7 @@
   --rule-bright:  #1e1e1e;   /* dividerStrong — visible hairline */
 
   --ink:          #ededed;   /* value — bright/primary text */
-  --ink-dim:      #9a9a9a;   /* body copy (web-readability tier) */
+  --ink-dim:      #b4b4b4;   /* body copy (web-readability tier) */
   --ink-faint:    #8a8a8a;   /* dim caps labels, tags, nav — lightened from the
                                 app's #555 to clear WCAG AA on pure black */
   --ink-ghost:    #757575;   /* faintest micro-copy — AA-safe (app uses #3a3a3a) */
@@ -63,13 +63,33 @@
 
 html { scroll-behavior: smooth; background: var(--bg); }
 
+/* The landing's spectrum glow, lifted out of the hero and pinned behind the
+   WHOLE page — a fixed, heavily-blurred band of the visible spectrum at top
+   centre. Because it's fixed and lives on <html> (with <body> transparent),
+   every part of the page — including the reserved space above the hero — sits
+   on this same canvas, so there's no black bar at the top. */
+html::before {
+  content: "";
+  position: fixed;
+  left: 50%;
+  top: -10vh;
+  transform: translateX(-50%);
+  width: min(1100px, 130vw);
+  height: 60vh;
+  background: var(--spectrum);
+  filter: blur(130px);
+  opacity: 0.30;
+  z-index: -1;
+  pointer-events: none;
+}
+
 body {
   margin: 0;
-  background: var(--bg);
+  background: transparent;
   color: var(--ink-dim);
   font-family: var(--font-sans);
   font-size: 17px;
-  font-weight: var(--w-light);
+  font-weight: var(--w-regular);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -80,10 +100,14 @@ img, video, svg { display: block; max-width: 100%; height: auto; }
 a {
   color: var(--ink);
   text-decoration: none;
-  border-bottom: 1px solid var(--rule-bright);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.6);
   transition: border-color 150ms ease-out, color 150ms ease-out;
 }
-a:hover { border-bottom-color: var(--ink-faint); }
+a:hover { border-bottom-color: #fff; }
+
+/* Chromatic text selection — the spectrum, even when you highlight. */
+::selection { background: #00b4ff; color: #000; }
+::-moz-selection { background: #00b4ff; color: #000; }
 
 /* ---------- a11y / utilities ---------- */
 
@@ -139,7 +163,7 @@ section.divided::before {
      overhangs (the narrow #decode column no longer gets a ~200px stick-out). */
   width: var(--section-col, var(--col-wide));
   height: 1px;
-  background: var(--rule);
+  background: transparent;
 }
 #features { --section-col: var(--col-wide); }   /* develop stays the wide beat */
 #compare  { --section-col: var(--col); }          /* frames its 720 text + centered square */
@@ -158,17 +182,17 @@ section.divided::before {
   color: var(--ink-faint);
   margin-bottom: 26px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--rule-bright);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.8);
 }
 
 h1, h2, h3, h4 { margin: 0 0 0.5em; color: var(--ink); }
 
 h1 {
   font-family: var(--font-display);
-  font-size: clamp(40px, 6.4vw, 72px);
-  line-height: 1.06;
-  letter-spacing: -0.02em;
-  font-weight: var(--w-light);          /* light, airy — like the app's display tier */
+  font-size: clamp(44px, 7vw, 84px);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  font-weight: var(--w-regular);        /* a touch more weight — present, not soft */
 }
 /* The one chromatic moment in the headline — the spectrum, clipped to text. */
 h1 .accent {
@@ -310,7 +334,13 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border-color: var(--ink);
   color: #000;
 }
-.btn--primary:hover { background: #ffffff; border-color: #ffffff; color: #000; }
+.btn--primary:hover {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #000;
+  /* a faint spectrum bloom on the install CTA */
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.4), 0 6px 30px -8px rgba(0,180,255,0.55);
+}
 
 /* Disabled / "coming soon" CTA — reads as inert chrome, not active gold */
 .btn--soon,
