@@ -95,14 +95,20 @@ html { scroll-behavior: smooth; background: var(--bg); }
   top: 0;
   transform: translateX(-50%) scaleY(1);
   transform-origin: top center;
-  width: 80vw;
-  height: 75vh;
+  width: 120%;    /* a touch past the viewport so the horizontal falloff lands
+                     off-screen (fixed elements don't add horizontal scroll) */
+  height: 100%;
   background: var(--spectrum);
   /* Viewport-relative blur so the glow keeps the same proportion (and vividness)
      on phones as on desktop — a fixed px blur over-blurs the smaller mobile
      element and washes the colour out. */
   filter: blur(clamp(40px, 10vw, 140px));
-  opacity: 0.32;
+  /* Radial falloff so it reads as a soft bloom from the top that fades out at the
+     edges, not a blurred rectangle. Pure alpha mask — rasterised once with the
+     layer, no per-frame cost. */
+  -webkit-mask-image: radial-gradient(100% 78% at 50% 18%, #000 0%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(100% 78% at 50% 18%, #000 0%, #000 40%, transparent 100%);
+  opacity: 0.28;
   z-index: -1;
   pointer-events: none;
   will-change: transform, opacity;

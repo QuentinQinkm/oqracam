@@ -48,7 +48,7 @@
           : (x - HOLD) / (glowEnd - HOLD);
     if (glowEl) {
       glowEl.style.transform = "translateX(-50%) scaleY(" + g.toFixed(3) + ")";
-      glowEl.style.opacity = (0.12 + g * 0.2).toFixed(3);
+      glowEl.style.opacity = (0.10 + g * 0.18).toFixed(3);
     }
 
     var i;
