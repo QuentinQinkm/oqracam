@@ -4,7 +4,7 @@
    A draggable divider wipes between the original capture (left) and the
    same frame developed through Oqra (right). Scene + film pickers swap the
    image pair. Pure vanilla, no deps; images live in /assets/img/samples/
-   as <scene>_<og|look>.jpg.
+   as <scene>_<og|look>.webp.
    ============================================================ */
 (function () {
   "use strict";
@@ -35,8 +35,8 @@
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
   function swap() {
-    before.src = BASE + scene + "_og.jpg";
-    after.src  = BASE + scene + "_" + look + ".jpg";
+    before.src = BASE + scene + "_og.webp";
+    after.src  = BASE + scene + "_" + look + ".webp";
     before.alt = cap(scene) + ", original capture";
     after.alt  = cap(scene) + ", developed in Oqra (" + cap(look) + ")";
     labelR.textContent = cap(look);
