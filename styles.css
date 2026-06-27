@@ -30,6 +30,12 @@
      decode field, and bordered buttons. */
   --glass:        rgba(0, 0, 0, 0.72);
   --glass-blur:   saturate(140%) blur(12px);
+  /* Same frosted surface with the blur dropped. Over the dark page (and the
+     already-soft hero-glow bloom) the 12px blur does no visible work, while the
+     saturate keeps the faint spectrum tint pixel-identical. Used on every glass
+     surface EXCEPT the nav — whose blur genuinely frosts photos scrolling under
+     it — so we shed the costly per-frame backdrop-blur pass with no visible loss. */
+  --glass-tint:   saturate(140%);
 
   --ink:          #ededed;   /* value — bright/primary text */
   --ink-dim:      #b4b4b4;   /* body copy (web-readability tier) */
@@ -347,8 +353,8 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border-radius: 0;                      /* hard-edged */
   color: var(--ink);
   background: var(--glass);       /* frosted glass, like the nav/cards */
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-tint);
+  backdrop-filter: var(--glass-tint);
   cursor: pointer;
   transition: border-color 150ms ease-out, background 150ms ease-out, color 150ms ease-out;
 }
@@ -563,8 +569,8 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border: 1px solid var(--rule-bright);
   border-radius: 0;          /* hard-edged */
   background: var(--glass);   /* frosted glass, like the nav/cards/buttons */
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-tint);
+  backdrop-filter: var(--glass-tint);
   color: var(--ink);
   cursor: pointer;
   transition: border-color 150ms ease-out, color 150ms ease-out;
@@ -595,10 +601,10 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   margin-top: 8px;
 }
 .feature {
-  /* same frosted infill as the floating nav bar */
+  /* same frosted infill as the floating nav bar (blur dropped — see --glass-tint) */
   background: var(--glass);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-tint);
+  backdrop-filter: var(--glass-tint);
   padding-bottom: clamp(24px, 2.6vw, 32px);
   overflow: hidden;
 }
@@ -759,8 +765,8 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   min-height: 92px;
   resize: vertical;
   background: var(--glass);   /* frosted glass, like the nav/cards */
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-tint);
+  backdrop-filter: var(--glass-tint);
   border: 1px solid var(--rule-bright);
   border-radius: 0;
   color: var(--ink);
@@ -950,8 +956,8 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border: 0;
   border-radius: 0;
   background: var(--glass);   /* frosted glass — inactive */
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-tint);
+  backdrop-filter: var(--glass-tint);
   color: var(--ink-faint);
   font-family: var(--font-sans);
   font-size: 11px;
