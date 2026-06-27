@@ -181,9 +181,19 @@ var pad = OqraScroll.pad, clamp = OqraScroll.clamp;
     var scrollable = root.offsetHeight - window.innerHeight;
     var p = scrollable > 0 ? clamp(-root.getBoundingClientRect().top / scrollable, 0, 1) : 0;
     var stage = OqraScroll.stageAt(p * budget, N, HOLD, FADE);
-    for (var i = 0; i < N; i++) {
-      // image 0 = always-on base; image i fades in over (i-1) across [i-1, i].
-      imgs[i].style.opacity = (i === 0) ? "1" : clamp(stage - (i - 1), 0, 1).toFixed(3);
+    // image 0 = always-on base; image i fades in over (i-1) across [i-1, i].
+    var op = [], topOpaque = 0, i;
+    for (i = 0; i < N; i++) {
+      op[i] = (i === 0) ? 1 : clamp(stage - (i - 1), 0, 1);
+      if (op[i] >= 1) topOpaque = i;   // highest image that fully covers the stack
+    }
+    // Composite only what's actually seen: the topmost opaque image hides every
+    // image beneath it (otherwise they're painted then covered — pure overdraw,
+    // the fill-rate cost that makes this crossfade chop on a phone GPU), plus any
+    // image still fading in above it. So 1 layer during a dwell, 2 mid-fade — not N.
+    for (i = 0; i < N; i++) {
+      imgs[i].style.opacity = op[i].toFixed(3);
+      imgs[i].style.visibility = (i >= topOpaque && op[i] > 0) ? "visible" : "hidden";
     }
     caption(clamp(Math.round(stage), 0, N - 1), N);
   });
