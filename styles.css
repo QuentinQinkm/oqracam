@@ -526,9 +526,17 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .speclist li { padding: 0 14px; border-left: 1px solid var(--rule-bright); }
 .speclist li:first-child { padding-left: 0; border-left: 0; }
 
+/* Reassurance at the install decision — quiet, mono, like a spec line. */
+.hero__free {
+  margin: 16px 0 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: var(--ink-faint);
+}
 /* Device requirement — quiet, sets expectations before the install decision. */
 .hero__req {
-  margin: 14px 0 0;
+  margin: 6px 0 0;
   font-size: 12px;
   letter-spacing: 0.02em;
   color: var(--ink-ghost);
@@ -918,6 +926,16 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   font-size: 13px;
   letter-spacing: 0.1em;
   cursor: ew-resize;
+}
+/* Affordance: brighten the border on hover; go solid + "grabbing" while
+   dragging (compare.js / stepper.js toggle .is-grabbing on the control). No
+   scale-bump — the hard-edged datasheet handle stays put. */
+.ba__handle:hover, .develop__scrub-handle:hover { border-color: #fff; }
+.ba.is-grabbing .ba__handle,
+.develop__scrub.is-grabbing .develop__scrub-handle {
+  border-color: #fff;
+  background: rgba(0, 0, 0, 0.82);
+  cursor: grabbing;
 }
 .ba__handle {
   position: absolute;

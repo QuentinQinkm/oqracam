@@ -26,6 +26,34 @@
   <link rel="icon" type="image/png" href="/assets/img/oqra-mark.png" />
   <link rel="apple-touch-icon" type="image/png" href="/assets/img/oqra-apple-touch.png" />
   <link rel="manifest" href="/manifest.json" />
+
+  <!-- Structured data (non-executable; allowed under script-src 'self'). -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Oqra",
+        "applicationCategory": "PhotographyApplication",
+        "operatingSystem": "iOS 18+",
+        "url": "https://oqra.app/",
+        "image": "https://oqra.app/assets/img/oqra-icon-1024.png",
+        "description": "A film camera for iPhone that develops every frame through a real film engine — grain, halation, and dye, all on device. Load a film or build your own and share it as a code.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Isn't this just a filter?", "acceptedAnswer": { "@type": "Answer", "text": "No. Oqra runs a real film-development engine — every shot is rebuilt from your full-resolution RAW through light-sensitive layers, with grain, halation, and dye. The look is part of the photo, not a preset laid on top." } },
+          { "@type": "Question", "name": "What is a film, and how do I make or share one?", "acceptedAnswer": { "@type": "Answer", "text": "A film is a look you load, then point and shoot. Build your own in the editor and save it to your collection. Every film folds into a code: share it as a link or QR, and anyone with Oqra can scan it to shoot your film." } },
+          { "@type": "Question", "name": "Do my photos stay private?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — everything develops on your phone. No account, no servers, nothing uploaded." } },
+          { "@type": "Question", "name": "What iPhone do I need, and do I need a Pro?", "acceptedAnswer": { "@type": "Answer", "text": "iPhone 13 or newer, on iOS 18 or later, and it is free while we are in the TestFlight beta. You do not need a Pro — Pro models capture Apple ProRAW, every other iPhone captures full-resolution DNG, and Oqra develops both." } }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -37,8 +65,9 @@
 <nav class="nav">
   <a class="nav__brand" href="#top" aria-label="Oqra — home"><img class="nav__logo" src="/assets/img/oqra-logo.png" alt="" width="240" height="146" />OQRA</a>
   <div class="nav__links">
-    <a class="is-secondary" href="#features">Features</a>
+    <a class="is-secondary" href="#features">Develop</a>
     <a class="is-secondary" href="#compare">See it</a>
+    <a class="is-secondary" href="#shareflow">Build &amp; share</a>
     <a href="#support">Support</a>
     <a class="accent" href="https://testflight.apple.com/join/Ya9JqGjF">Join beta</a>
   </div>
@@ -78,6 +107,7 @@
         <a class="btn btn--primary" href="https://testflight.apple.com/join/Ya9JqGjF">Join the TestFlight beta</a>
         <span class="btn btn--soon">On the App&nbsp;Store<span class="btn__note">&nbsp;· soon</span></span>
       </div>
+      <p class="hero__free">Free during the beta&nbsp;· no account, nothing leaves your phone.</p>
       <p class="hero__req">Requires iPhone&nbsp;13 or newer · iOS&nbsp;18 or later</p>
     </div>
 
@@ -156,7 +186,8 @@
           </div>
           <p class="develop__intro">A real film engine builds the look from
              light-sensitive layers, each with its own tone, dye, and grain —
-             the same way film does.</p>
+             the same way film does. The look is developed <em>into</em> the
+             photo, not a filter on top.</p>
         </div>
       </div>
     </div>
@@ -175,7 +206,7 @@
 
     <div class="ba" id="ba" style="--split:50%;" tabindex="0"
          role="slider" aria-label="Before / after reveal — drag, or use the left and right arrow keys"
-         aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% developed">
       <img class="ba__img ba__after"  id="baAfter"  src="/assets/img/samples/flower_amethyst.webp" alt="Developed in Oqra" width="1024" height="1024" decoding="async" draggable="false" />
       <img class="ba__img ba__before" id="baBefore" src="/assets/img/samples/flower_og.webp" alt="Original capture" width="1024" height="1024" decoding="async" draggable="false" />
       <span class="ba__label ba__label--l">Original</span>
@@ -242,8 +273,8 @@
         <button id="decodeBtn" class="btn" type="button">Decode recipe</button>
         <button id="downloadBtn" class="btn btn--primary" type="button" hidden>Download .fbp</button>
       </div>
-      <div id="decodeStatus" class="decoder__status"></div>
-      <div id="recipeSpec"></div>
+      <div id="decodeStatus" class="decoder__status" role="status" aria-live="polite"></div>
+      <div id="recipeSpec" aria-live="polite"></div>
     </div>
   </div>
 </section>

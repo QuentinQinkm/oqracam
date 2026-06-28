@@ -72,6 +72,9 @@ var pad = OqraScroll.pad, clamp = OqraScroll.clamp;
     if (scrub) {
       scrub.style.setProperty("--scrub", pos.toFixed(4));   // unitless 0..1; CSS insets the travel
       scrub.setAttribute("aria-valuenow", String(Math.round(stage)));
+      // Voice the stage by NAME, not a bare index ("One layer, in colour" not "8").
+      var nm = imgs[clamp(Math.round(stage), 0, N - 1)].getAttribute("data-name");
+      if (nm) scrub.setAttribute("aria-valuetext", nm);
     }
     render(stage);
   }
@@ -87,14 +90,15 @@ var pad = OqraScroll.pad, clamp = OqraScroll.clamp;
     var dragging = false;
     scrub.addEventListener("pointerdown", function (e) {
       dragging = true;
+      scrub.classList.add("is-grabbing");
       autoplayed = true; sliding = false;   // a manual grab pre-empts the auto-develop
       if (scrub.setPointerCapture) { try { scrub.setPointerCapture(e.pointerId); } catch (_) {} }
       setFromX(e.clientX);
       e.preventDefault();
     });
     scrub.addEventListener("pointermove", function (e) { if (dragging) { setFromX(e.clientX); e.preventDefault(); } });
-    scrub.addEventListener("pointerup",   function () { dragging = false; });
-    scrub.addEventListener("pointercancel", function () { dragging = false; });
+    scrub.addEventListener("pointerup",   function () { dragging = false; scrub.classList.remove("is-grabbing"); });
+    scrub.addEventListener("pointercancel", function () { dragging = false; scrub.classList.remove("is-grabbing"); });
     scrub.addEventListener("keydown", function (e) {
       var step = 1 / (N - 1);
       autoplayed = true; sliding = false;
