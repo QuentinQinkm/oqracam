@@ -22,7 +22,7 @@
     var summary = el.querySelector("summary");
     var content = el.querySelector(".faq__a");
     if (!summary || !content) return;
-    var animation = null, closing = false, expanding = false;
+    var animation = null, fade = null, closing = false, expanding = false;
 
     function finish(open) {
       el.open = open;
@@ -30,10 +30,15 @@
       el.style.height = ""; el.style.overflow = "";   // hand height back to layout (auto)
     }
     // Animate the <details> box height from its CURRENT rendered height (so a
-    // reversed mid-flight toggle starts where it is) to the target.
+    // reversed mid-flight toggle starts where it is) to the target. A composited
+    // opacity fade on the content runs alongside — opacity is GPU-cheap and
+    // smooths over the per-frame layout cost of the height tween.
     function animateTo(endPx, open) {
       if (animation) animation.cancel();
+      if (fade) fade.cancel();
       animation = el.animate({ height: [el.offsetHeight + "px", endPx] },
+                             { duration: DUR, easing: EASE });
+      fade = content.animate({ opacity: [open ? 0 : 1, open ? 1 : 0] },
                              { duration: DUR, easing: EASE });
       animation.onfinish = function () { finish(open); };
       animation.oncancel = function () { closing = false; expanding = false; };
