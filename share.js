@@ -15,7 +15,10 @@
                   dmax9 fog8 hdToe8 hdGamma9 hdShoulder8 crystalSize8
      v4 grain   : flag+localToneMap(1+7?) flag+grainGain(1+7?)
                   flag+grainSharpness(1+7?)            (v>=4 only)
-     name(v2-4) : len1 + UTF-8, byte-aligned        · CRC-16/CCITT-FALSE
+     v5 optics  : lensEnabled1 flag+lensStrength(1+7?) flag+lensCoverage(1+7?)
+                  flag+dyeBleedRadius(1+7?) flag+dyeBleedStrength(1+7?)
+                  flag+interImageGain(1+7?)            (v>=5 only)
+     name(v2-5) : len1 + UTF-8, byte-aligned        · CRC-16/CCITT-FALSE
    ============================================================ */
 (function () {
   "use strict";
@@ -46,6 +49,11 @@
     crystalSize:   [0, 0.5],
     grainGain:     [0, 2],
     grainSharpness:[0, 1],
+    lensStrength:    [0, 1],
+    lensCoverage:    [0, 1],
+    dyeBleedRadius:  [0, 20],
+    dyeBleedStrength:[0, 1],
+    interImageGain:  [0, 1],
   };
 
   function extractPayload(input) {
@@ -130,7 +138,7 @@
 
     var r = new BitReader(body);
     var version = r.read(4);
-    if (version < 1 || version > 4) throw new Error("unsupportedVersion: " + version);
+    if (version < 1 || version > 5) throw new Error("unsupportedVersion: " + version);
 
     var layerCount = r.read(2) + 1;
     var hasCalK = r.read(1) === 1;
@@ -158,6 +166,13 @@
     global.localToneMapAmount = version === 3 ? dq(r.read(7), R.localToneMap, 7) : null;
     global.grainGain = null;
     global.grainSharpness = null;
+    // v5 optics — default AUTO/off; the v5 block below overwrites when present.
+    global.lensEnabled = null;
+    global.lensStrength = null;
+    global.lensCoverage = null;
+    global.dyeBleedRadius = null;
+    global.dyeBleedStrength = null;
+    global.interImageGain = null;
 
     var layers = [];
     for (var i = 0; i < layerCount; i++) {
@@ -189,12 +204,29 @@
       if (v4HasGS) global.grainSharpness = dq(r.read(7), R.grainSharpness, 7);
     }
 
-    // Optional name block (v2/v3/v4), byte-aligned after the recipe bits.
+    // v5 optics block (after the v4 grain block): vignette (lens*), dye-bleed,
+    // locked inter-image. lensEnabled is a bare on/off bit (off == null ==
+    // default); each Double is a presence flag + 7-bit value. v5Bits tracks the
+    // exact width read so the name block's byte offset below stays correct.
+    // Absent in v1–v4 (they decode to null = engine defaults).
+    var v5Bits = 0;
+    if (version >= 5) {
+      if (r.read(1) === 1) global.lensEnabled = true;
+      v5Bits += 1;
+      if (r.read(1) === 1) { global.lensStrength = dq(r.read(7), R.lensStrength, 7); v5Bits += 8; } else { v5Bits += 1; }
+      if (r.read(1) === 1) { global.lensCoverage = dq(r.read(7), R.lensCoverage, 7); v5Bits += 8; } else { v5Bits += 1; }
+      if (r.read(1) === 1) { global.dyeBleedRadius = dq(r.read(7), R.dyeBleedRadius, 7); v5Bits += 8; } else { v5Bits += 1; }
+      if (r.read(1) === 1) { global.dyeBleedStrength = dq(r.read(7), R.dyeBleedStrength, 7); v5Bits += 8; } else { v5Bits += 1; }
+      if (r.read(1) === 1) { global.interImageGain = dq(r.read(7), R.interImageGain, 7); v5Bits += 8; } else { v5Bits += 1; }
+    }
+
+    // Optional name block (v2–v5), byte-aligned after the recipe bits.
     var name = null;
     if (version >= 2) {
       var recipeBits = 10 + 52 + (hasCalK ? 10 : 0) + (hasRawBoost ? 7 : 0) +
         (version === 3 ? 7 : 0) + 83 * layerCount +
-        (version >= 4 ? (3 + (v4HasLTM ? 7 : 0) + (v4HasGG ? 7 : 0) + (v4HasGS ? 7 : 0)) : 0);
+        (version >= 4 ? (3 + (v4HasLTM ? 7 : 0) + (v4HasGG ? 7 : 0) + (v4HasGS ? 7 : 0)) : 0) +
+        v5Bits;
       var lenIdx = Math.ceil(recipeBits / 8);
       if (lenIdx < body.length) {
         var len = body[lenIdx];
@@ -231,6 +263,14 @@
     // default-grain share stays byte-stable (matches the Swift encodeIfPresent).
     if (g.grainGain != null) globalOut.grainGain = g.grainGain;
     if (g.grainSharpness != null) globalOut.grainSharpness = g.grainSharpness;
+    // v5 optics — vignette, dye-bleed, locked inter-image. Emit only when
+    // present so a recipe using none stays byte-stable (matches encodeIfPresent).
+    if (g.lensEnabled != null) globalOut.lensEnabled = g.lensEnabled;
+    if (g.lensStrength != null) globalOut.lensStrength = g.lensStrength;
+    if (g.lensCoverage != null) globalOut.lensCoverage = g.lensCoverage;
+    if (g.dyeBleedRadius != null) globalOut.dyeBleedRadius = g.dyeBleedRadius;
+    if (g.dyeBleedStrength != null) globalOut.dyeBleedStrength = g.dyeBleedStrength;
+    if (g.interImageGain != null) globalOut.interImageGain = g.interImageGain;
 
     var envelope = {
       kind: "preset",
