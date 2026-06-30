@@ -5,3 +5,10 @@ assets/AppImages/
 
 # HEIC source scenes (converted to /scenes/*.jpg for the web)
 assets/img/samples/*.heic
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
