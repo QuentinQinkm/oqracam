@@ -2,7 +2,10 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["R47YR9KUY4.com.kuangming.FilmBo-iOS"],
+        "appIDs": [
+          "FXQ469K24K.com.kuangming.oqra",
+          "R47YR9KUY4.com.kuangming.FilmBo-iOS"
+        ],
         "components": [
           {
             "/": "/p/*",
