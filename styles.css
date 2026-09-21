@@ -1332,6 +1332,20 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 
 /* Primary download with a secondary beta link. */
 .btn-row.download-links { flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-.testflight-link { font-size: 13px; color: var(--ink-dim, #aaa); text-decoration: underline; text-underline-offset: 3px; }
+.testflight-link { border-bottom: 0; font-size: 13px; color: var(--ink-dim, #aaa); text-decoration: underline; text-underline-offset: 3px; }
 .testflight-link:hover { color: #fff; }
 .download-links a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+.download-links .btn--primary {
+  border: 2px solid transparent;
+  color: #fff;
+  background:
+    linear-gradient(rgba(0,0,0,.84), rgba(0,0,0,.84)) padding-box,
+    var(--spectrum) border-box;
+  box-shadow: 0 0 22px rgba(0,180,255,.12);
+  transition: filter 150ms ease-out, box-shadow 150ms ease-out;
+}
+.download-links .btn--primary:hover {
+  filter: brightness(1.2) saturate(1.12);
+  box-shadow: 0 0 30px rgba(0,200,200,.22);
+}
