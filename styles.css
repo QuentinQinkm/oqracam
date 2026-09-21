@@ -1329,3 +1329,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   .shareflow__img { position: static; opacity: 1; width: min(200px, 44vw); height: auto; }
   .shareflow__cap { display: none; }
 }
+
+/* Primary download with a secondary beta link. */
+.btn-row.download-links { flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.testflight-link { font-size: 13px; color: var(--ink-dim, #aaa); text-decoration: underline; text-underline-offset: 3px; }
+.testflight-link:hover { color: #fff; }
+.download-links a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
