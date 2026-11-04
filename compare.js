@@ -35,7 +35,7 @@
 
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
-  // ---- speculative preload: make scene/preset switches instant cuts ----
+  // ---- speculative preload: make scene/preset switches start at once ----
   var SCENES = ["street", "bay", "river", "pier", "cherry"];
   var LOOKS  = ["golden", "sunburn", "window", "monor"];
   var warmed = {};
@@ -48,6 +48,10 @@
   function warmCross() {
     var i;
     for (i = 0; i < LOOKS.length; i++)  warm(BASE + scene + "_" + LOOKS[i] + ".webp");
+    if (window.OqraLight) {
+      for (i = 0; i < LOOKS.length; i++)  OqraLight.warm(scene + "_" + LOOKS[i]);
+      for (i = 0; i < SCENES.length; i++) OqraLight.warm(SCENES[i] + "_" + look);
+    }
     for (i = 0; i < SCENES.length; i++) { warm(BASE + SCENES[i] + "_" + look + ".webp"); warm(BASE + SCENES[i] + "_og.webp"); }
   }
   // Skip the speculative warm on data-saver / 2g.
@@ -61,26 +65,29 @@
     idle(function () { warmPending = false; warmCross(); });
   }
 
-  // Decode the new frame off-DOM, THEN assign — so a switch is a clean cut, never
-  // a half-painted frame. A per-element token guards against out-of-order decodes.
-  function swapImg(el, url) {
-    el._want = url;
-    if (el.getAttribute("src") === url) return;
-    warm(url);
-    var tmp = new Image(); tmp.decoding = "async"; tmp.src = url;
-    function show() { if (el._want === url) el.src = url; }
-    if (tmp.decode) tmp.decode().then(show, function () {});
-    else if (tmp.complete && tmp.naturalWidth) show();
-    else tmp.addEventListener("load", show, { once: true });
-  }
+  // The photos and the page light wait for each other, then fade on the same frame.
+  // The labels change at once, so a tap always answers immediately.
+  var FADE_MS = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 320;
+  var section = ba.closest("section");
+  var beforeFader = OqraScroll.crossfader(before);
+  var afterFader = OqraScroll.crossfader(after);
+  var swaps = 0;
 
   function swap() {
-    swapImg(before, BASE + scene + "_og.webp");
-    swapImg(after,  BASE + scene + "_" + look + ".webp");
-    before.alt = cap(scene) + ", original capture";
-    after.alt  = cap(scene) + ", developed in Oqra (" + NAMES[look] + ")";
+    var id = ++swaps;
     labelR.textContent = NAMES[look];
     if (note) note.textContent = CHARS[look] || "";
+    Promise.all([
+      beforeFader.load(BASE + scene + "_og.webp", cap(scene) + ", original capture"),
+      afterFader.load(BASE + scene + "_" + look + ".webp",
+                      cap(scene) + ", developed in Oqra (" + NAMES[look] + ")"),
+      window.OqraLight ? OqraLight.prepare(section, scene + "_" + look) : false
+    ]).then(function (ready) {
+      if (id !== swaps) return;
+      if (ready[0]) beforeFader.reveal(FADE_MS);
+      if (ready[1]) afterFader.reveal(FADE_MS);
+      if (ready[2]) OqraLight.reveal(FADE_MS);
+    });
   }
 
   function activate(seg, btn) {

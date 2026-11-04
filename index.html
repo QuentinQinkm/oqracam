@@ -58,9 +58,9 @@
 </head>
 <body>
 
-<!-- Page-wide spectrum glow (decorative). A real element so hero.js can drive
-     its transform/opacity directly on the compositor — see styles.css. -->
-<div class="hero-glow" aria-hidden="true"></div>
+<!-- Page light (decorative). light.js picks the image for the section on screen from its
+     data-light; hero.js fades the layer in as the hero scrolls away. -->
+<div class="page-light" aria-hidden="true"><img alt=""></div>
 
 <!-- ============================== NAV ============================== -->
 <nav class="nav">
@@ -125,7 +125,7 @@
 </section>
 
 <!-- ============================== IMMERSIVE SAMPLES (shot on Oqra) ============================== -->
-<section class="gallery" id="scenes" aria-roledescription="carousel" aria-label="Photos shot on Oqra">
+<section class="gallery" id="scenes" data-light="scene-6" aria-roledescription="carousel" aria-label="Photos shot on Oqra">
   <h2 class="gallery__title">Shot on Oqra</h2>
   <div class="gallery__stage" tabindex="0" role="group" aria-label="Photo gallery — swipe or use the arrow keys">
     <img class="gallery__img is-active" src="/assets/img/scenes/scene-6.webp" alt="A blue bay seen over tiled rooftops, with a breakwater and seaside hotels under a green headland, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
@@ -149,7 +149,7 @@
 </section>
 
 <!-- ============================== FEATURES ============================== -->
-<section class="divided" id="features">
+<section class="divided" id="features" data-light="build-7-halation">
   <div class="container--wide">
     <!-- Develop: scroll-driven, sticky build-up. ONE real Snow capture
          (developed through a shared Verdigris recipe) walked through the whole
@@ -208,7 +208,7 @@
 </section>
 
 <!-- ============================== SEE THE FILMS (before / after) ============================== -->
-<section class="divided" id="compare">
+<section class="divided" id="compare" data-light="street_golden">
   <div class="container">
     <p class="tag">See the presets</p>
     <h2>The same frame, two ways.</h2>
@@ -247,7 +247,7 @@
 </section>
 
 <!-- ============================== BUILD & SHARE ============================== -->
-<section class="divided prose" id="build">
+<section class="divided prose" id="build" data-light="edit-1000">
   <div class="container--wide">
     <p class="tag">Build &amp; share</p>
     <h2>Build your own preset, then share it</h2>
@@ -288,7 +288,7 @@
 </section>
 
 <!-- ============================== BUILT FOR IPHONE (native capture) ============================== -->
-<section class="divided" id="native">
+<section class="divided" id="native" data-light="native-control">
   <div class="container--wide">
     <!-- Taller than square, sideways.js pins the head and moves only the cards left. -->
     <div class="native-run">
@@ -421,6 +421,7 @@
 
 <script src="/scroll.js" defer></script>
 <script src="/hero.js" defer></script>
+<script src="/light.js" defer></script>
 <script src="/compare.js" defer></script>
 <script src="/stepper.js" defer></script>
 <script src="/sideways.js" defer></script>
