@@ -95,7 +95,52 @@ var OqraScroll = (function () {
     };
   }
 
+  // Crossfades an <img> to new photos using a second copy, fading the new one in over
+  // the old so nothing dips to black. load() gets the photo ready and resolves true if
+  // it is still the one wanted; reveal() then starts the fade, so several crossfades
+  // can begin on the same frame. The fade itself runs on the compositor.
+  function crossfader(el) {
+    var live = el, fade = null, wanted = null;
+    var idle = document.createElement("img");
+    idle.className = el.className + " is-idle";
+    idle.alt = "";
+    idle.decoding = "async";
+    el.parentNode.insertBefore(idle, el.nextSibling);
+
+    return {
+      load: function (url, alt) {
+        wanted = url;
+        if (live.getAttribute("src") === url) return Promise.resolve(false);
+        // The photo under a running fade is about to change, so end the fade first.
+        if (fade) fade.finish();
+        idle.src = url;
+        if (alt !== undefined) idle.alt = alt;
+        return idle.decode().then(function () { return wanted === url; },
+                                  function () { return false; });
+      },
+      reveal: function (ms) {
+        var incoming = idle, outgoing = live;
+        if (fade) fade.finish();
+        incoming.parentNode.insertBefore(incoming, outgoing.nextSibling);
+        incoming.classList.remove("is-idle");
+        outgoing.alt = "";
+        live = incoming;
+        idle = outgoing;
+        function settle() {
+          if (idle !== outgoing) return;
+          outgoing.classList.add("is-idle");
+          fade = null;
+        }
+        if (!ms) { settle(); return; }
+        fade = incoming.animate([{ opacity: 0 }, { opacity: 1 }],
+                                { duration: ms, easing: "ease-out" });
+        fade.finished.then(settle, function () {});
+      }
+    };
+  }
+
   return {
+    crossfader: crossfader,
     clamp: clamp, pad: pad, tokens: tokens, turnAt: turnAt,
     onScroll: onScroll, refresh: refresh, stageAt: stageAt, captioner: captioner
   };

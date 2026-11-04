@@ -1,10 +1,10 @@
 // Hero scroll choreography.
-// The spectrum glow stays hidden through the hero, then grows in from the top as it
-// scrolls away, on every screen. Windows taller than square also pin the hero and
+// The page light stays hidden through the hero, then fades in as it scrolls away, on
+// every screen. Windows taller than square also pin the hero and
 // crossfade frame A (headline + camera) into frame B (editor + intro).
 //
 // Progressive: only runs with JS on and motion allowed. Otherwise the frames stack
-// in normal flow and the decorative glow stays hidden.
+// in normal flow and the decorative light stays hidden.
 (function () {
   var hero = document.getElementById("top");
   if (!hero) return;
@@ -20,9 +20,9 @@
   var pin = hero.querySelector(".hero__pin");
   var frameA = hero.querySelector(".hero__frame--a");
   var frameB = hero.querySelector(".hero__frame--b");
-  var glowEl = document.querySelector(".hero-glow"); // driven directly (no CSS var)
+  var lightEl = document.querySelector(".page-light"); // driven directly (no CSS var)
   var pinned = hero.classList.contains("is-pinned");
-  var glowScale, glowOpacity;
+  var lightOpacity;
 
   function frameWriter(el) {
     var previousOpacity, previousActive;
@@ -70,26 +70,22 @@
 
     // Starts once the hero's end is on screen, so the second section stays on black.
     var g = OqraScroll.clamp((vh - hero.getBoundingClientRect().bottom) / (0.65 * vh), 0, 1);
-    return { phase: q, glow: g };
+    return { phase: q, light: g };
   }
 
   function render(state) {
-    var q = state.phase, g = state.glow;
+    var q = state.phase, g = state.light;
     if (pinned) {
       // A clears before B arrives: the two layouts overlap and collide mid-fade.
       setFrameA(String(Math.max(0, 1 - 2 * q)), q <= 0.5);
       setFrameB(String(Math.max(0, 2 * q - 1)), q > 0.5);
     }
-    if (glowEl) {
-      var scale = g.toFixed(3);
-      var opacity = g > 0 ? (0.10 + g * 0.18).toFixed(3) : "0";
-      if (scale !== glowScale) {
-        glowEl.style.transform = "translateX(-50%) scaleY(" + scale + ")";
-        glowScale = scale;
-      }
-      if (opacity !== glowOpacity) {
-        glowEl.style.opacity = opacity;
-        glowOpacity = opacity;
+    if (lightEl) {
+      var opacity = (g * 0.62).toFixed(3);
+      if (opacity !== lightOpacity) {
+        lightEl.style.opacity = opacity;
+        lightEl.style.visibility = g > 0 ? "visible" : "hidden";
+        lightOpacity = opacity;
       }
     }
   }

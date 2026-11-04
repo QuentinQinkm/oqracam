@@ -64,6 +64,11 @@
     var text = pad(n + 1) + " / " + pad(total);
     if (counter && counter.textContent !== text) counter.textContent = text;
     warmAround(n);
+    if (window.OqraLight) {
+      var name = (imgs[n].getAttribute("data-src") || imgs[n].getAttribute("src"))
+        .split("/").pop().replace(".webp", "");
+      OqraLight.prepare(gallery, name).then(function (ok) { if (ok) OqraLight.reveal(320); });
+    }
   }
   function settle() {
     clearTimeout(settleTimer);
