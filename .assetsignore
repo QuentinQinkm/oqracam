@@ -11,3 +11,11 @@ README.md
 # Source photos (DNG originals + exported HEIC looks) — heavy, not for the web.
 # The web-ready squares live in assets/img/samples/ and DO publish.
 assets/SamplePhotos/
+# Deployment source and tooling are never website assets.
+.github/
+scripts/
+docs/
+dist/
+build/
+esa.jsonc
+assets/AppImages/

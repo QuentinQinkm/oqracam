@@ -1,0 +1,9 @@
+{
+  "name": "oqracam",
+  "installCommand": "",
+  "buildCommand": "node scripts/build-site.mjs",
+  "entry": "./build/esa-entry.js",
+  "assets": {
+    "directory": "./dist"
+  }
+}

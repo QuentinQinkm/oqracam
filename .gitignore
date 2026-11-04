@@ -5,3 +5,7 @@ assets/AppImages/
 
 # HEIC source scenes (converted to /scenes/*.jpg for the web)
 assets/img/samples/*.heic
+
+# Generated ESA deployment output.
+dist/
+build/
