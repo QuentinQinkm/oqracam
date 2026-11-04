@@ -54,16 +54,24 @@
   var conn = navigator.connection || {};
   var thrifty = conn.saveData || /(^|-)2g$/.test(conn.effectiveType || "");
   var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 200); };
-  function warmSoon() { if (!thrifty) idle(warmCross); }
+  var near = false, warmPending = false;
+  function warmSoon() {
+    if (!near || thrifty || warmPending) return;
+    warmPending = true;
+    idle(function () { warmPending = false; warmCross(); });
+  }
 
   // Decode the new frame off-DOM, THEN assign — so a switch is a clean cut, never
   // a half-painted frame. A per-element token guards against out-of-order decodes.
   function swapImg(el, url) {
+    el._want = url;
     if (el.getAttribute("src") === url) return;
-    el._want = url; warm(url);
+    warm(url);
     var tmp = new Image(); tmp.decoding = "async"; tmp.src = url;
     function show() { if (el._want === url) el.src = url; }
-    if (tmp.decode) tmp.decode().then(show, show); else show();
+    if (tmp.decode) tmp.decode().then(show, function () {});
+    else if (tmp.complete && tmp.naturalWidth) show();
+    else tmp.addEventListener("load", show, { once: true });
   }
 
   function swap() {
@@ -86,17 +94,26 @@
   // Sync aria-pressed with the initial .active markup.
   activate(sceneSeg, sceneSeg.querySelector("button.active"));
   activate(lookSeg, lookSeg.querySelector("button.active"));
-  warmSoon();   // warm the cross around the default selection once idle
+  // This demo is several screens down; don't race the hero for its bandwidth.
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      near = true; io.disconnect();
+      before.loading = after.loading = "eager";
+      warmSoon();
+    }, { rootMargin: (window.innerHeight || 800) + "px 0px" });
+    io.observe(ba);
+  }
 
   sceneSeg.addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b || !b.dataset.scene) return;
-    scene = b.dataset.scene; activate(sceneSeg, b); swap(); warmSoon();
+    near = true; scene = b.dataset.scene; activate(sceneSeg, b); swap(); warmSoon();
   });
   lookSeg.addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b || !b.dataset.look) return;
-    look = b.dataset.look; activate(lookSeg, b); swap(); warmSoon();
+    near = true; look = b.dataset.look; activate(lookSeg, b); swap(); warmSoon();
   });
 
   // ---- drag the divider ----
@@ -111,11 +128,21 @@
     ba.setAttribute("aria-valuetext", (100 - n) + "% developed");
   }
   function setSplit(clientX) {
-    var r = ba.getBoundingClientRect();
+    var r = dragBounds || ba.getBoundingClientRect();
+    if (!r.width) return;
     setPct((clientX - r.left) / r.width);
   }
 
-  var dragging = false;
+  var dragging = false, dragBounds = null, pendingX = null, dragFrame = 0;
+  function paintDrag() {
+    dragFrame = 0;
+    if (pendingX !== null) { setSplit(pendingX); pendingX = null; }
+  }
+  function endDrag() {
+    if (dragFrame) { cancelAnimationFrame(dragFrame); paintDrag(); }
+    dragging = false; dragBounds = null;
+    ba.classList.remove("is-grabbing");
+  }
   function onHandle(e) { return !!(e.target.closest && e.target.closest(".ba__handle")); }
   ba.addEventListener("pointerdown", function (e) {
     // Touch must START on the handle to drag — otherwise let the gesture
@@ -123,18 +150,27 @@
     // divider to the finger). Mouse/pen keep click-anywhere-to-set.
     if (e.pointerType === "touch" && !onHandle(e)) return;
     dragging = true;
+    dragBounds = ba.getBoundingClientRect();
     ba.classList.add("is-grabbing");
     if (ba.setPointerCapture) { try { ba.setPointerCapture(e.pointerId); } catch (_) {} }
     setSplit(e.clientX);
     e.preventDefault();
   });
-  ba.addEventListener("pointermove", function (e) { if (dragging) { setSplit(e.clientX); e.preventDefault(); } });
-  ba.addEventListener("pointerup",   function () { dragging = false; ba.classList.remove("is-grabbing"); });
-  ba.addEventListener("pointercancel", function () { dragging = false; ba.classList.remove("is-grabbing"); });
+  ba.addEventListener("pointermove", function (e) {
+    if (!dragging) return;
+    pendingX = e.clientX;
+    if (!dragFrame) dragFrame = requestAnimationFrame(paintDrag);
+    e.preventDefault();
+  });
+  ba.addEventListener("pointerup", endDrag);
+  ba.addEventListener("pointercancel", endDrag);
+  ba.addEventListener("lostpointercapture", endDrag);
+  window.addEventListener("resize", function () { dragBounds = null; }, { passive: true });
 
   // ---- keyboard a11y ----
   ba.addEventListener("keydown", function (e) {
-    var cur = parseFloat(ba.style.getPropertyValue("--split")) || 50;
+    var cur = parseFloat(ba.style.getPropertyValue("--split"));
+    if (!isFinite(cur)) cur = 50;
     if      (e.key === "ArrowLeft")  { setPct((cur - 4) / 100); e.preventDefault(); }
     else if (e.key === "ArrowRight") { setPct((cur + 4) / 100); e.preventDefault(); }
     else if (e.key === "Home")       { setPct(0); e.preventDefault(); }

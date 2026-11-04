@@ -4,7 +4,7 @@
 // crossfade frame A (headline + camera) into frame B (editor + intro).
 //
 // Progressive: only runs with JS on and motion allowed. Otherwise the frames stack
-// in normal flow and the glow shows at its CSS default.
+// in normal flow and the decorative glow stays hidden.
 (function () {
   var hero = document.getElementById("top");
   if (!hero) return;
@@ -21,41 +21,77 @@
   var frameA = hero.querySelector(".hero__frame--a");
   var frameB = hero.querySelector(".hero__frame--b");
   var glowEl = document.querySelector(".hero-glow"); // driven directly (no CSS var)
+  var pinned = hero.classList.contains("is-pinned");
+  var glowScale, glowOpacity;
 
-  function setFrame(el, opacity, active) {
-    el.style.opacity = opacity;
-    el.style.pointerEvents = active ? "" : "none";
-  }
-
-  function update() {
-    var vh = window.innerHeight || 1;
-
-    if (row.matches) {
-      if (hero.classList.contains("is-pinned")) {
-        hero.classList.remove("is-pinned");
-        setFrame(frameA, "", true);
-        setFrame(frameB, "", true);
+  function frameWriter(el) {
+    var previousOpacity, previousActive;
+    return function (opacity, active) {
+      if (opacity !== previousOpacity) {
+        el.style.opacity = opacity;
+        previousOpacity = opacity;
       }
-    } else {
-      hero.classList.add("is-pinned");
+      if (active !== previousActive) {
+        el.style.pointerEvents = active ? "" : "none";
+        previousActive = active;
+      }
+    };
+  }
+  var setFrameA = frameWriter(frameA), setFrameB = frameWriter(frameB);
+
+  // Layout-mode writes happen on setup/resize, outside the shared scroll reads.
+  function syncMode() {
+    var nextPinned = !row.matches;
+    if (nextPinned === pinned) return;
+    pinned = nextPinned;
+    hero.classList.toggle("is-pinned", pinned);
+    if (!pinned) {
+      setFrameA("", true);
+      setFrameB("", true);
+    }
+    OqraScroll.refresh();
+  }
+  syncMode();
+  row.addEventListener("change", syncMode);
+  window.addEventListener("resize", syncMode, { passive: true });
+
+  function measure() {
+    var vh = window.innerHeight || 1;
+    var q;
+    if (pinned) {
       // Travel comes from measured heights, not vh: on phones CSS vh and
       // innerHeight disagree with the URL bar showing.
       var range = stage.offsetHeight - pin.offsetHeight;
       var scrolled = OqraScroll.clamp(-stage.getBoundingClientRect().top, 0, range);
       var units = 2 * HOLD + FADE;                  // the transition itself
       var x = (range > 0 ? scrolled / range : 0) * (units + TAIL);
-      var q = OqraScroll.stageAt(x, 2, HOLD, FADE);
-      // A clears before B arrives: the two layouts overlap and collide mid-fade.
-      setFrame(frameA, String(Math.max(0, 1 - 2 * q)), q <= 0.5);
-      setFrame(frameB, String(Math.max(0, 2 * q - 1)), q > 0.5);
+      q = OqraScroll.stageAt(x, 2, HOLD, FADE);
     }
 
     // Starts once the hero's end is on screen, so the second section stays on black.
     var g = OqraScroll.clamp((vh - hero.getBoundingClientRect().bottom) / (0.65 * vh), 0, 1);
+    return { phase: q, glow: g };
+  }
+
+  function render(state) {
+    var q = state.phase, g = state.glow;
+    if (pinned) {
+      // A clears before B arrives: the two layouts overlap and collide mid-fade.
+      setFrameA(String(Math.max(0, 1 - 2 * q)), q <= 0.5);
+      setFrameB(String(Math.max(0, 2 * q - 1)), q > 0.5);
+    }
     if (glowEl) {
-      glowEl.style.transform = "translateX(-50%) scaleY(" + g.toFixed(3) + ")";
-      glowEl.style.opacity = g > 0 ? (0.10 + g * 0.18).toFixed(3) : "0";
+      var scale = g.toFixed(3);
+      var opacity = g > 0 ? (0.10 + g * 0.18).toFixed(3) : "0";
+      if (scale !== glowScale) {
+        glowEl.style.transform = "translateX(-50%) scaleY(" + scale + ")";
+        glowScale = scale;
+      }
+      if (opacity !== glowOpacity) {
+        glowEl.style.opacity = opacity;
+        glowOpacity = opacity;
+      }
     }
   }
-  OqraScroll.onScroll(update);
+  OqraScroll.onScroll(measure, render);
 })();

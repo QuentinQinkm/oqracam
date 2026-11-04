@@ -106,16 +106,12 @@
 html { scroll-behavior: smooth; background: var(--bg); }
 
 
-/* The landing's spectrum glow, lifted out of the hero and pinned behind the
-   WHOLE page — a fixed, heavily-blurred band of the visible spectrum at top
-   centre. Because it's fixed and lives on <html> (with <body> transparent),
-   every part of the page — including the reserved space above the hero — sits
-   on this same canvas, so there's no black bar at the top. */
 /* Page-wide spectrum glow — a fixed, soft band anchored at the top, behind all
    content. A real element (not a pseudo) so hero.js can write its transform and
    opacity directly each frame (compositor-only, no tree-wide style invalidation).
-   hero.js grows it FROM the top (scaleY) as you scroll into phase two; this
-   default state (full) is what no-JS / reduced motion sees.
+   Start hidden, matching the initial hero state before deferred scripts load.
+   hero.js grows it from the top as the hero scrolls away. Without JavaScript or
+   with reduced motion, this decorative layer stays hidden.
 
    No filter: blur — the --spectrum gradient is already smooth between stops, so
    the softness is carried entirely by the mask (a radial falloff for the
@@ -127,7 +123,7 @@ html { scroll-behavior: smooth; background: var(--bg); }
   position: fixed;
   left: 50%;
   top: 0;
-  transform: translateX(-50%) scaleY(1);
+  transform: translateX(-50%) scaleY(0);
   transform-origin: top center;
   width: 120%;    /* a touch past the viewport so the horizontal falloff lands
                      off-screen (fixed elements don't add horizontal scroll) */
@@ -144,7 +140,7 @@ html { scroll-behavior: smooth; background: var(--bg); }
     radial-gradient(100% 78% at 50% 18%, #000 0%, #000 40%, transparent 100%),
     linear-gradient(to bottom, rgba(0,0,0,0.5) 0, #000 clamp(40px, 10vw, 140px));
   mask-composite: intersect;
-  opacity: 0.28;
+  opacity: 0;
   z-index: -1;
   pointer-events: none;
   will-change: transform, opacity;

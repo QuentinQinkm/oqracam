@@ -1,11 +1,5 @@
-/* ============================================================
-   Oqra — sideways sections: scroll down, the row moves left
-   ============================================================
-   Pins a section and moves its row 1:1 with scroll, so it feels like ordinary
-   scrolling turned sideways, with a hold at each end. Used by build + share (.flows,
-   on every screen) and Built for iPhone (.native-run, taller than square).
-   prefers-reduced-motion keeps the CSS fallbacks (no pin, no scroll bind).
-   ============================================================ */
+/* Pinned horizontal sections. Geometry changes on resize, not on every scroll.
+   The shared scheduler measures every section before applying any transforms. */
 (function () {
   "use strict";
   if (window.matchMedia &&
@@ -13,8 +7,6 @@
 
   var clamp = OqraScroll.clamp;
 
-  // Clipped off to the right, lazy images wouldn't load until they slid into view,
-  // so ask for them once the section is near.
   function loadAhead(root) {
     if (!("IntersectionObserver" in window)) return;
     var io = new IntersectionObserver(function (entries) {
@@ -27,16 +19,25 @@
     io.observe(root);
   }
 
-  // Sizes the section to its travel and moves the row; returns the px moved so far.
-  function drive(root, pin, win, track, hold) {
-    // Measured, not vh: on phones CSS vh and innerHeight disagree with the URL bar showing.
-    var x = Math.max(0, track.offsetWidth + 2 * track.offsetLeft - win.clientWidth);
-    var travel = hold + x + hold;
-    var height = pin.offsetHeight + travel + "px";
-    if (root.style.height !== height) root.style.height = height;
-    var moved = clamp(-root.getBoundingClientRect().top - hold, 0, x);
-    track.style.transform = "translate3d(" + (-moved) + "px,0,0)";
-    return moved;
+  function watchSizes(elements, invalidate) {
+    window.addEventListener("resize", invalidate, { passive: true });
+    window.addEventListener("pageshow", invalidate);
+    if ("ResizeObserver" in window) {
+      var observer = new ResizeObserver(invalidate);
+      elements.forEach(function (element) { observer.observe(element); });
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(invalidate);
+  }
+
+  var written = new WeakMap();
+  function style(element, property, value) {
+    value = String(value);
+    var values = written.get(element);
+    if (!values) { values = {}; written.set(element, values); }
+    if (values[property] === value) return false;
+    element.style[property] = value;
+    values[property] = value;
+    return true;
   }
 
   var flows = document.querySelector(".flows");
@@ -46,24 +47,41 @@
     var flowsTrack = flows.querySelector(".flows__track");
     var pairs = flows.querySelectorAll(".flows__pair");
     var caps = flows.querySelectorAll(".flow__cap");
+    var flowSize, flowDirty = true;
     flows.classList.add("is-pinned");
     loadAhead(flows);
 
+    watchSizes([flowsPin, flowsWin, flowsTrack, pairs[0], pairs[1]], function () {
+      flowDirty = true;
+      OqraScroll.refresh();
+    });
     OqraScroll.onScroll(function () {
-      // A long hold first: the second group stays out of sight while the first is read.
-      var moved = drive(flows, flowsPin, flowsWin, flowsTrack, flowsPin.offsetHeight * 0.3);
-      var origin = flowsTrack.getBoundingClientRect().left;
-      var a = pairs[0].getBoundingClientRect(), b = pairs[1].getBoundingClientRect();
-      var pad = a.left - origin;
-      // The hand-over runs from the first group fully in view to the second settled.
-      var from = Math.max(0, a.right - origin + pad - flowsWin.clientWidth);
-      var t = clamp((moved - from) / (b.left - origin - pad - from), 0, 1);
-      // The first group holds a moment in full view, which on phones is only now complete.
-      pairs[0].style.opacity = clamp((0.65 - t) / 0.5, 0, 1);
-      pairs[1].style.opacity = clamp((t - 0.45) / 0.55, 0, 1);
-      // Text can't overlap, so the first intro clears before the second arrives.
-      caps[0].style.opacity = clamp((0.5 - t) / 0.2, 0, 1);
-      caps[1].style.opacity = clamp((t - 0.5) / 0.2, 0, 1);
+      if (flowDirty) {
+        var width = flowsWin.clientWidth;
+        var pinHeight = flowsPin.offsetHeight;
+        var distance = Math.max(0, flowsTrack.offsetWidth + 2 * flowsTrack.offsetLeft - width);
+        var origin = flowsTrack.getBoundingClientRect().left;
+        var a = pairs[0].getBoundingClientRect(), b = pairs[1].getBoundingClientRect();
+        var pad = a.left - origin;
+        var from = Math.max(0, a.right - origin + pad - width);
+        flowSize = {
+          distance: distance, hold: pinHeight * 0.3,
+          height: pinHeight * 1.6 + distance + "px",
+          from: from, fade: Math.max(1, b.left - origin - pad - from)
+        };
+        flowDirty = false;
+      }
+      var moved = clamp(-flows.getBoundingClientRect().top - flowSize.hold, 0, flowSize.distance);
+      return { moved: moved, fade: clamp((moved - flowSize.from) / flowSize.fade, 0, 1) };
+    }, function (state) {
+      if (style(flows, "height", flowSize.height)) {
+        OqraScroll.refresh(); // sections below moved; measure them next frame
+      }
+      style(flowsTrack, "transform", "translate3d(" + (-state.moved) + "px,0,0)");
+      style(pairs[0], "opacity", clamp((0.65 - state.fade) / 0.5, 0, 1));
+      style(pairs[1], "opacity", clamp((state.fade - 0.45) / 0.55, 0, 1));
+      style(caps[0], "opacity", clamp((0.5 - state.fade) / 0.2, 0, 1));
+      style(caps[1], "opacity", clamp((state.fade - 0.5) / 0.2, 0, 1));
     });
   }
 
@@ -72,21 +90,47 @@
     var runPin = run.querySelector(".native-run__pin");
     var runWin = run.querySelector(".native-run__window");
     var runTrack = run.querySelector(".features");
-    // Matches the shape threshold in styles.css and hero.js.
     var wide = window.matchMedia("(min-aspect-ratio: 1/1)");
-    var pinned = false;
+    var pinned, runSize, runDirty = true;
     loadAhead(run);
 
-    OqraScroll.onScroll(function () {
-      if (pinned === wide.matches) {
-        pinned = !wide.matches;
+    function configure() {
+      var next = !wide.matches;
+      if (pinned !== next) {
+        pinned = next;
         run.classList.toggle("is-pinned", pinned);
-        if (!pinned) run.style.height = runTrack.style.transform = "";
+        if (!pinned) {
+          style(run, "height", "");
+          style(runTrack, "transform", "");
+          runPin.style.removeProperty("--pin-h");
+        }
       }
-      if (!pinned) return;
-      var pinH = runPin.offsetHeight + "px";
-      if (runPin.style.getPropertyValue("--pin-h") !== pinH) runPin.style.setProperty("--pin-h", pinH);
-      drive(run, runPin, runWin, runTrack, 120);
+      runDirty = true;
+      OqraScroll.refresh();
+    }
+    configure();
+    if (wide.addEventListener) wide.addEventListener("change", configure);
+    else wide.addListener(configure);
+    watchSizes([runPin, runWin, runTrack], configure);
+
+    OqraScroll.onScroll(function () {
+      if (!pinned) return null;
+      if (runDirty) {
+        var pinHeight = runPin.offsetHeight;
+        var distance = Math.max(0, runTrack.offsetWidth + 2 * runTrack.offsetLeft - runWin.clientWidth);
+        runSize = { distance: distance, pinHeight: pinHeight + "px", height: pinHeight + 240 + distance + "px" };
+        runDirty = false;
+      }
+      return clamp(-run.getBoundingClientRect().top - 120, 0, runSize.distance);
+    }, function (moved) {
+      if (moved === null) return;
+      if (runPin.style.getPropertyValue("--pin-h") !== runSize.pinHeight) {
+        runPin.style.setProperty("--pin-h", runSize.pinHeight);
+      }
+      if (style(run, "height", runSize.height)) {
+        OqraScroll.refresh();
+      }
+      style(runTrack, "transform", "translate3d(" + (-moved) + "px,0,0)");
     });
   }
 })();

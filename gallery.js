@@ -27,25 +27,55 @@
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
 
-  // Warm a neighbour so the next flip paints instantly (lazy imgs only load
-  // once shown otherwise). Each src is fetched at most once.
-  var warmed = {};
+  // Prepare the actual image, including its decode, before hiding the old one.
+  // Keep only the neighbours warm; the whole gallery needn't download at load.
+  var ready = {}, near = false, shown = i, request = 0;
   function preload(n) {
     n = (n + total) % total;
-    if (warmed[n]) return;
-    warmed[n] = true;
-    var src = imgs[n].getAttribute("src");
-    if (src) { var p = new Image(); p.src = src; }
+    if (ready[n]) return ready[n];
+    var img = imgs[n];
+    img.loading = "eager";
+    var src = img.getAttribute("data-src") || img.getAttribute("src");
+    if (src && img.getAttribute("src") !== src) img.src = src;
+    ready[n] = (img.decode ? img.decode() : new Promise(function (resolve, reject) {
+      if (img.complete) {
+        if (img.naturalWidth) resolve(); else reject(new Error("Image unavailable"));
+        return;
+      }
+      function loaded() { cleanup(); resolve(); }
+      function failed() { cleanup(); reject(new Error("Image unavailable")); }
+      function cleanup() {
+        img.removeEventListener("load", loaded);
+        img.removeEventListener("error", failed);
+      }
+      img.addEventListener("load", loaded);
+      img.addEventListener("error", failed);
+    })).then(function () { return true; }, function () {
+      delete ready[n];
+      return false;
+    });
+    return ready[n];
+  }
+
+  function warmNeighbours() {
+    if (!near) return;
+    preload(i + 1);
+    preload(i - 1);
   }
 
   function show(n) {
     i = (n + total) % total;                   // wrap around both ends
-    for (var k = 0; k < total; k++) {
-      imgs[k].classList.toggle("is-active", k === i);
-    }
-    if (counter) counter.textContent = pad(i + 1) + " / " + pad(total);
-    preload(i + 1);
-    preload(i - 1);
+    near = true;
+    var target = i, token = ++request;
+    preload(target).then(function (loaded) {
+      if (token !== request) return;
+      if (!loaded) { i = shown; return; }
+      imgs[shown].classList.remove("is-active");
+      imgs[target].classList.add("is-active");
+      shown = target;
+      if (counter) counter.textContent = pad(target + 1) + " / " + pad(total);
+      warmNeighbours();
+    });
   }
   function go(dir) { show(i + dir); }
 
@@ -61,12 +91,15 @@
     else if (e.key === "ArrowRight") { go(1); e.preventDefault(); }
   });
 
-  // Once the page is idle, warm every photo into cache so each flip is an
-  // instant hard cut (lazy imgs would otherwise blank on first view). Cheap —
-  // eight small WebPs, fetched off the critical path.
-  function warmAll() { for (var k = 0; k < total; k++) preload(k); }
-  if (window.requestIdleCallback) window.requestIdleCallback(warmAll, { timeout: 2500 });
-  else window.addEventListener("load", function () { window.setTimeout(warmAll, 800); }, { once: true });
+  // Load one viewport ahead, keeping these requests off the hero's load path.
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      near = true; io.disconnect();
+      preload(i); warmNeighbours();
+    }, { rootMargin: (window.innerHeight || 800) + "px 0px" });
+    io.observe(gallery);
+  }
 
   // Horizontal swipe on touch.
   var x0 = null, y0 = null;
@@ -82,5 +115,5 @@
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
   }, { passive: true });
 
-  show(i);
+  if (counter) counter.textContent = pad(i + 1) + " / " + pad(total);
 })();

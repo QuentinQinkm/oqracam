@@ -23,15 +23,25 @@ var OqraScroll = (function () {
     };
   }
 
-  // rAF-throttled scroll + resize binding. Runs fn at most once per frame, and
-  // once immediately.
-  function onScroll(fn) {
-    var ticking = false;
-    function tick() { ticking = false; fn(); }
-    function handler() { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }
-    window.addEventListener("scroll", handler, { passive: true });
-    window.addEventListener("resize", handler, { passive: true });
-    fn();
+  // One frame for every pinned section. Read all geometry before any section
+  // writes styles, so one animation cannot force layout for the next one.
+  var jobs = [], ticking = false;
+  function tick() {
+    ticking = false;
+    var values = jobs.map(function (job) { return job.measure(); });
+    jobs.forEach(function (job, i) { if (job.render) job.render(values[i]); });
+  }
+  function refresh() {
+    if (!ticking) { ticking = true; requestAnimationFrame(tick); }
+  }
+  window.addEventListener("scroll", refresh, { passive: true });
+  window.addEventListener("resize", refresh, { passive: true });
+  window.addEventListener("pageshow", refresh);
+
+  function onScroll(measure, render) {
+    jobs.push({ measure: measure, render: render });
+    var value = measure();
+    if (render) render(value);
   }
 
   // HOLD·fade·HOLD over N stages → fractional stage 0..N-1. `x` is the vh of
@@ -65,6 +75,6 @@ var OqraScroll = (function () {
 
   return {
     clamp: clamp, pad: pad, tokens: tokens,
-    onScroll: onScroll, stageAt: stageAt, captioner: captioner
+    onScroll: onScroll, refresh: refresh, stageAt: stageAt, captioner: captioner
   };
 })();

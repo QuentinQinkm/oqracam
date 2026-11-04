@@ -59,6 +59,11 @@ The GitHub Actions workflow `.github/workflows/deploy-aliyun.yml` publishes
 files. Existing Nginx configuration supplies HTTPS, route handling, security
 headers, and asset caching; no additional ESA hosting plan is required.
 
+The builder adds each stylesheet and script's SHA-256 content version to its URL
+in generated HTML, including the optional ESA route fallback. A changed file gets
+a fresh browser cache entry, preventing old CSS or JavaScript from being paired
+with a new page. Source HTML stays unchanged for Cloudflare and local previews.
+
 The workflow uses the `ALIYUN_DEPLOY_KEY` and `ALIYUN_KNOWN_HOSTS` repository
 secrets and the `ALIYUN_HOST` variable. Its dedicated SSH key can only invoke
 the root-owned receiver at `/usr/local/libexec/oqracam-deploy.py`; it has no

@@ -99,7 +99,7 @@
              srcset="/assets/img/hero/camera-800.webp 800w, /assets/img/hero/camera-1450.webp 1450w"
              sizes="(min-aspect-ratio: 1/1) 39vw, 100vw"
              alt="The Oqra camera viewfinder on an iPhone held sideways, framing a curved white tunnel"
-             width="1450" height="1048" />
+             width="1450" height="1048" decoding="async" fetchpriority="high" />
       </div>
 
       <div class="hero__frame hero__frame--b">
@@ -108,7 +108,7 @@
              srcset="/assets/img/hero/edit-640.webp 640w, /assets/img/hero/edit-1100.webp 1100w"
              sizes="(min-aspect-ratio: 1/1) 21vw, 62vw"
              alt="The Oqra editor on an iPhone, with a red rose above the film-layer controls"
-             width="1100" height="2268" />
+             width="1100" height="2268" decoding="async" />
         <p class="lead hero__lead">
           A creative camera for iPhone, built on film physics. Stack layers, dye,
           grain, and glow, see what comes out, and share it as a code.
@@ -128,14 +128,14 @@
 <section class="gallery" id="scenes" aria-roledescription="carousel" aria-label="Photos shot on Oqra">
   <h2 class="gallery__title">Shot on Oqra</h2>
   <div class="gallery__stage">
-    <img class="gallery__img is-active" src="/assets/img/scenes/scene-6.webp" alt="A blue bay seen over tiled rooftops, with a breakwater and seaside hotels under a green headland, shot on Oqra" width="1050" height="1400" decoding="async" draggable="false" />
-    <img class="gallery__img" src="/assets/img/scenes/scene-7.webp" alt="Fireworks bursting over a beach, two people silhouetted at the water's edge, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
-    <img class="gallery__img" src="/assets/img/scenes/scene-8.webp" alt="Log steps climbing through a dark, misty forest, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
-    <img class="gallery__img" src="/assets/img/scenes/scene-1.webp" alt="Snow-capped mountains and a ski slope, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
-    <img class="gallery__img" src="/assets/img/scenes/scene-2.webp" alt="An old tiled-roof temple in foliage at dusk, shot on Oqra" width="1049" height="1400" loading="lazy" decoding="async" draggable="false" />
-    <img class="gallery__img" src="/assets/img/scenes/scene-3.webp" alt="A cherry-blossom tree in full bloom, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
-    <img class="gallery__img" src="/assets/img/scenes/scene-4.webp" alt="A museum interior in black and white, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
-    <img class="gallery__img" src="/assets/img/scenes/scene-5.webp" alt="A waterfront cycle path at dusk under a curving canopy, city lights along the lake, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img is-active" src="/assets/img/scenes/scene-6.webp" alt="A blue bay seen over tiled rooftops, with a breakwater and seaside hotels under a green headland, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" data-src="/assets/img/scenes/scene-7.webp" alt="Fireworks bursting over a beach, two people silhouetted at the water's edge, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" data-src="/assets/img/scenes/scene-8.webp" alt="Log steps climbing through a dark, misty forest, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" data-src="/assets/img/scenes/scene-1.webp" alt="Snow-capped mountains and a ski slope, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" data-src="/assets/img/scenes/scene-2.webp" alt="An old tiled-roof temple in foliage at dusk, shot on Oqra" width="1049" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" data-src="/assets/img/scenes/scene-3.webp" alt="A cherry-blossom tree in full bloom, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" data-src="/assets/img/scenes/scene-4.webp" alt="A museum interior in black and white, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
+    <img class="gallery__img" data-src="/assets/img/scenes/scene-5.webp" alt="A waterfront cycle path at dusk under a curving canopy, city lights along the lake, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
   </div>
   <div class="gallery__controls">
     <button type="button" class="gallery__nav" data-dir="-1" aria-label="Previous photo">
@@ -166,7 +166,7 @@
           </div>
           <div class="develop__stage">
             <div class="develop__frame" role="img" aria-label="One real snow photo being developed, step by step: the raw capture, then Apple's developed photo, then the layers adding their colour and grain, a warm glow around the highlights, and a final tint on the finished frame.">
-            <img class="develop__img" data-i="0" data-name="Raw capture" data-sub="Straight from the camera, untouched" src="/assets/img/samples/build-0-raw.webp" alt="The raw iPhone capture, straight from the camera" width="900" height="900" decoding="async" draggable="false" />
+            <img class="develop__img" data-i="0" data-name="Raw capture" data-sub="Straight from the camera, untouched" src="/assets/img/samples/build-0-raw.webp" alt="The raw iPhone capture, straight from the camera" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
             <img class="develop__img" data-i="1" data-name="Developed" data-sub="Apple's RAW processing — cleaned up and colour-corrected" src="/assets/img/samples/build-1-capture.webp" alt="The capture after Apple's RAW processing" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
             <img class="develop__img" data-i="2" data-name="One layer, silver" data-sub="The first light-sensitive layer turns light into tone" src="/assets/img/samples/build-2-silver.webp" alt="The first layer turned to grey tone" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
             <img class="develop__img" data-i="3" data-name="One layer, in colour" data-sub="That layer takes on its colour, and its grain" src="/assets/img/samples/build-3-record.webp" alt="That layer in colour, with its grain" width="900" height="900" loading="lazy" decoding="async" draggable="false" />
@@ -220,8 +220,8 @@
     <div class="ba" id="ba" style="--split:50%;" tabindex="0"
          role="slider" aria-label="Before / after reveal — drag, or use the left and right arrow keys"
          aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% developed">
-      <img class="ba__img ba__after"  id="baAfter"  src="/assets/img/samples/street_golden.webp" alt="Developed in Oqra" width="1024" height="1024" decoding="async" draggable="false" />
-      <img class="ba__img ba__before" id="baBefore" src="/assets/img/samples/street_og.webp" alt="Original capture" width="1024" height="1024" decoding="async" draggable="false" />
+      <img class="ba__img ba__after"  id="baAfter"  src="/assets/img/samples/street_golden.webp" alt="Developed in Oqra" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
+      <img class="ba__img ba__before" id="baBefore" src="/assets/img/samples/street_og.webp" alt="Original capture" width="1024" height="1024" loading="lazy" decoding="async" draggable="false" />
       <span class="ba__label ba__label--l">Original</span>
       <span class="ba__label ba__label--r" id="baLabelR">Golden</span>
       <div class="ba__line"><div class="ba__handle" aria-hidden="true">‹ ›</div></div>
@@ -420,13 +420,13 @@
 </footer>
 
 <script src="/scroll.js" defer></script>
+<script src="/hero.js" defer></script>
 <script src="/compare.js" defer></script>
 <script src="/stepper.js" defer></script>
 <script src="/sideways.js" defer></script>
 <script src="/reveal.js" defer></script>
 <script src="/gallery.js" defer></script>
 <script src="/nav.js" defer></script>
-<script src="/hero.js" defer></script>
 <script src="/faq.js" defer></script>
 </body>
 </html>
