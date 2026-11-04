@@ -53,12 +53,14 @@ Verify after deploy:
 
 ## Aliyun mirror — `oqracam.com`
 
-ESA Pages supports native GitHub builds from `main`. The prepared configuration
-is `esa.jsonc`; `node scripts/build-site.mjs` packages public files into `dist/`
+ESA Pages project `oqracam` is connected to this GitHub repository and builds
+from `main`. Its configuration is `esa.jsonc`; `node scripts/build-site.mjs`
+packages public files into `dist/`
 and generates the small fallback for AASA, support redirects and preset links.
 No dependencies or GitHub Actions secrets are needed.
 
-The GitHub connection and domain migration still need to be completed in ESA.
+The first ESA build and preview are verified. The domain migration is pending
+site-plan approval; `oqracam.com` is still served by the existing Nginx server.
 Follow [Aliyun's official GitHub guide](https://help.aliyun.com/zh/edge-security-acceleration/esa/user-guide/connect-pages-to-github).
 ESA site response-header rules must mirror the global headers in `_headers`,
 and `/assets/*` should retain its seven-day browser cache policy. Validate the
