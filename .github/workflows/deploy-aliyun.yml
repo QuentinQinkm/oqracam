@@ -1,0 +1,55 @@
+name: Deploy Aliyun website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aliyun-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Package public website files
+        run: node scripts/build-site.mjs --target=nginx
+      - name: Deploy and verify HTTPS
+        shell: bash
+        env:
+          ALIYUN_DEPLOY_KEY: ${{ secrets.ALIYUN_DEPLOY_KEY }}
+          ALIYUN_KNOWN_HOSTS: ${{ secrets.ALIYUN_KNOWN_HOSTS || vars.ALIYUN_KNOWN_HOSTS }}
+          ALIYUN_HOST: ${{ vars.ALIYUN_HOST }}
+        run: |
+          set -euo pipefail
+          : "${ALIYUN_DEPLOY_KEY:?Set the ALIYUN_DEPLOY_KEY repository secret}"
+          : "${ALIYUN_KNOWN_HOSTS:?Set the verified ALIYUN_KNOWN_HOSTS secret or variable}"
+          : "${ALIYUN_HOST:?Set the ALIYUN_HOST repository variable}"
+          [[ "$ALIYUN_HOST" =~ ^[A-Za-z0-9][A-Za-z0-9.-]*$ ]]
+          deploy_temp=$(mktemp -d)
+          trap 'rm -rf -- "$deploy_temp"' EXIT
+          chmod 700 "$deploy_temp"
+          printf '%s\n' "$ALIYUN_DEPLOY_KEY" > "$deploy_temp/key"
+          printf '%s\n' "$ALIYUN_KNOWN_HOSTS" > "$deploy_temp/known_hosts"
+          chmod 600 "$deploy_temp/key" "$deploy_temp/known_hosts"
+          ssh-keygen -F "$ALIYUN_HOST" -f "$deploy_temp/known_hosts" > /dev/null
+          tar -czf "$deploy_temp/site.tar.gz" -C dist .
+          ssh -i "$deploy_temp/key" \
+            -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$deploy_temp/known_hosts" \
+            -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+            "oqracam-deploy@$ALIYUN_HOST" "deploy $GITHUB_SHA" < "$deploy_temp/site.tar.gz"
+          deployed=$(curl --fail --silent --show-error --retry 2 \
+            --connect-timeout 5 --max-time 20 --max-filesize 1024 \
+            "https://oqracam.com/deploy-revision.txt?revision=$GITHUB_SHA")
+          [[ "$deployed" == "$GITHUB_SHA" ]]
+          printf 'Verified https://oqracam.com at %s\n' "$GITHUB_SHA"

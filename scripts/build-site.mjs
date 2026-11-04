@@ -1,11 +1,16 @@
 #!/usr/bin/env node
-// Build ESA's static files and its small fallback for routes requiring HTTP logic.
+// Package public website files for Nginx or ESA Pages.
 import { execFileSync } from 'node:child_process';
 import { copyFileSync, lstatSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const target = process.argv[2] ?? '--target=esa';
+if (process.argv.length > 3 || !['--target=esa', '--target=nginx'].includes(target)) {
+  throw new Error('Usage: node scripts/build-site.mjs [--target=esa|--target=nginx]');
+}
+const isESA = target === '--target=esa';
 const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
 const aasaPath = '.well-known/apple-app-site-association';
 const images = new Set(['.avif', '.gif', '.ico', '.jpeg', '.jpg', '.png', '.svg', '.webp']);
@@ -69,7 +74,7 @@ for (const directory of ['dist', 'build']) {
 }
 writeFileSync(marker, 'ESA website build\n');
 
-const staticFiles = files.filter(name => name !== aasaPath);
+const staticFiles = files.filter(name => !isESA || name !== aasaPath);
 for (const name of staticFiles) {
   const target = join(root, 'dist', name);
   mkdirSync(dirname(target), { recursive: true });
@@ -98,6 +103,7 @@ export default {
   }
 };
 `;
-writeFileSync(join(root, 'build', 'esa-entry.js'), entry);
+if (isESA) writeFileSync(join(root, 'build', 'esa-entry.js'), entry);
 const size = staticFiles.reduce((total, name) => total + lstatSync(join(root, name)).size, 0);
-console.log(`Built ${staticFiles.length} static files (${size.toLocaleString('en-US')} bytes) and one ${Buffer.byteLength(entry).toLocaleString('en-US')}-byte ESA function.`);
+console.log(`Built ${staticFiles.length} static files (${size.toLocaleString('en-US')} bytes)`
+  + (isESA ? ` and one ${Buffer.byteLength(entry).toLocaleString('en-US')}-byte ESA function.` : ' for Nginx.'));

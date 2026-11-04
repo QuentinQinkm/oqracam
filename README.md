@@ -53,18 +53,24 @@ Verify after deploy:
 
 ## Aliyun mirror — `oqracam.com`
 
-ESA Pages project `oqracam` is connected to this GitHub repository and builds
-from `main`. Its configuration is `esa.jsonc`; `node scripts/build-site.mjs`
-packages public files into `dist/`
-and generates the small fallback for AASA, support redirects and preset links.
-No dependencies or GitHub Actions secrets are needed.
+The selected deployment target is the existing Aliyun Ubuntu/Nginx server.
+The GitHub Actions workflow `.github/workflows/deploy-aliyun.yml` publishes
+`main`, using `node scripts/build-site.mjs --target=nginx` to package only public
+files. Existing Nginx configuration supplies HTTPS, route handling, security
+headers, and asset caching; no additional ESA hosting plan is required.
 
-The first ESA build and preview are verified. The domain migration is pending
-site-plan approval; `oqracam.com` is still served by the existing Nginx server.
-Follow [Aliyun's official GitHub guide](https://help.aliyun.com/zh/edge-security-acceleration/esa/user-guide/connect-pages-to-github).
-ESA site response-header rules must mirror the global headers in `_headers`,
-and `/assets/*` should retain its seven-day browser cache policy. Validate the
-preview and routes before moving `oqracam.com` from the current Nginx server.
+The workflow uses the `ALIYUN_DEPLOY_KEY` and `ALIYUN_KNOWN_HOSTS` repository
+secrets and the `ALIYUN_HOST` variable. Its dedicated SSH key can only invoke
+the root-owned receiver at `/usr/local/libexec/oqracam-deploy.py`; it has no
+interactive shell or sudo access. Releases live in `/srv/oqracam/deploy/releases`.
+The receiver switches `/srv/oqracam/deploy/current` atomically and restores the
+previous release if its HTTPS check fails. `deploy-revision.txt` identifies the
+deployed commit. The original `/srv/oqracam/site` is retained for recovery.
+
+An ESA Pages test project was also verified, but no ESA site plan was purchased
+and the domain was not moved. Its optional `esa.jsonc` configuration uses the
+same builder without `--target=nginx`. [Aliyun's native GitHub guide](https://help.aliyun.com/zh/edge-security-acceleration/esa/user-guide/connect-pages-to-github)
+documents that alternative.
 
 ## Remaining work
 
