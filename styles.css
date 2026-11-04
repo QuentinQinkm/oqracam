@@ -26,8 +26,8 @@
   --rule-bright:  #1e1e1e;   /* dividerStrong — visible hairline */
   --hairline:     rgba(255, 255, 255, 0.12);   /* light divider — matches the current chrome */
 
-  /* Frosted-glass surface — shared by the nav, feature cards, pickers, the
-     decode field, and bordered buttons. */
+  /* Frosted-glass surface — shared by the nav, feature cards, pickers,
+     and bordered buttons. */
   --glass:        rgba(0, 0, 0, 0.72);
   --glass-blur:   saturate(140%) blur(12px);
   /* Same frosted surface with the blur dropped. Over the dark page (and the
@@ -67,6 +67,9 @@
   /* ---- type: SF Pro / system, light-first (no mono) ---- */
   --font-sans:    -apple-system, BlinkMacSystemFont, "SF Pro Text",
                   "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+  /* Page and section titles, as in the app. ui-serif asks Apple devices for their built-in
+     New York; its license doesn't allow shipping the font, so others get the fallback. */
+  --font-display: ui-serif, "New York", "Playfair Display", serif;
   --font-mono:    ui-monospace, "SF Mono", Menlo, monospace;   /* datasheet voice */
 
   --w-light:   300;
@@ -80,12 +83,20 @@
   /* ---- shared scroll-transition rhythm (unitless vh) ----
      HOLD = dwell scroll distance on each stage; FADE = crossfade distance
      between stages; TAIL = extra dwell AFTER the final phase, before the pinned
-     section releases into the next. Read by hero.js and stepper.js (#shareflow)
-     so every pinned transition shares one feel — and their pinned heights derive
-     from them (hero = 2·HOLD + FADE + TAIL of travel, atop one viewport). */
+     section releases into the next. Read by hero.js, and the pinned height
+     derives from them (hero = 2·HOLD + FADE + TAIL of travel, atop one viewport). */
   --scroll-hold: 28;
   --scroll-fade: 42;
   --scroll-tail: 30;
+}
+
+/* Headline fallback where New York isn't available. Browsers only fetch it if
+   ui-serif and "New York" both miss. Licensed under the OFL (see assets/fonts). */
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/assets/fonts/playfair-display.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
 }
 
 /* ---------- reset / base ---------- */
@@ -93,6 +104,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; background: var(--bg); }
+
 
 /* The landing's spectrum glow, lifted out of the hero and pinned behind the
    WHOLE page — a fixed, heavily-blurred band of the visible spectrum at top
@@ -215,14 +227,13 @@ section.divided::before {
   top: 0; left: 50%;
   transform: translateX(-50%);
   /* Each divided section's hairline frames its OWN content width, so it never
-     overhangs (the narrow #decode column no longer gets a ~200px stick-out). */
+     overhangs. */
   width: var(--section-col, var(--col-wide));
   height: 1px;
   background: transparent;
 }
 #features { --section-col: var(--col-wide); }   /* develop stays the wide beat */
 #compare  { --section-col: var(--col); }          /* frames its 720 text + centered square */
-#decode   { --section-col: var(--col); }         /* matches its reading column */
 #support  { --section-col: var(--col); }          /* reading column */
 
 /* ---------- shared label / type ---------- */
@@ -240,6 +251,11 @@ section.divided::before {
 }
 
 h1, h2, h3, h4 { margin: 0 0 0.5em; color: var(--ink); }
+h1, h2 {
+  font-family: var(--font-display);
+  /* Hold New York's display cut at phone sizes too, as in the poster. */
+  font-variation-settings: "opsz" 80;
+}
 
 h1 {
   font-size: clamp(44px, 7vw, 84px);
@@ -247,19 +263,12 @@ h1 {
   letter-spacing: -0.025em;
   font-weight: var(--w-regular);        /* a touch more weight — present, not soft */
 }
-/* The one chromatic moment in the headline — the spectrum, clipped to text. */
-h1 .accent {
-  background: var(--spectrum);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
 
 h2 {
   font-size: clamp(24px, 3vw, 36px);
   line-height: 1.15;
   letter-spacing: -0.01em;
-  font-weight: var(--w-light);
+  font-weight: var(--w-regular);        /* New York's lightest */
 }
 
 h3 {
@@ -331,6 +340,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 /* The mark is the spectrum capsules (transparent PNG) — sits straight on the
    black nav with no edge. Non-square, so size by height and let width follow. */
 .nav__logo { height: 32px; width: auto; display: block; }
+.nav__wordmark { height: 14px; width: auto; display: block; }
 
 .nav__links {
   display: flex;
@@ -421,92 +431,131 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 /* ---------- hero ---------- */
 
 .hero {
-  padding: clamp(16px, 3vh, 36px) 0 clamp(56px, 9vh, 104px);
-  text-align: center;
+  /* --u is one poster pixel; --type is the headline size, and the lockup scales
+     with it in em. Tall windows: the camera device runs edge to edge when height allows. */
+  --u: min(100vw / 1879.7, 50svh / 1358.6);
+  --type: min(12.5vw, 8svh);
+  margin-top: -73px;           /* the hidden nav still reserves its height in flow */
+  padding: 0 0 clamp(56px, 9vh, 104px);
+  overflow-x: clip;
 }
-.hero .lead { max-width: 620px; margin-left: auto; margin-right: auto; }
-.hero .btn-row { justify-content: center; margin-top: 0; }
+/* Taller than square: two full-screen frames. hero.js pins them and crossfades on
+   scroll; without JS or with reduced motion they simply stack. */
+.hero__frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+}
+.hero__frame--a { gap: clamp(22px, 4svh, 40px); padding-top: clamp(24px, 6svh, 64px); }
+.hero__frame--b { gap: clamp(20px, 3.5svh, 32px); }
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.26em;
+  width: 6.56em;
+  font-size: var(--type);
+}
+.hero__copy h1 {
+  margin: 0;
+  font-size: 1em;
+  font-weight: var(--w-regular);
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #fff;
+}
+.hero__brand { display: flex; align-items: center; }
+/* The PNG carries padding for its bloom, so pull it out to align the pills. */
+.hero__mark { width: 1.394em; height: auto; margin: 0 0.185em 0 -0.22em; }
+.hero__wordmark { width: 1.962em; height: 0.439em; }
+.hero__copy .btn-row { margin-top: 0.1em; }
+.hero__copy .btn { letter-spacing: 0.12em; white-space: nowrap; }
 
-/* ---- pinned hero: phone fixed, text zones crossfade around it ----
-   Enhanced behaviour only kicks in with .is-scroll (added by hero.js when JS is
-   on and motion is allowed). Default flow shows every face stacked & visible. */
-.hero.is-scroll {
-  padding: 0;
-  /* HOLD (dwell phase 1) · FADE (crossfade) · HOLD (dwell phase 2) · TAIL
-     (trailing dwell) of travel, plus one viewport for the pinned stage —
-     derived from the shared tokens. */
-  height: calc((2 * var(--scroll-hold) + var(--scroll-fade) + var(--scroll-tail)) * 1vh + 100vh);
-  /* The nav hides at the landing but, being sticky, still reserves ~its height
-     in flow — that shows as a blank band on top. Pull the landing up under it so
-     the first screen truly starts at the top edge. */
-  margin-top: -68px;
+.hero__device { display: block; height: auto; max-width: none; }
+.hero__device--camera { width: calc(1879.7 * var(--u)); }
+.hero__device--edit { width: auto; height: min(128vw, calc(100svh - 250px)); }
+.hero__lead.lead { width: min(calc(6.56 * var(--type)), 620px); margin: 0; }
+
+.hero.is-pinned .hero__stage {
+  height: calc((2 * var(--scroll-hold) + var(--scroll-fade) + var(--scroll-tail)) * 1svh + 100svh);
 }
-.hero.is-scroll .hero__stage {
+.hero.is-pinned .hero__pin {
   position: sticky;
   top: 0;
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(22px, 4.5vh, 48px);
-}
-/* The top zone stacks its two faces in one cell, so the taller face fixes the
-   zone's height — the phone below never shifts as they crossfade. Both faces are
-   CENTER-aligned, so brand+title and intro+buttons share a common centre line
-   and swap in place; any height difference splits evenly above and below. */
-.hero.is-scroll .hero__zone {
   display: grid;
-  width: 100%;
-  justify-items: center;
-  align-items: center;
+  height: 100svh;
 }
-.hero.is-scroll .hero__face {
-  grid-area: 1 / 1;
-  margin: 0;
-  will-change: opacity;
-}
-.hero.is-scroll .hero__face--b { opacity: 0; }   /* hidden until scrolled (JS drives it) */
-.hero.is-scroll .hero__brand { margin: 0; }      /* spacing handled by the head gap */
-.hero.is-scroll .hero__media { margin: 0; }
-.hero.is-scroll .hero__req { margin: 0; }
+.hero.is-pinned .hero__frame { grid-area: 1 / 1; min-height: 0; will-change: opacity; }
+.hero.is-pinned .hero__frame--b { opacity: 0; }
 
-/* Logo + swapping text, kept together as one unit above the phone. Constrained
-   to the shared reading column so the text keeps the same side gutter as every
-   other section (otherwise it runs edge-to-edge on mobile). */
-.hero__head {
+.hero__intro {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: clamp(14px, 2.2vh, 22px);
-  width: var(--col);
+  align-items: flex-start;
+  width: calc(6.56 * var(--type));
   margin: 0 auto;
+  padding-top: clamp(24px, 4vh, 48px);
 }
-/* Buttons + requirement: a fixed cluster under the phone, always shown. */
-.hero__foot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(16px, 2.5vh, 24px);
-  width: var(--col);
-  margin: 0 auto;
+
+/* Square or wider keeps the poster's row, whatever the size. The camera's image
+   overflows its layout box and sits above the row's centre, as in the poster. */
+@media (min-aspect-ratio: 1/1) {
+  .hero {
+    --u: min(83vw / 4363, 69svh / 2030.32, 0.6px);
+    --type: calc(200 * var(--u));
+  }
+  .hero__pin, .hero__frame { display: contents; }
+  .hero__stage {
+    display: grid;
+    grid-template-areas: "edit copy camera" "lead lead lead";
+    grid-template-columns: auto auto auto;
+    grid-template-rows: 100svh auto;
+    justify-content: center;
+    align-items: center;
+    column-gap: calc(238 * var(--u));
+    padding-left: calc(58 * var(--u));
+  }
+  .hero__copy { grid-area: copy; }
+  .hero__device--edit { grid-area: edit; width: calc(984.723 * var(--u)); height: auto; }
+  .hero__device--camera {
+    grid-area: camera;
+    margin: 0 calc(-144.4 * var(--u)) calc(241.8 * var(--u)) calc(-145.3 * var(--u));
+  }
+  .hero__lead.lead {
+    grid-area: lead;
+    justify-self: center;
+    width: min(620px, var(--col));
+    margin-left: calc(-58 * var(--u));
+    padding-top: clamp(40px, 8vh, 88px);
+    text-align: center;
+  }
+  .hero__intro { align-items: center; width: var(--col); padding-top: 24px; text-align: center; }
 }
-/* Hero brand lockup — the spectrum mark + the OQRA wordmark, centred. This is
-   the brand presence at the landing (the nav hides while the hero is in view,
-   so the name needs to live here). */
-.hero__brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(10px, 1.4vw, 14px);
-  margin: 0 0 clamp(16px, 2.5vh, 24px);
+/* Small row: use more of the width, and fit the button to the centre column so it
+   wraps rather than running into the camera. */
+@media (min-aspect-ratio: 1/1) and (max-width: 1100px) {
+  .hero { --u: min(90vw / 4363, 69svh / 2030.32); }
+  .hero__copy .btn-row { width: 100%; }
+  .hero__copy .btn {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    white-space: normal;
+    text-wrap: balance;
+  }
 }
-.hero__mark { display: block; height: clamp(40px, 6vw, 56px); width: auto; }
-.hero__wordmark {
-  font-size: clamp(20px, 3vw, 28px);
-  letter-spacing: 0.3em;
-  font-weight: var(--w-light);
-  color: var(--ink);
+/* Sideways phones have no height to spare, so let the row fill more of it. */
+@media (min-aspect-ratio: 1/1) and (max-height: 500px) {
+  .hero { --u: min(83vw / 4363, 84svh / 2030.32); }
+  .hero__copy .btn { padding: 9px 12px; font-size: 10px; }
 }
 
 /* Capability chips — hairline-divided mono row, the app's datasheet voice. */
@@ -526,10 +575,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .speclist li { padding: 0 14px; border-left: 1px solid var(--rule-bright); }
 .speclist li:first-child { padding-left: 0; border-left: 0; }
 
-/* Reassurance at the install decision — quiet, mono, like a spec line. */
+/* Reassurance at the install decision. */
 .hero__free {
   margin: 16px 0 0;
-  font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.01em;
   color: var(--ink-faint);
@@ -541,12 +589,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   letter-spacing: 0.02em;
   color: var(--ink-ghost);
 }
-
-.hero__media {
-  margin: clamp(22px, 3.5vh, 40px) auto;            /* sits between the headline and the lead */
-  width: min(600px, calc(100% - 2 * var(--gutter)));
-}
-.hero__media img { width: 100%; display: block; }
 
 /* ---------- immersive sample gallery (shot on Oqra) ----------
    One photo at a time in a fixed 3:4 frame (all five are portrait), centred on
@@ -783,86 +825,6 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .faq__a { padding: 0 0 20px; }
 .faq__a p { margin: 0; }
 
-/* ---------- preset-code decoder tool (the #decode section) ---------- */
-
-.decoder { margin-top: 40px; }
-.decoder__field {
-  width: 100%;
-  min-height: 92px;
-  resize: vertical;
-  background: var(--glass);   /* frosted glass, like the nav/cards */
-  -webkit-backdrop-filter: var(--glass-tint);
-  backdrop-filter: var(--glass-tint);
-  border: 1px solid var(--rule-bright);
-  border-radius: 0;
-  color: var(--ink);
-  font-family: var(--font-mono); /* a CODE field — mono is correct here */
-  font-size: 13px;
-  line-height: 1.5;
-  letter-spacing: 0.01em;
-  padding: 14px 16px;
-}
-.decoder__field::placeholder { color: var(--ink-ghost); }
-.decoder__field:focus {
-  outline: none;
-  border-color: var(--ink-faint);
-}
-.decoder .btn-row { margin-top: 18px; }
-
-.decoder__status {
-  margin-top: 18px;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  min-height: 1.2em;
-}
-.decoder__status.is-error   { color: var(--destructive); }  /* app filmic-red */
-.decoder__status.is-ok      { color: var(--live); }        /* cyan = decoded/live */
-
-/* Decoded recipe shown as a film datasheet — mono spec rows, on-brand */
-.recipe-spec {
-  margin-top: 28px;
-  border: 1px solid var(--rule-bright);
-  background: var(--bg-elev);
-}
-.recipe-spec__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--rule-bright);
-}
-.recipe-spec__name {
-  font-size: 16px;
-  font-weight: var(--w-regular);
-  color: var(--ink);
-}
-.recipe-spec__kind {
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-.recipe-spec__rows {
-  font-family: var(--font-mono);
-  font-size: 12px;
-}
-.recipe-spec__row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 9px 18px;
-  border-top: 1px solid var(--rule);
-  color: var(--ink-dim);
-}
-.recipe-spec__row:first-child { border-top: 0; }
-.recipe-spec__row b {
-  color: var(--ink);
-  font-weight: var(--w-regular);
-  font-variant-numeric: tabular-nums;
-}
-.recipe-spec__row span { color: var(--ink-faint); letter-spacing: 0.08em; text-transform: uppercase; }
-
 /* ---------- before / after reveal (#compare) ---------- */
 
 .ba {
@@ -1011,49 +973,51 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 
 /* ---------- footer ---------- */
 
+/* The app's print credit (RecipeQRPoster.signature): a hairline, then the lockup
+   and links, with the credit lines speaking in the voice at the lower corners. */
 .site-footer {
-  padding: 56px var(--gutter);
+  padding: 56px var(--gutter) 40px;
 }
 .site-footer__inner {
   width: var(--col-wide);
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-.site-footer__brand {
-  letter-spacing: 0.32em;
-  font-size: 15px;
-  color: var(--ink);
-  font-weight: var(--w-regular);
-}
-.site-footer__tagline {
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-top: 8px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 24px 32px;
 }
 .site-footer__links {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 0 26px;
   font-size: 11px;
   font-weight: var(--w-light);
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-.site-footer__links a { color: var(--ink-faint); border: 0; }
+.site-footer__links a {
+  color: var(--ink-faint);
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+}
 .site-footer__links a:hover { color: var(--ink); }
+.site-footer__tagline,
 .site-footer__legal {
-  width: var(--col-wide);
-  margin: 32px auto 0;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-ghost);
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+.site-footer__legal { text-align: right; }
+.site-footer .nav__brand { justify-self: start; }
+@media (max-width: 560px) {
+  .site-footer__links { grid-column: 1 / -1; grid-row: 2; }
+  .site-footer__tagline { grid-column: 1; grid-row: 3; }
+  .site-footer__legal { grid-column: 2; grid-row: 3; }
 }
 
 /* ---------- develop: scroll-driven, sticky build-up (#develop) ----------
@@ -1128,27 +1092,21 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   background: linear-gradient(to top,
     rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.42) 50%, transparent 100%);
 }
-/* Caption text styles are shared by the develop (#develop) and shareflow
-   (#shareflow) sticky sections — same name/sub/count typography. */
-.develop__name, .shareflow__name {
+/* Caption text styles for the develop (#develop) sticky section. */
+.develop__name {
   font-size: 12px;
   font-weight: var(--w-regular);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink);
 }
-.develop__sub, .shareflow__sub {
+.develop__sub {
   font-size: 13px;
   font-weight: var(--w-light);
   line-height: 1.45;
   color: var(--ink-faint);
 }
-/* Only the shareflow caption is IN-FLOW (below the phone), so it reserves two
-   lines to stop the count line jumping as the stage crossfades. The develop
-   caption is an absolute bottom overlay on the frame — it can't shift page
-   layout, so it needs no reserve and sits tight against its 01/09 count. */
-.shareflow__sub { min-height: 2.9em; }
-.develop__count, .shareflow__count {
+.develop__count {
   margin-top: 2px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1267,85 +1225,109 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   .develop__intro { grid-column: auto; grid-row: auto; width: 100%; }
 }
 
-/* ---------- build → collect → share: scroll-driven crossfade (#shareflow) ----------
-   One centered phone frame, pinned while the section scrolls, cross-fading
-   through the three app screenshots in order (Build → Collect → Share). Stacked
-   so the crossfade never dips to black: image 0 is the always-on base, each
-   next fades in on top. No frame border — the screenshots carry their own
-   device bezel. stepper.js drives opacity + caption from scroll. */
-.shareflow {
-  --shareflow-scroll: 168vh;   /* set by stepper.js; matches the develop dwell */
-  position: relative;
-  margin: clamp(6px, 1.5vw, 16px) 0 0;   /* sit close under the section title */
-  height: calc(100vh + var(--shareflow-scroll));
+/* ---------- build + share: two groups in one row (.flows) ----------
+   sideways.js pins it and moves the row left as you scroll, fading the first group out
+   as the second fades in, with the intro swapping alongside. --pad starts the row on the
+   page's left edge (.container--wide), the same edge as the section head. Taller than square (the hero's threshold) a pair
+   overflows on purpose, sized for legibility over matching scale: a sideways phone at
+   true scale would leave the upright one too small to read. */
+.flows {
+  --pad: calc((100vw - var(--col-wide)) / 2);
+  --pad-end: var(--pad);
+  --wide: calc(100vw - 2 * var(--gutter));
+  --tall-h: min(60svh, 130vw);
+  --gap: clamp(16px, 3vw, 32px);
+  width: 100vw;
+  margin: clamp(12px, 3vw, 32px) 0 0 calc(50% - 50vw);
 }
-.shareflow__sticky {
-  position: sticky;
-  top: 64px;                 /* pin just below the fixed nav */
-  min-height: calc(100vh - 64px);
+.flows__pin { display: flex; flex-direction: column; }
+.flows__caps { order: 1; }   /* last on screen, first in the markup: read before the images */
+.flows__window { position: relative; display: flex; align-items: center; overflow-x: auto; }
+.flows__track {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--gap) * 2.5);   /* a wider gap between groups */
+  padding-inline: var(--pad) var(--pad-end);
+}
+.flows__pair { flex: none; display: flex; align-items: center; gap: var(--gap); }
+.flow__shot { display: block; flex: none; -webkit-user-drag: none; }
+.flow__shot--tall { width: auto; height: var(--tall-h); }
+.flow__shot--wide { width: var(--wide); height: auto; }
+.flow__cap {
   box-sizing: border-box;
-  padding-top: clamp(28px, 5vh, 56px);   /* clear offset below the nav when pinned */
-  padding-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;   /* phone near the top, close to the title */
-  gap: 20px;
-}
-.shareflow__frame {
-  position: relative;
-  /* Size by HEIGHT so the phone + caption always fit below the nav; width
-     follows the 720:1483 aspect. */
-  aspect-ratio: 720 / 1483;
-  height: min(66vh, 700px);
-  width: auto;
-}
-.shareflow__img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  will-change: opacity;
-  -webkit-user-drag: none;
-}
-.shareflow__img:first-child { opacity: 1; }
-.shareflow__cap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  padding: clamp(14px, 2.5svh, 28px) var(--gutter) clamp(20px, 4svh, 44px);
   text-align: center;
-  max-width: 360px;
 }
-/* .shareflow__name/__sub/__count typography is shared with .develop__* above. */
-/* Reduced motion: drop the scroll crossfade — show all three side by side. */
-@media (prefers-reduced-motion: reduce) {
-  .shareflow { height: auto; margin: 32px 0; }
-  .shareflow__sticky { position: static; min-height: 0; }
-  .shareflow__frame { display: flex; flex-wrap: wrap; justify-content: center;
-    gap: 14px; width: 100%; aspect-ratio: auto; }
-  .shareflow__img { position: static; opacity: 1; width: min(200px, 44vw); height: auto; }
-  .shareflow__cap { display: none; }
+.flow__cap h3 { margin: 0 0 8px; }
+.flow__cap p { max-width: 46ch; margin: 0 auto; text-wrap: balance; }
+
+.flows.is-pinned .flows__pin {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100svh;
+  padding-top: 73px;   /* clears the fixed nav */
+}
+.flows.is-pinned .flows__caps { display: grid; }
+.flows.is-pinned .flow__cap { grid-area: 1 / 1; will-change: opacity; }
+.flows.is-pinned .flows__window { flex: 1; min-height: 0; overflow: hidden; }
+.flows.is-pinned .flows__track { will-change: transform; }
+.flows.is-pinned .flows__pair { will-change: opacity; }
+
+/* Square or wider: a pair fits on screen, at the mockups' true relative scale. */
+@media (min-aspect-ratio: 1/1) {
+  .flows {
+    --u: min(var(--col-wide) / 1848, (100svh - 290px) / 1113);
+    --gap: calc(64 * var(--u));
+    --pair: calc(1848 * var(--u));
+    --pad-end: calc(100vw - var(--pad) - var(--pair));   /* the second group lands where the first began */
+  }
+  .flows__caps { width: var(--pair); margin-left: var(--pad); }   /* centred under the group */
+  .flow__shot--tall { width: calc(536 * var(--u)); height: auto; }
+  .flow__shot--wide { width: calc(1248 * var(--u)); }
+}
+/* Short windows and sideways phones: a tighter intro leaves the phones more room. */
+@media (min-aspect-ratio: 1/1) and (max-height: 640px) {
+  .flows {
+    --u: min(var(--col-wide) / 1848, (100svh - 133px) / 1113);
+    --pad: calc((100vw - var(--pair)) / 2);   /* much narrower than the page here, so centre it */
+  }
+  .flows__caps { width: 100%; margin-left: 0; }
+  .flow__cap { padding: 8px var(--gutter) 10px; }
+  .flow__cap h3 { margin-bottom: 2px; }
+  .flows .flow__cap p:not(.tag):not(.lead) { max-width: none; font-size: 13px; line-height: 1.4; }
 }
 
-/* Primary download with a secondary beta link. */
-.btn-row.download-links { flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-.testflight-link { border-bottom: 0; font-size: 13px; color: var(--ink-dim, #aaa); text-decoration: underline; text-underline-offset: 3px; }
-.testflight-link:hover { color: #fff; }
+/* Built for iPhone, taller than square: the head holds still and the cards move left.
+   Without .is-pinned (JS off, or square and wider) they stay the grid above. */
+.native-run.is-pinned .native-run__pin {
+  position: sticky;
+  /* A pin taller than the screen (small iPhones) sticks by its bottom, keeping the cards. */
+  top: min(0px, calc(100svh - var(--pin-h, 100svh)));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 100svh;
+  padding-top: 73px;   /* clears the fixed nav */
+}
+.native-run.is-pinned .tag { align-self: flex-start; }
+.native-run.is-pinned .native-run__window {
+  position: relative;
+  display: flex;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+}
+.native-run.is-pinned .features {
+  --pad: calc((100vw - var(--col-wide)) / 2);
+  flex: none;
+  display: flex;
+  margin: clamp(24px, 3vw, 40px) var(--pad) 0;
+  will-change: transform;
+}
+.native-run.is-pinned .feature { flex: none; width: min(78vw, 440px); }
+
 .download-links a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
 
-.download-links .btn--primary {
-  border: 2px solid transparent;
-  color: #fff;
-  background:
-    linear-gradient(rgba(0,0,0,.84), rgba(0,0,0,.84)) padding-box,
-    var(--spectrum) border-box;
-  box-shadow: 0 0 22px rgba(0,180,255,.12);
-  transition: filter 150ms ease-out, box-shadow 150ms ease-out;
-}
-.download-links .btn--primary:hover {
-  filter: brightness(1.2) saturate(1.12);
-  box-shadow: 0 0 30px rgba(0,200,200,.22);
-}
