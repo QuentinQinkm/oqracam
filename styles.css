@@ -166,7 +166,9 @@ a {
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.6);
   transition: border-color 150ms ease-out, color 150ms ease-out;
 }
-a:hover { border-bottom-color: #fff; }
+@media (hover: hover) and (pointer: fine) {
+  a:hover { border-bottom-color: #fff; }
+}
 
 /* Chromatic text selection — the spectrum, even when you highlight. */
 ::selection { background: #00b4ff; color: #000; }
@@ -354,7 +356,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   align-items: center;
   min-height: 36px;   /* roomier tap target */
 }
-.nav__links a:hover { color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .nav__links a:hover { color: var(--ink); }
+}
 .nav__links a.accent { color: var(--ink); }
 
 @media (max-width: 560px) {
@@ -382,7 +386,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   cursor: pointer;
   transition: border-color 150ms ease-out, background 150ms ease-out, color 150ms ease-out;
 }
-.btn:hover { border-color: var(--ink-faint); color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover { border-color: var(--ink-faint); color: var(--ink); }
+}
 
 /* Primary = the app's active-segment look: solid bright-ink fill, black text
    (SegmentedSelector active state) — NOT a colored accent. */
@@ -391,12 +397,14 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   border-color: var(--ink);
   color: #000;
 }
+@media (hover: hover) and (pointer: fine) {
 .btn--primary:hover {
   background: #ffffff;
   border-color: #ffffff;
   color: #000;
   /* a faint spectrum bloom on the install CTA */
   box-shadow: 0 0 0 1px rgba(255,255,255,0.4), 0 6px 30px -8px rgba(0,180,255,0.55);
+}
 }
 
 /* Disabled / "coming soon" CTA — reads as inert chrome, not active gold */
@@ -587,34 +595,45 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 }
 
 /* ---------- immersive sample gallery (shot on Oqra) ----------
-   One photo at a time in a fixed 3:4 frame (all five are portrait), centred on
-   the black canvas. Arrows, swipe, or arrow-keys cycle them, wrapping around;
-   each swap crossfades. gallery.js drives it (toggles .is-active); with no JS
-   the first photo stays visible. */
+   Native paging in the same 3:4 frame. Without JS only the first image shows;
+   with JS the browser owns finger tracking, momentum and page snapping. */
 .gallery { margin: 0; padding-top: clamp(40px, 7vh, 88px); }
 .gallery__title { text-align: center; margin: 0 0 24px; padding: 0 var(--gutter); }
 .gallery__stage {
   position: relative;
   width: 100%;
-  max-width: calc(82vh * 3 / 4);   /* the whole 3:4 photo fits within 82vh tall */
+  max-width: calc(82vh * 3 / 4);
   margin: 0 auto;
   aspect-ratio: 3 / 4;
   overflow: hidden;
   background: var(--bg);
 }
 .gallery__img {
-  position: absolute;
-  inset: 0;
+  display: none;
   width: 100%;
   height: 100%;
-  object-fit: cover;               /* frame and photos are both 3:4 — no crop */
-  opacity: 0;
-  transition: opacity 450ms ease;
+  object-fit: cover;
+  -webkit-user-drag: none;
 }
-.gallery__img.is-active { opacity: 1; }
-@media (prefers-reduced-motion: reduce) {
-  .gallery__img { transition: none; }   /* instant swap, no crossfade */
+.gallery__img.is-active { display: block; }
+.gallery.is-scrollable .gallery__stage {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: auto;   /* JS requests smooth arrows; auto remains instant */
+  scrollbar-width: none;
+  touch-action: auto;      /* retain vertical page scrolling and pinch zoom */
 }
+.gallery.is-scrollable .gallery__stage::-webkit-scrollbar { display: none; }
+.gallery.is-scrollable .gallery__img {
+  display: block;
+  flex: 0 0 100%;
+  min-width: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.gallery__stage:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 
 .gallery__controls {
   display: flex;
@@ -639,7 +658,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   cursor: pointer;
   transition: border-color 150ms ease-out, color 150ms ease-out;
 }
-.gallery__nav:hover { border-color: var(--ink-faint); }
+@media (hover: hover) and (pointer: fine) {
+  .gallery__nav:hover { border-color: var(--ink-faint); }
+}
 .gallery__nav svg { display: block; width: 13px; height: 13px; }
 .gallery__counter {
   min-width: 5.5em;
@@ -961,7 +982,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   cursor: pointer;
   transition: background 150ms ease-out, color 150ms ease-out;
 }
-.seg button:hover { color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .seg button:hover { color: var(--ink); }
+}
 .seg button.active {           /* app active state: bright-ink fill, black text */
   background: var(--ink);
   color: #000;
@@ -1192,6 +1215,7 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   align-items: center;
   gap: 8px;
   width: fit-content;
+  min-height: 44px;
   margin: 16px auto 0;
   padding: 8px 10px;
   background: transparent;
@@ -1204,7 +1228,9 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
   cursor: pointer;
   transition: color 150ms ease-out;
 }
-.develop__replay:hover { color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .develop__replay:hover { color: var(--ink); }
+}
 .develop__replay-icon { width: 13px; height: 13px; display: block; flex: none; }
 
 /* Portrait / narrow: one column — title → image stage (frame + dragger) → body.
@@ -1326,4 +1352,25 @@ strong { color: var(--ink); font-weight: var(--w-regular); }
 .native-run.is-pinned .feature { flex: none; width: min(78vw, 440px); }
 
 .download-links a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+/* Touch-down feedback is immediate; only the release eases back into place.
+   Manipulation preserves panning and pinch zoom on these discrete controls. */
+.btn, .gallery__nav, .seg button, .develop__replay {
+  touch-action: manipulation;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 200ms ease-out, border-color 150ms ease-out,
+              background-color 150ms ease-out, color 150ms ease-out;
+}
+.btn:not([aria-disabled="true"]):not(.btn--soon):active,
+.gallery__nav:active, .seg button:active, .develop__replay:active {
+  transform: scale(0.97);
+  opacity: 0.78;
+  transition-duration: 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn:not([aria-disabled="true"]):not(.btn--soon):active,
+  .gallery__nav:active, .seg button:active, .develop__replay:active {
+    transform: none;
+  }
+}
 

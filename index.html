@@ -127,7 +127,7 @@
 <!-- ============================== IMMERSIVE SAMPLES (shot on Oqra) ============================== -->
 <section class="gallery" id="scenes" aria-roledescription="carousel" aria-label="Photos shot on Oqra">
   <h2 class="gallery__title">Shot on Oqra</h2>
-  <div class="gallery__stage">
+  <div class="gallery__stage" tabindex="0" role="group" aria-label="Photo gallery — swipe or use the arrow keys">
     <img class="gallery__img is-active" src="/assets/img/scenes/scene-6.webp" alt="A blue bay seen over tiled rooftops, with a breakwater and seaside hotels under a green headland, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
     <img class="gallery__img" data-src="/assets/img/scenes/scene-7.webp" alt="Fireworks bursting over a beach, two people silhouetted at the water's edge, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
     <img class="gallery__img" data-src="/assets/img/scenes/scene-8.webp" alt="Log steps climbing through a dark, misty forest, shot on Oqra" width="1050" height="1400" loading="lazy" decoding="async" draggable="false" />
@@ -141,7 +141,7 @@
     <button type="button" class="gallery__nav" data-dir="-1" aria-label="Previous photo">
       <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M9.5 1 L3.5 7 L9.5 13" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
     </button>
-    <span class="gallery__counter" aria-live="polite">01 / 08</span>
+    <span class="gallery__counter" aria-live="polite" aria-atomic="true">01 / 08</span>
     <button type="button" class="gallery__nav" data-dir="1" aria-label="Next photo">
       <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M4.5 1 L10.5 7 L4.5 13" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
     </button>
