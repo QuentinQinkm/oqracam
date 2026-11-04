@@ -1,9 +1,9 @@
 /* ============================================================
    Oqra — shared scroll-transition helpers
    ============================================================
-   Common pieces used by the pinned transitions (hero.js, and the #shareflow
-   crossfade in stepper.js): the shared rhythm tokens, a rAF scroll/resize
-   throttle, the HOLD·fade·HOLD stage mapping, and a caption updater. Loaded
+   Common pieces used by the pinned sections (hero.js, sideways.js): the shared
+   rhythm tokens, a rAF scroll/resize throttle, the HOLD·fade·HOLD stage
+   mapping, and a caption updater. Loaded
    before its consumers. Vanilla, no deps, CSP-safe (script-src 'self').
    ============================================================ */
 var OqraScroll = (function () {

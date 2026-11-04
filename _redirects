@@ -1,6 +1,6 @@
 # Cloudflare / Netlify rewrites.
-# Serve the single-page site for any shared-recipe link; share.js reads the
-# /p/<code> payload, decodes it, and scrolls to the #decode section.
+# Serve the site for any shared-recipe link, so one opened without the app lands on
+# the home page instead of a 404.
 # When Oqra IS installed, iOS opens the app before the browser ever loads this.
 # Target is "/" (the root index) — OUTSIDE /p/, so the rule can't match its own
 # destination (a destination under /p/ would re-trigger /p/* — a loop Cloudflare

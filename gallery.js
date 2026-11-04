@@ -63,7 +63,7 @@
 
   // Once the page is idle, warm every photo into cache so each flip is an
   // instant hard cut (lazy imgs would otherwise blank on first view). Cheap —
-  // five small JPEGs, fetched off the critical path.
+  // eight small WebPs, fetched off the critical path.
   function warmAll() { for (var k = 0; k < total; k++) preload(k); }
   if (window.requestIdleCallback) window.requestIdleCallback(warmAll, { timeout: 2500 });
   else window.addEventListener("load", function () { window.setTimeout(warmAll, 800); }, { once: true });

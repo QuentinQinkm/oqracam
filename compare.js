@@ -2,7 +2,7 @@
    Oqra — before/after reveal (#compare)
    ============================================================
    A draggable divider wipes between the original capture (left) and the
-   same frame developed through Oqra (right). Scene + film pickers swap the
+   same frame developed through Oqra (right). Scene + preset pickers swap the
    image pair. Pure vanilla, no deps; images live in /assets/img/samples/
    as <scene>_<og|look>.webp.
    ============================================================ */
@@ -20,29 +20,30 @@
   var lookSeg  = document.getElementById("lookSeg");
   var BASE = "/assets/img/samples/";
 
-  var scene = "flower";
-  var look  = "amethyst";
+  var scene = "street";
+  var look  = "golden";
 
-  // Each film's one-line identity (shown under the picker — the looks' names
+  // Each preset's one-line identity (shown under the picker — the looks' names
   // gain a character, not just a label).
   var CHARS = {
-    amethyst:  "Soft warmth, cool shadows",
-    crystal:   "Clean, bright, true colour",
-    onyx:      "Deep silver black & white",
-    verdigris: "Vivid, sun-faded colour"
+    golden:  "Warm, peach-toned light",
+    sunburn: "Amber sun, olive shadows",
+    window:  "Cool light, teal shadows",
+    monor:   "Black and white, as if through a red filter"
   };
+  var NAMES = { golden: "Golden", sunburn: "Sunburn", window: "Window", monor: "Mono R" };
 
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
-  // ---- speculative preload: make scene/film switches instant cuts ----
-  var SCENES = ["flower", "park", "pub", "rose", "snow"];
-  var LOOKS  = ["amethyst", "crystal", "onyx", "verdigris"];
+  // ---- speculative preload: make scene/preset switches instant cuts ----
+  var SCENES = ["street", "bay", "river", "pier", "cherry"];
+  var LOOKS  = ["golden", "sunburn", "window", "monor"];
   var warmed = {};
   function warm(url) {
     if (warmed[url]) return; warmed[url] = true;
     var im = new Image(); im.decoding = "async"; im.src = url;
   }
-  // The "cross" one tap can reach next: this scene in every film, and this film
+  // The "cross" one tap can reach next: this scene in every preset, and this preset
   // across every scene (+ each scene's original).
   function warmCross() {
     var i;
@@ -69,8 +70,8 @@
     swapImg(before, BASE + scene + "_og.webp");
     swapImg(after,  BASE + scene + "_" + look + ".webp");
     before.alt = cap(scene) + ", original capture";
-    after.alt  = cap(scene) + ", developed in Oqra (" + cap(look) + ")";
-    labelR.textContent = cap(look);
+    after.alt  = cap(scene) + ", developed in Oqra (" + NAMES[look] + ")";
+    labelR.textContent = NAMES[look];
     if (note) note.textContent = CHARS[look] || "";
   }
 
